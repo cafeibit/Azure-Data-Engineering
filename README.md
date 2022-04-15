@@ -14,5 +14,5 @@ To process and analyze data using multi-task jobs and Delta Live Tables, the Azu
 * Build and query a Delta Lake & performance tuning
 * Build production workloads on Azure Databricks with Azure Data Factory
 * Integrate Azure Databricks with Azure Synapse 
-* Implement CI/CD with Azure DevOps 
+* Implement CI/CD with Azure DevOps - an automated process version control, testing capabilities, and controls for deployment approvals
 
