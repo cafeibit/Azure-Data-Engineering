@@ -14,8 +14,8 @@ To process and analyze data using multi-task jobs and Delta Live Tables, the Azu
 * Build and query a Delta Lake & performance tuning
 * Build production workloads on Azure Databricks with Azure Data Factory
 * Integrate Azure Databricks with Azure Synapse 
-- Describe the connection architecture of Synapse and Spark
-- Configure a connection between Databricks and Synapse
-- Read data from Synapse and Write data to Synapse
+0 Describe the connection architecture of Synapse and Spark
+0 Configure a connection between Databricks and Synapse
+0 Read data from Synapse and Write data to Synapse
 * Implement CI/CD with Azure DevOps - an automated process version control, testing capabilities, and controls for deployment approvals
 
