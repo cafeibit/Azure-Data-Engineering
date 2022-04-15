@@ -8,7 +8,7 @@
 
 ### Data Engineering with Azure Databricks with best practices
 To process and analyze data using multi-task jobs and Delta Live Tables, the Azure Databricks data processing pipeline framework. To run a Delta Live Tables pipeline as part of a data processing workflow with Databricks jobs, Apache Airflow, or Azure Data Factory. 
-* Azure Databricks/Delta Lake architecture performance/features
+* Azure Databricks/Delta Lake architecture/performance/features programming by Scala/Python/Java
 * Read and write data in Azure Databricks 
 * Work with DataFrames in Azure Databricks 
 * Build and query a Delta Lake & performance tuning
