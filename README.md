@@ -5,7 +5,7 @@
 ### Data Engineering with Azure Synapse Analytics
 
 ### Data Engineering with Azure Databricks with best practices
-##### To run a Delta Live Tables pipeline as part of a data processing workflow with Databricks jobs, Apache Airflow, or Azure Data Factory. 
+To process and analyze data using multi-task jobs and Delta Live Tables, the Azure Databricks data processing pipeline framework. To run a Delta Live Tables pipeline as part of a data processing workflow with Databricks jobs, Apache Airflow, or Azure Data Factory. 
 * Azure Databricks Delta Lake architecture & lazy evaluation and other performance features
 * Read and write data in Azure Databricks 
 * Work with DataFrames in Azure Databricks 
