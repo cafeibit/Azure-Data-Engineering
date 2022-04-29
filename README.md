@@ -36,21 +36,21 @@ To orchestrate big data, integrate data sources, ingest data from on-premises, m
 * To analyze and optimize data warehouse storage in Azure Synapse Analytics 
 * To approach and implement security to protect your data with Azure Synapse Analytics such as serverless SQL pools. 
 * To use serverless SQL pools
- * To query and prepare data in an interactive way on files placed in Azure Storage such as querying the different file types stored in a data lake. 
- * To create objects to help you query data or optimize your existing data transformation pipeline through Azure Synapse serverless SQL pools
- * To use CREATE EXTERNAL TABLE AS SELECT statements to transform data and encapsulate the transformation logic in stored procedures.
+  * To query and prepare data in an interactive way on files placed in Azure Storage such as querying the different file types stored in a data lake. 
+  * To create objects to help you query data or optimize your existing data transformation pipeline through Azure Synapse serverless SQL pools
+  * To use CREATE EXTERNAL TABLE AS SELECT statements to transform data and encapsulate the transformation logic in stored procedures.
 * To perform data engineering with Azure Synapse Apache Spark Pools, to boost the performance of big-data analytic applications by in-memory cluster computing. 
- * To ingest data using Apache Spark Notebooks in Azure Synapse Analytics.
- * To transform data using DataFrames in Apache Spark Pools in Azure Synapse Analytics. 
- * To integrate SQL and Apache Spark pools in Azure Synapse Analytics.
- * To monitor and manage data engineering workloads with Apache Spark in Azure Synapse Analytics.
+  * To ingest data using Apache Spark Notebooks in Azure Synapse Analytics.
+  * To transform data using DataFrames in Apache Spark Pools in Azure Synapse Analytics. 
+  * To integrate SQL and Apache Spark pools in Azure Synapse Analytics.
+  * To monitor and manage data engineering workloads with Apache Spark in Azure Synapse Analytics.
 * Work with Hybrid Transactional and Analytical Processing Solutions using Azure Synapse Analytics, to perform operational analytics against Azure Cosmos DB using the Azure Synapse Link feature within Azure Synapse Analytics. 
- * To configure and enable Azure Synapse Link to interact with Azure Cosmos DB. 
- * To perform analytics against Azure Cosmos DB using Azure Synapse Link.
- * to use the Synapse serverless SQL pools to query the Azure Cosmos DB data made available by Azure Synapse Link. 
+  * To configure and enable Azure Synapse Link to interact with Azure Cosmos DB. 
+  * To perform analytics against Azure Cosmos DB using Azure Synapse Link.
+  * to use the Synapse serverless SQL pools to query the Azure Cosmos DB data made available by Azure Synapse Link. 
 * Integrate Azure Synapse Analytics with Azure Data and AI services
- * To build Power BI reports from within Azure Synapse Analytics. 
- * To build machine learning modules from within Azure Synapse Analytics. 
+  * To build Power BI reports from within Azure Synapse Analytics. 
+  * To build machine learning modules from within Azure Synapse Analytics. 
  * 
 ### Data Engineering with Azure Databricks with best practices
 To process and analyze data using multi-task jobs and Delta Live Tables, the Azure Databricks data processing pipeline framework. To run a Delta Live Tables pipeline as part of a data processing workflow with Databricks jobs, Apache Airflow, or Azure Data Factory. 
