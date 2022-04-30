@@ -29,7 +29,7 @@ To use Data Factory mapping data flows to process and transform the data as need
        -- A example of this is that Azure Data Factory can create a pipeline to an analytical data platform such as Spark pools in an Azure Synapse Analytics instance to perform a complex calculation using python. Another example could be to send data to an Azure SQL Database instance to execute a stored procedure using Transact-SQL.
      * Compute environment: On-demand HDInsight cluster or your own HDInsight cluster, Azure Batch, Azure Machine Learning Studio Machine, Azure Machine Learning, Azure Data Lake Analytics, Azure SQL, Azure SQL Data Warehouse, SQL Server, Azure Databricks, Azure Function, 
    * Transforming data using SQL Server Integration Services (SSIS) packages
-     ** Using Azure-SSIS Integration Runtime will enable you to deploy and manage your existing SSIS packages with little to no change using familiar tools such as SQL Server Data Tools (SSDT) and SQL Server Management Studio (SSMS), just like using SSIS on premises.
+      * Using Azure-SSIS Integration Runtime will enable you to deploy and manage your existing SSIS packages with little to no change using familiar tools such as SQL Server Data Tools (SSDT) and SQL Server Management Studio (SSMS), just like using SSIS on premises.
      
 * CI/CD & Publish (Analysis and future)
   * To develop and deliver ETL processes incrementally before publishing by using Azure DevOps and GitHub. 
