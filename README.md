@@ -1,7 +1,7 @@
 # Azure Data Engineering
 
 ##### To choose Azure Cloud Plaftorm as data engineering solution for big data processing for batch/stream data processing on Lambad/Kappa architecture.
- * There are many components to work on data engineering: Azure Synapse Analytics (Serverless pools, Spark pools), Synapse Pipelines, Azure Blog Storage, Azure Cosmos DB, Azure Synapse Link for Azure Cosmos DB, Azure Analysis Service, Azure Streaming Service, Power BI
+ * There are many components to work on data engineering: Azure Synapse Analytics (Serverless pools, Spark pools), Azure Databricks (Spark/Delta Lake), Azure HDInsight, Synapse Pipelines/ Azure Data Factory, Azure Streaming Service (Event Hubs/IoT Hub/ADSL Gen2/Apache Kafka), Azure Blog Storage, Azure Cosmos DB, Azure Synapse Link for Azure Cosmos DB, Azure Analysis Service, Azure Data Explorer, Power BI
  
 ##### To make data-drven decisions and build data-powered products becoming morden business intelligence - AI/ML.
 * To provision and set up data platform technologies that are on-premises and in the cloud manage and secure the flow of structured and unstructured data from multiple sources. The data platforms they use can include relational databases, nonrelational databases, data streams, and file stores. 
