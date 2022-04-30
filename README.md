@@ -11,7 +11,7 @@ Primary responsibilities include using services and tools to ingest, egress, and
 * Ensure business continuity in uncommon conditions by using techniques for high availability and disaster recovery. 
 * Monitor to ensure that the systems run properly and are cost-effective. 
 
-### Data Engineering with Azure Data Factory
+### Data Engineering with Azure Data Factory / Azure Synapse Pipeline
 To orchestrate big data, integrate data sources, ingest data from on-premises, multiple-cloud, and software as a service (SaaS) data sources; create and schedule data-driven workflows to ingest data from different data stores, build complex ETL processes to transform this data visually with compute services or with data flows. To build complex and iterative processing logic within the pipelines you create with Azure Data Factory, which supports the creation of diverse data integration patterns such as building a modern data warehouse.
 
 * Connect and Collect
@@ -51,7 +51,7 @@ To orchestrate big data, integrate data sources, ingest data from on-premises, m
 * Integrate Azure Synapse Analytics with Azure Data and AI services
   * To build Power BI reports from within Azure Synapse Analytics. 
   * To build machine learning modules from within Azure Synapse Analytics. 
- * 
+  
 ### Data Engineering with Azure Databricks with best practices
 To process and analyze data using multi-task jobs and Delta Live Tables, the Azure Databricks data processing pipeline framework. To run a Delta Live Tables pipeline as part of a data processing workflow with Databricks jobs, Apache Airflow, or Azure Data Factory. 
 * Azure Databricks/Delta Lake architecture/performance/features programming by Scala/Python/Java
