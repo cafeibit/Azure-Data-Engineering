@@ -14,10 +14,11 @@ Primary responsibilities include using services and tools to ingest, egress, and
 ### Data Engineering with Azure Data Factory / Azure Synapse Pipeline
 To orchestrate big data, integrate data sources, ingest data from on-premises, multiple-cloud, and software as a service (SaaS) data sources; create and schedule data-driven workflows to ingest data from different data stores, build complex ETL processes to transform this data visually with compute services or with data flows. To build complex and iterative processing logic within the pipelines you create with Azure Data Factory, which supports the creation of diverse data integration patterns such as building a modern data warehouse.
 
-* Connect and Collect
+* Connect and Collect (Ingest)
   * To collect the required data from the appropriate data sources in different locations, including on-premises sources and in the cloud.  
   * To use the <code>Copy Activity</code> (Read data from source data store; Perform the following tasks on the data: Serialization/deserialization, Compression/decompression and Column mapping; Write data to the destination data store - sink) to move data from various sources to a single, centralized data store in the cloud. 
-* Transform and Enrich
+  
+* Transform and Enrich (Prepare & Transform)
 To use Data Factory mapping data flows to process and transform the data as needed such as Data Flow Expression Builder.
    * Transforming data using Mapping Data Flow to modify data (Code Free) (Sink/Source)
      * Schema modifier transformations: Aggregate, Derived column, Flatten, Pivot/Unpivot, Select, Surrogate key, Window
@@ -25,13 +26,17 @@ To use Data Factory mapping data flows to process and transform the data as need
      * Multiple inputs/outputs transformations: Conditional split, Exists, Join, Lookup, New branch, Union
    * Transforming data using compute resources
      * To call on compute resources to transform data by a data platform service that may be better suited to the job. 
-       A example of this is that Azure Data Factory can create a pipeline to an analytical data platform such as Spark pools in an Azure Synapse Analytics instance to perform a complex calculation using python. Another example could be to send data to an Azure SQL Database instance to execute a stored procedure using Transact-SQL.
+       -- A example of this is that Azure Data Factory can create a pipeline to an analytical data platform such as Spark pools in an Azure Synapse Analytics instance to perform a complex calculation using python. Another example could be to send data to an Azure SQL Database instance to execute a stored procedure using Transact-SQL.
+     * Compute environment: On-demand HDInsight cluster or your own HDInsight cluster, Azure Batch, Azure Machine Learning Studio Machine, Azure Machine Learning, Azure Data Lake Analytics, Azure SQL, Azure SQL Data Warehouse, SQL Server, Azure Databricks, Azure Function, 
    * Transforming data using SQL Server Integration Services (SSIS) packages
-* CI/CD & Publish
+     --  Using Azure-SSIS Integration Runtime will enable you to deploy and manage your existing SSIS packages with little to no change using familiar tools such as SQL Server Data Tools (SSDT) and SQL Server Management Studio (SSMS), just like using SSIS on premises.
+     
+* CI/CD & Publish (Analysis and future)
   * To develop and deliver ETL processes incrementally before publishing by using Azure DevOps and GitHub. 
   * Set triggers on-demand and schedule data processing based on your needs. Associate a pipeline with a trigger, or manually start it as and when needed. 
   * Connect to linked services, such as on-premises apps and data, or Azure services via integration runtimes.
   * After refined the raw data, to load the data into whichever analytics engine to access from business intelligence tools, including Azure Synapse Analytics, Azure SQL Database, and Azure Cosmos DB.
+  
 * Monitoring 
   * After successfully built and deployed data integration pipeline, to monitor your scheduled activities and pipelines. This enables you to track success and failure rates by using one of following: Azure Monitor, API, PowerShell, Azure Monitor logs, and Health panels in the Azure portal 
 
