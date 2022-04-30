@@ -19,6 +19,9 @@ To orchestrate big data, integrate data sources, ingest data from on-premises, m
   * To use the <code>Copy Activity</code> (Read data from source data store; Perform the following tasks on the data: Serialization/deserialization, Compression/decompression and Column mapping; Write data to the destination data store - sink) to move data from various sources to a single, centralized data store in the cloud. 
 * Transform and Enrich
   * To use Data Factory mapping data flows to process and transform the data as needed.
+   * * Transforming data using Mapping Data Flow
+   * * Transforming data using compute resources
+   * * Transforming data using SQL Server Integration Services (SSIS) packages
 * CI/CD & Publish
   * To develop and deliver ETL processes incrementally before publishing by using Azure DevOps and GitHub. 
   * Set triggers on-demand and schedule data processing based on your needs. Associate a pipeline with a trigger, or manually start it as and when needed. 
