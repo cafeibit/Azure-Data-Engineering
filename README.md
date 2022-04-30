@@ -15,13 +15,13 @@ Primary responsibilities include using services and tools to ingest, egress, and
 * Monitor to ensure that the systems run properly and are cost-effective. 
 
 ### Data Engineering with Azure Data Factory / Azure Synapse Pipeline
-To orchestrate big data, integrate data sources, ingest data from on-premises, multiple-cloud, and software as a service (SaaS) data sources; create and schedule data-driven workflows to ingest data from different data stores, build complex ETL processes to transform this data visually with compute services or with data flows. To build complex and iterative processing logic within the pipelines you create with Azure Data Factory, which supports the creation of diverse data integration patterns such as building a modern data warehouse.
+To orchestrate big data, integrate data sources, ingest data from on-premises, multiple-cloud, and software as a service (SaaS) data sources; create and schedule data-driven workflows to ingest data from different data stores, build complex ETL processes to transform this data visually with compute services or with data flows. <br> To build complex and iterative processing logic within the pipelines you create with Azure Data Factory, which supports the creation of diverse data integration patterns such as building a modern data warehouse.
 
 * Connect and Collect (Ingest)
   * To collect the required data from the appropriate data sources in different locations, including on-premises sources and in the cloud.  
   * To use the <code>Copy Activity</code> (Read data from source data store; Perform the following tasks on the data: Serialization/deserialization, Compression/decompression and Column mapping; Write data to the destination data store - sink) to move data from various sources to a single, centralized data store in the cloud. 
   
-* Transform and Enrich (Prepare & Transform) 
+* Transform and Enrich (Prepare & Transform)<br>
 To use Data Factory mapping data flows to process and transform the data as needed such as Data Flow Expression Builder.
    * Transforming data using Mapping Data Flow to modify data (Code Free) (Sink/Source)
      Mapping Data Flow follows an extract, load, transform (ELT) approach and works with staging datasets that are all in Azure. 
@@ -30,11 +30,13 @@ To use Data Factory mapping data flows to process and transform the data as need
      * Multiple inputs/outputs transformations: Conditional split, Exists, Join, Lookup, New branch, Union
      * The main tasks for this are as follows: 1. Preparing the environment, 2. Adding a Data Source, 3. Using Mapping Data Flow transformation, 4. Writing to a Data Sink, 5. Running the Pipeline, 6. Debug mapping data flow
      * To use Power Query known as an Online Mashup Editor/Power Query M functions to enable more advanced users to perform more complex data preparation using formulas. Wrangling Function toolbar including: Managing columns, Transforming tables, Reducing rows, Adding columns, Combining tables.
-   * Transforming data using compute resources
-     * To call on compute resources to transform data by a data platform service that may be better suited to the job. <br> A example of this is that Azure Data Factory can create a pipeline to an analytical data platform such as Spark pools in an Azure Synapse Analytics instance to perform a complex calculation using python. Another example could be to send data to an Azure SQL Database instance to execute a stored procedure using Transact-SQL.
+  
+   * Transforming data using compute resources<br>
+   To call on compute resources to transform data by a data platform service that may be better suited to the job. <br> A example of this is that Azure Data Factory can create a pipeline to an analytical data platform such as Spark pools in an Azure Synapse Analytics instance to perform a complex calculation using python. Another example could be to send data to an Azure SQL Database instance to execute a stored procedure using Transact-SQL.
      * Compute environment: On-demand HDInsight cluster or your own HDInsight cluster, Azure Batch, Azure Machine Learning Studio Machine, Azure Machine Learning, Azure Data Lake Analytics, Azure SQL, Azure SQL Data Warehouse, SQL Server, Azure Databricks, Azure Function, 
      * To use Azure Data Factory to ingest raw data collected from different sources and work with a range of compute resources such as Azure Databricks, Azure HDInsight, or other compute resources to restructure it as per your requirements.
      * Data ingestion and transformation using the collective capabilities of ADF and Azure Databricks essentially involves the following steps:<br> 1. Create Azure storage account, 2. Create an Azure Data Factory, 3. Create data workflow pipeline, 4. Add Databricks notebook to pipeline, 5. Perform analysis on data. For example: Generate a Databricks Access Token, Generate a Databricks Notebook, Create Linked Services, Create a Pipeline that uses Databricks Notebook Activity, Trigger a Pipeline Run, Monitor the Pipeline, Verify the output.
+   
    * Transforming data using SQL Server Integration Services (SSIS) packages (Lift and shift existing SSIS workloads)
       * Using Azure-SSIS Integration Runtime will enable you to deploy and manage your existing SSIS packages with little to no change using familiar tools such as SQL Server Data Tools (SSDT) and SQL Server Management Studio (SSMS), just like using SSIS on premises.
       * With the Azure-SSIS integration runtime enabled, you are able to manage, monitor and schedule SSIS packages using tools such as SQL Server Management Studio (SSMS) or SQL Server Data Tools (SSDT).
