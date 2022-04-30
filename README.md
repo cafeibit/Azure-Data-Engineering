@@ -20,12 +20,12 @@ To orchestrate big data, integrate data sources, ingest data from on-premises, m
 * Transform and Enrich
 To use Data Factory mapping data flows to process and transform the data as needed such as Data Flow Expression Builder.
    * Transforming data using Mapping Data Flow to modify data (Code Free) (Sink/Source)
-     * * Schema modifier transformations: Aggregate, Derived column, Flatten, Pivot/Unpivot, Select, Surrogate key, Window
-     * * Row modifier transformations: Alter row, Filter, Sort
-     * * Multiple inputs/outputs transformations: Conditional split, Exists, Join, Lookup, New branch, Union
+     * Schema modifier transformations: Aggregate, Derived column, Flatten, Pivot/Unpivot, Select, Surrogate key, Window
+     * Row modifier transformations: Alter row, Filter, Sort
+     * Multiple inputs/outputs transformations: Conditional split, Exists, Join, Lookup, New branch, Union
    * Transforming data using compute resources
-    ** To call on compute resources to transform data by a data platform service that may be better suited to the job. 
-    ** A example of this is that Azure Data Factory can create a pipeline to an analytical data platform such as Spark pools in an Azure Synapse Analytics instance to perform a complex calculation using python. Another example could be to send data to an Azure SQL Database instance to execute a stored procedure using Transact-SQL.
+    * To call on compute resources to transform data by a data platform service that may be better suited to the job. 
+     **  A example of this is that Azure Data Factory can create a pipeline to an analytical data platform such as Spark pools in an Azure Synapse Analytics instance to perform a complex calculation using python. Another example could be to send data to an Azure SQL Database instance to execute a stored procedure using Transact-SQL.
    * Transforming data using SQL Server Integration Services (SSIS) packages
 * CI/CD & Publish
   * To develop and deliver ETL processes incrementally before publishing by using Azure DevOps and GitHub. 
