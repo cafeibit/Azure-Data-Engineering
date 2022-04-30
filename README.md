@@ -22,7 +22,7 @@ To orchestrate big data, integrate data sources, ingest data from on-premises, m
   * To use the <code>Copy Activity</code> (Read data from source data store; Perform the following tasks on the data: Serialization/deserialization, Compression/decompression and Column mapping; Write data to the destination data store - sink) to move data from various sources to a single, centralized data store in the cloud. 
   
 * Transform and Enrich (Prepare & Transform)
-To use Data Factory mapping data flows to process and transform the data as needed such as Data Flow Expression Builder.
+ To use Data Factory mapping data flows to process and transform the data as needed such as Data Flow Expression Builder.
    * Transforming data using Mapping Data Flow to modify data (Code Free) (Sink/Source)
      * Schema modifier transformations: Aggregate, Derived column, Flatten, Pivot/Unpivot, Select, Surrogate key, Window
      * Row modifier transformations: Alter row, Filter, Sort
