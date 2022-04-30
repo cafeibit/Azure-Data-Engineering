@@ -28,11 +28,14 @@ To use Data Factory mapping data flows to process and transform the data as need
      * Schema modifier transformations: Aggregate, Derived column, Flatten, Pivot/Unpivot, Select, Surrogate key, Window
      * Row modifier transformations: Alter row, Filter, Sort
      * Multiple inputs/outputs transformations: Conditional split, Exists, Join, Lookup, New branch, Union
-     * The main tasks for this are as follows: 1. Preparing the environment, 2. Adding a Data Source, 3. Using Mapping Data Flow transformation, 4. Writing to a Data Sink
+     * The main tasks for this are as follows: 1. Preparing the environment, 2. Adding a Data Source, 3. Using Mapping Data Flow transformation, 4. Writing to a Data Sink, 5. Running the Pipeline, 6. Debug mapping data flow
+     * To use Power Query known as an Online Mashup Editor/Power Query M functions to enable more advanced users to perform more complex data preparation using formulas. Wrangling Function toolbar including: Managing columns, Transforming tables, Reducing rows, Adding columns, Combining tables.
    * Transforming data using compute resources
      * To call on compute resources to transform data by a data platform service that may be better suited to the job. 
        -- A example of this is that Azure Data Factory can create a pipeline to an analytical data platform such as Spark pools in an Azure Synapse Analytics instance to perform a complex calculation using python. Another example could be to send data to an Azure SQL Database instance to execute a stored procedure using Transact-SQL.
      * Compute environment: On-demand HDInsight cluster or your own HDInsight cluster, Azure Batch, Azure Machine Learning Studio Machine, Azure Machine Learning, Azure Data Lake Analytics, Azure SQL, Azure SQL Data Warehouse, SQL Server, Azure Databricks, Azure Function, 
+     * To use Azure Data Factory to ingest raw data collected from different sources and work with a range of compute resources such as Azure Databricks, Azure HDInsight, or other compute resources to restructure it as per your requirements.
+       -- Data ingestion and transformation using the collective capabilities of ADF and Azure Databricks essentially involves the following steps: 1. Create Azure storage account, 2. Create an Azure Data Factory, 3. Create data workflow pipeline, 4. Add Databricks notebook to pipeline, 5. Perform analysis on data. For example: Generate a Databricks Access Token, Generate a Databricks Notebook, Create Linked Services, Create a Pipeline that uses Databricks Notebook Activity, Trigger a Pipeline Run.
    * Transforming data using SQL Server Integration Services (SSIS) packages
       * Using Azure-SSIS Integration Runtime will enable you to deploy and manage your existing SSIS packages with little to no change using familiar tools such as SQL Server Data Tools (SSDT) and SQL Server Management Studio (SSMS), just like using SSIS on premises.
      
@@ -72,6 +75,7 @@ To use Data Factory mapping data flows to process and transform the data as need
   
 ### Data Engineering with Azure Databricks with best practices
 To process and analyze data using multi-task jobs and Delta Live Tables, the Azure Databricks data processing pipeline framework. To run a Delta Live Tables pipeline as part of a data processing workflow with Databricks jobs, Apache Airflow, or Azure Data Factory. 
+
 * Azure Databricks/Delta Lake architecture/performance/features programming by Scala/Python/Java
 * Read and write data in Azure Databricks 
 * Work and code with DataFrames in Azure Databricks 
