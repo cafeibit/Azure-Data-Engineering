@@ -21,9 +21,10 @@ To orchestrate big data, integrate data sources, ingest data from on-premises, m
   * To collect the required data from the appropriate data sources in different locations, including on-premises sources and in the cloud.  
   * To use the <code>Copy Activity</code> (Read data from source data store; Perform the following tasks on the data: Serialization/deserialization, Compression/decompression and Column mapping; Write data to the destination data store - sink) to move data from various sources to a single, centralized data store in the cloud. 
   
-* Transform and Enrich (Prepare & Transform)
- To use Data Factory mapping data flows to process and transform the data as needed such as Data Flow Expression Builder.
+* Transform and Enrich (Prepare & Transform) 
+To use Data Factory mapping data flows to process and transform the data as needed such as Data Flow Expression Builder.
    * Transforming data using Mapping Data Flow to modify data (Code Free) (Sink/Source)
+     Mapping Data Flow follows an extract, load, transform (ELT) approach and works with staging datasets that are all in Azure. 
      * Schema modifier transformations: Aggregate, Derived column, Flatten, Pivot/Unpivot, Select, Surrogate key, Window
      * Row modifier transformations: Alter row, Filter, Sort
      * Multiple inputs/outputs transformations: Conditional split, Exists, Join, Lookup, New branch, Union
