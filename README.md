@@ -15,8 +15,8 @@ Primary responsibilities include using services and tools to ingest, egress, and
 To orchestrate big data, integrate data sources, ingest data from on-premises, multiple-cloud, and software as a service (SaaS) data sources; create and schedule data-driven workflows to ingest data from different data stores, build complex ETL processes to transform this data visually with compute services or with data flows. To build complex and iterative processing logic within the pipelines you create with Azure Data Factory, which supports the creation of diverse data integration patterns such as building a modern data warehouse.
 
 * Connect and Collect
- * To collect the required data from the appropriate data sources in different locations, including on-premises sources and in the cloud.  
- * To use the <code>Copy Activity</code> (Read data from source data store; Perform the following tasks on the data: Serialization/deserialization, Compression/decompression and Column mapping; Write data to the destination data store - sink) to move data from various sources to a single, centralized data store in the cloud. 
+  * To collect the required data from the appropriate data sources in different locations, including on-premises sources and in the cloud.  
+  * To use the <code>Copy Activity</code> (Read data from source data store; Perform the following tasks on the data: Serialization/deserialization, Compression/decompression and Column mapping; Write data to the destination data store - sink) to move data from various sources to a single, centralized data store in the cloud. 
 * Transform and Enrich
   * To use Data Factory mapping data flows to process and transform the data as needed.
 * CI/CD & Publish
