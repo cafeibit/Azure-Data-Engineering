@@ -44,7 +44,8 @@ To use Data Factory mapping data flows to process and transform the data as need
 * Orchestrate data movement and transformation in Azure Data Factory or Azure Synapse Pipeline
   * To use Control flow ( an orchestration of pipeline activities) including chaining activities in a sequence, branching, defining parameters at the pipeline level, and passing arguments while invoking the pipeline on demand or from a trigger, Execute Pipeline activity, Delta flows, Others (Web activity/Get metadata activity).
   * There are many activities that are possible in a pipeline in Azure Data Factory, grouped the activities in three categories:Data movement activities: The Copy Activity, Data transformation activities, Control activities on four dependency conditions: Succeeded, Failed, Skipped and Completed.
-* CI/CD & Publish (Analysis and future)
+  
+* CI/CD & Publish
   * To develop and deliver ETL processes incrementally before publishing by using Azure DevOps and GitHub. 
   * Set triggers on-demand and schedule data processing based on your needs. Associate a pipeline with a trigger, or manually start it as and when needed. 
   * Connect to linked services, such as on-premises apps and data, or Azure services via integration runtimes.
