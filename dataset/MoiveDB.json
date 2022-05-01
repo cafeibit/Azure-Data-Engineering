@@ -1,0 +1,27 @@
+{
+	"name": "MoiveDB",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorageMovieDB",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "moviesDB.csv",
+				"folderPath": "synapse/workspaces/datafactory",
+				"fileSystem": "databricksfs"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"type": "String"
+			}
+		]
+	}
+}
