@@ -64,7 +64,7 @@ To use Data Factory mapping data flows to process and transform the data as need
 * <a href="https://docs.microsoft.com/en-ca/azure/data-factory/">Azure Data Factory documentation</a>
 
 ### Data Engineering with Azure Synapse Analytics (Descriptive/Diagnostic/Predictive/Prescriptive analytics) 
-Azure Synapse Analytics is an integrated analytics platform, which combines data warehousing, big data analytics, data integration, and visualization into a single environment. Azure Synapse Analytics empowers users of all abilities to gain access and quick insights across all of their data, enabling a whole new level of performance and scale.
+Azure Synapse Analytics is an integrated analytics platform, which combines <b>data warehousing, big data analytics, data integration, and visualization</b> into a single environment. Azure Synapse Analytics empowers users of all abilities to gain access and quick insights across all of their data, enabling a whole new level of performance and scale.
 
 * To choose the tools and techniques used to work with Modern Data Warehouses productively and securely within Azure Synapse Analytics. 
 * To to build Data Warehouses using modern architecture patterns by using Azure Synapse Analytics. 
