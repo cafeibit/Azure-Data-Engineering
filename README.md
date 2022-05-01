@@ -29,8 +29,8 @@ To orchestrate big data, integrate data sources, ingest data from on-premises, m
   
 * Transform and Enrich (Prepare & Transform)<br>
 To use Data Factory mapping data flows to process and transform the data as needed such as Data Flow Expression Builder.
-   * Transforming data using Mapping Data Flow to modify data (Code Free) (Sink/Source)
-     Mapping Data Flow follows an extract, load, transform (ELT) approach and works with staging datasets that are all in Azure. 
+   * Transforming data using Mapping Data Flow to modify data (Code Free) (Sink/Source)<br>
+     Mapping Data Flow follows an extract, load, transform (ELT) approach and works with staging datasets that are all in Azure. And the data flows will run on your own execution cluster for scaled-out data processing. Data flow activities can be operationalized via existing Data Factory scheduling, control, flow, and monitoring capabilities.
      * Schema modifier transformations: Aggregate, Derived column, Flatten, Pivot/Unpivot, Select, Surrogate key, Window
      * Row modifier transformations: Alter row, Filter, Sort
      * Multiple inputs/outputs transformations: Conditional split, Exists, Join, Lookup, New branch, Union
