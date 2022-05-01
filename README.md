@@ -15,6 +15,7 @@ Primary responsibilities include using services and tools to ingest, egress, and
 * Monitor to ensure that the systems run properly and are cost-effective. 
 
 ### Data Engineering with Azure Data Factory / Azure Synapse Pipeline
+<a href="https://docs.microsoft.com/en-us/azure/data-factory/data-factory-tutorials">Azure Data Factory tutorials</a>
 To orchestrate big data, integrate data sources, ingest data from on-premises, multiple-cloud, and software as a service (SaaS) data sources; create and schedule data-driven workflows to ingest data from different data stores, build complex ETL processes to transform this data visually with compute services or with data flows. <br> To build complex and iterative processing logic within the pipelines you create with Azure Data Factory, which supports the creation of diverse data integration patterns such as building a modern data warehouse.
 
 * Connect and Collect (Ingest)
