@@ -18,8 +18,14 @@ Primary responsibilities include using services and tools to ingest, egress, and
 To orchestrate big data, integrate data sources, ingest data from on-premises, multiple-cloud, and software as a service (SaaS) data sources; create and schedule data-driven workflows to ingest data from different data stores, build complex ETL processes to transform this data visually with compute services or with data flows. <br> To build complex and iterative processing logic within the pipelines you create with Azure Data Factory, which supports the creation of diverse data integration patterns such as building a modern data warehouse.
 
 * Connect and Collect (Ingest)
-  * To collect the required data from the appropriate data sources in different locations, including on-premises sources and in the cloud.  
-  * To use the <code>Copy Activity</code> (Read data from source data store; Perform the following tasks on the data: Serialization/deserialization, Compression/decompression and Column mapping; Write data to the destination data store - sink) to move data from various sources to a single, centralized data store in the cloud. 
+   * To collect the required data from the appropriate data sources in different locations, including on-premises sources and in the cloud.  
+   * To use the <code>Copy Activity</code> (Read data from source data store; Perform the following tasks on the data: Serialization/deserialization, Compression/decompression and Column mapping; Write data to the destination data store - sink) to move data from various sources to a single, centralized data store in the cloud. 
+   * To ingest data from Azure Data Share into Azure Data Factory pipelines to build automated ingestion pipelines.
+      ** Receive data using Azure Data Sharem 
+      ** Ingest data into Azure Data Lake Gen 2 using Azure Data Factory
+      ** Join and transform data with Mapping Flow in Azure Data Factory
+      ** Sink a dataset into Azure Synapse Analytics using Azure Data Factory
+      ** Publish a pipeline run in Azure Data Factory
   
 * Transform and Enrich (Prepare & Transform)<br>
 To use Data Factory mapping data flows to process and transform the data as needed such as Data Flow Expression Builder.
