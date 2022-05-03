@@ -73,10 +73,13 @@ Azure Synapse Analytics is an integrated analytics platform, which combines <b>d
 * To manage and monitor data warehouse activities in Azure Synapse Analytics 
 * To analyze and optimize data warehouse storage in Azure Synapse Analytics 
 * To approach and implement security to protect your data with Azure Synapse Analytics such as serverless SQL pools. 
-* To use serverless SQL pools
+* Build data analytics solutions using Azure Synapse serverless SQL pools
   * To query and prepare data in an interactive way on files placed in Azure Storage such as querying the different file types stored in a data lake. 
   * To create objects to help you query data or optimize your existing data transformation pipeline through Azure Synapse serverless SQL pools
+  * To create objects to help you query data or optimize your existing data transformation pipeline through Azure Synapse serverless SQL pools.
   * To use CREATE EXTERNAL TABLE AS SELECT statements to transform data and encapsulate the transformation logic in stored procedures.
+  * To serve and make use of the data that is queried or transformed by Azure Synapse serverless SQL pool.
+  * To set up security when using Azure Synapse serverless SQL pools
 * To perform data engineering with Azure Synapse Apache Spark Pools, to boost the performance of big-data analytic applications by in-memory cluster computing. 
   * To ingest data using Apache Spark Notebooks in Azure Synapse Analytics.
   * To transform data using DataFrames in Apache Spark Pools in Azure Synapse Analytics. 
