@@ -1,4 +1,3 @@
-%md
 # Reading and Writing to Synapse
  
  ## Objectives
@@ -12,9 +11,8 @@
  - leverages massively parallel processing (MPP) to quickly run complex queries across petabytes of data
  - PolyBase T-SQL queries
 
-# COMMAND ----------
+# COMMAND 
 
- %md
  ## Synapse Connector
  - uses Azure Blob Storage as intermediary
  - uses PolyBase in Synapse
@@ -39,9 +37,7 @@
                password
  ```
 
-# COMMAND ----------
-
- %md
+# COMMAND
  
  ## SQL DW Connection
  
@@ -62,9 +58,8 @@
     - Synapse connector creates a database scoped credential before asking Synapse to load or unload data
     - then it deletes the database scoped credential once the loading or unloading operation is done.
 
-# COMMAND ----------
+# COMMAND
 
- %md
  ## Enter Variables from Cloud Setup
  
  Before starting this lesson, you were guided through configuring Azure Synapse and deploying a Storage Account and blob container.
@@ -73,7 +68,7 @@
  
  Also enter the JDBC connection string for your Azure Synapse instance. Make sure you substitute in your password as indicated within the generated string.
 
-# COMMAND ----------
+# COMMAND
 
 storageAccount = "name-of-your-storage-account"
 containerName = "data"
@@ -82,9 +77,8 @@ jdbcURI = ""
 
 spark.conf.set(f"fs.azure.account.key.{storageAccount}.blob.core.windows.net", accessKey)
 
-# COMMAND ----------
+# COMMAND
 
- %md
  ## Read from the Customer Table
  
  Next, use the Synapse Connector to read data from the Customer Table.
@@ -96,7 +90,7 @@ spark.conf.set(f"fs.azure.account.key.{storageAccount}.blob.core.windows.net", a
  - the connector uses a caching directory on the Azure Blob Container.
  - `forwardSparkAzureStorageCredentials` is set to `true` so that the Synapse instance can access the blob for its MPP read via Polybase
 
-# COMMAND ----------
+# COMMAND
 
 cacheDir = f"wasbs://{containerName}@{storageAccount}.blob.core.windows.net/cacheDir"
 
@@ -112,36 +106,30 @@ customerDF = (spark.read
 
 customerDF.createOrReplaceTempView("customer_data")
 
-# COMMAND ----------
-
- %md
+# COMMAND
  
  Use SQL queries to count the number of rows in the Customer table and to display table metadata.
 
-# COMMAND ----------
+# COMMAND 
 
  %sql
  select count(*) from customer_data
 
-# COMMAND ----------
+# COMMAND 
 
  %sql
  describe customer_data
 
-# COMMAND ----------
-
- %md
+# COMMAND
  
  Note that `CustomerKey` and `CustomerAlternateKey` use a very similar naming convention.
 
-# COMMAND ----------
+# COMMAND
 
  %sql
  select CustomerKey, CustomerAlternateKey from customer_data limit 10;
 
-# COMMAND ----------
-
- %md
+# COMMAND
  
  In a situation in which we may be merging many new customers into this table, we can imagine that we may have issues with uniqueness with regard to the `CustomerKey`. Let us redefine `CustomerAlternateKey` for stronger uniqueness using a [UUID](https://en.wikipedia.org/wiki/Universally_unique_identifier).
  
@@ -149,7 +137,7 @@ customerDF.createOrReplaceTempView("customer_data")
  
  **Note:** It is a best practice to update the Synapse instance via a staging table.
 
-# COMMAND ----------
+# COMMAND 
 
 import uuid
 
@@ -160,13 +148,11 @@ uuidUdf = udf(lambda : str(uuid.uuid4()), StringType())
 customerUpdatedDF = customerDF.withColumn("CustomerAlternateKey", uuidUdf())
 display(customerUpdatedDF)
 
-# COMMAND ----------
+# COMMAND
 
- %md
- 
  ### Use the Polybase Connector to Write to the Staging Table
 
-# COMMAND ----------
+# COMMAND
 
 (customerUpdatedDF.write
   .format("com.databricks.spark.sqldw")
@@ -177,12 +163,11 @@ display(customerUpdatedDF)
   .option("tempdir", cacheDir)
   .save())
 
-# COMMAND ----------
+# COMMAND
 
- %md
  ## Read and Display Changes from Staging Table
 
-# COMMAND ----------
+# COMMAND
 
 customerTempDF = (spark.read
   .format("com.databricks.spark.sqldw")
@@ -194,7 +179,7 @@ customerTempDF = (spark.read
 
 customerTempDF.createOrReplaceTempView("customer_temp_data")
 
-# COMMAND ----------
+# COMMAND
 
  %sql
  select CustomerKey, CustomerAlternateKey from customer_temp_data limit 10;
