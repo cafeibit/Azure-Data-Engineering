@@ -97,16 +97,16 @@ spark.conf.set(f"fs.azure.account.key.{storageAccount}.blob.core.windows.net", a
  ###  Use SQL queries to count the number of rows in the Customer table and to display table metadata.
 
 `%sql`
-<code>select count(*) from customer_data</code><br>
+`select count(*) from customer_data`
 
- <code>%sql<br>
- <code>describe customer_data`<br>
+ `%sql`
+ `describe customer_data`
  
  Note that `CustomerKey` and `CustomerAlternateKey` use a very similar naming convention.
 
  
-  `%sql
-  select CustomerKey, CustomerAlternateKey from customer_data limit 10:`
+  `%sql`
+  `select CustomerKey, CustomerAlternateKey from customer_data limit 10:`
  
  In a situation in which we may be merging many new customers into this table, we can imagine that we may have issues with uniqueness with regard to the `CustomerKey`. Let us redefine `CustomerAlternateKey` for stronger uniqueness using a [UUID](https://en.wikipedia.org/wiki/Universally_unique_identifier).
  
