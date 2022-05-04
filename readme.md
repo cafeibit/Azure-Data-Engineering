@@ -156,11 +156,11 @@ spark.conf.set(f"fs.azure.account.key.{storageAccount}.blob.core.windows.net", a
  -- Find data skew for a distributed table
  `DBCC PDW_SHOWSPACEUSED('dbo.FactInternetSales');`
   
-### Analyze the space used by tables
+## Analyze the space used by tables
 1. **Open Synapse Studio.**
 2. **Select the Develop hub.**
 3. **From the Develop menu, select the + button (1) and choose SQL Script (2) from the context menu.**
 4. **In the toolbar menu, connect to the SQLPool01 database to execute the query.**
-5. **In the query window, replace the script with the following Database Console Command (DBCC):**<br>
-  <code>DBCC PDW_SHOWSPACEUSED('wwi_perf.Sale_Hash');</code>
+5. **In the query window, replace the script with the following Database Console Command (DBCC):**
+  `DBCC PDW_SHOWSPACEUSED('wwi_perf.Sale_Hash');`
   
