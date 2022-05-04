@@ -80,9 +80,9 @@ spark.conf.set(f"fs.azure.account.key.{storageAccount}.blob.core.windows.net", a
  - the connector uses a caching directory on the Azure Blob Container.
  - `forwardSparkAzureStorageCredentials` is set to `true` so that the Synapse instance can access the blob for its MPP read via Polybase
 
- `cacheDir = f"wasbs://{containerName}@{storageAccount}.blob.core.windows.net/cacheDir"
+ `cacheDir = f"wasbs://{containerName}@{storageAccount}.blob.core.windows.net/cacheDir`
 
-  `tableName = "dbo.DimCustomer"</code>`
+  `tableName = "dbo.DimCustomer"`
 
  <code>customerDF = (spark.read</code><br>
   <code>.format("com.databricks.spark.sqldw")</code><br>
@@ -92,11 +92,11 @@ spark.conf.set(f"fs.azure.account.key.{storageAccount}.blob.core.windows.net", a
   <code>.option("dbTable", tableName)</code><br>
   <code>.load())</code><br>
 
- <code>customerDF.createOrReplaceTempView("customer_data")</code>`
+ `customerDF.createOrReplaceTempView("customer_data")`<br>
  
  ###  Use SQL queries to count the number of rows in the Customer table and to display table metadata.
 
-`%sql</code><br>
+`%sql`
 <code>select count(*) from customer_data</code><br>
 
  <code>%sql<br>
