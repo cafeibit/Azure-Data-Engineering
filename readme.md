@@ -147,9 +147,9 @@ customerTempDF = (spark.read<br>
   .option("tempDir", cacheDir)<br>
   .option("forwardSparkAzureStorageCredentials", "true")<br>
   .option("dbTable", tableName + "Staging")<br>
-  .load())<br>
+ .load())</code><br>
 
- customerTempDF.createOrReplaceTempView("customer_temp_data")</code><br>
-<code>
- %sql<br>
- select CustomerKey, CustomerAlternateKey from customer_temp_data limit 10;</code><br>
+ <code>customerTempDF.createOrReplaceTempView("customer_temp_data")</code><br>
+
+ <code> %sql</code><br>
+ <code>select CustomerKey, CustomerAlternateKey from customer_temp_data limit 10;</code><br>
