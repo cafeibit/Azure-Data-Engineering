@@ -149,3 +149,7 @@ spark.conf.set(f"fs.azure.account.key.{storageAccount}.blob.core.windows.net", a
 
  <code> %sql</code><br>
  <code>select CustomerKey, CustomerAlternateKey from customer_temp_data limit 10;</code><br>
+  
+#  Analyze and optimize data warehouse storage in Azure Synapse Analytics 
+
+
