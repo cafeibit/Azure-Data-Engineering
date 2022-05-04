@@ -123,7 +123,7 @@ spark.conf.set(f"fs.azure.account.key.{storageAccount}.blob.core.windows.net", a
 <code>customerUpdatedDF = customerDF.withColumn("CustomerAlternateKey", uuidUdf())</code><br>
 <code>display(customerUpdatedDF)</code><br>
  
-#### Use the Polybase Connector to Write to the Staging Table
+### Use the Polybase Connector to Write to the Staging Table
 
 <code>(customerUpdatedDF.write</code><br>
   <code>.format("com.databricks.spark.sqldw")</code><br>
@@ -134,7 +134,7 @@ spark.conf.set(f"fs.azure.account.key.{storageAccount}.blob.core.windows.net", a
   <code>.option("tempdir", cacheDir)</code><br>
  <code>.save())</code><br>
 
-#### Read and Display Changes from Staging Table
+### Read and Display Changes from Staging Table
 
 <code>customerTempDF = (spark.read</code><br>
   <code>.format("com.databricks.spark.sqldw")</code><br>
@@ -147,18 +147,51 @@ spark.conf.set(f"fs.azure.account.key.{storageAccount}.blob.core.windows.net", a
  <code>customerTempDF.createOrReplaceTempView("customer_temp_data")</code><br>
 
  <code> %sql</code><br>
- <code>select CustomerKey, CustomerAlternateKey from customer_temp_data limit 10;</code><br>
+ <code>select CustomerKey, CustomerAlternateKey from customer_temp_data limit 10;</code><br>`
 
-#  Use data loading best practices in Azure Synapse Analytics 
+
+# Use data loading best practices in Azure Synapse Analytics 
+
+### Load methods into Azure Synapse Analytics
+1. **Data loads directly from Azure storage with transact-sql and the copy statement**
+2. **Perform data loads using Azure synapse pipeline data flows.**
+3. **Use polybase by defining external tables**
   
-  
-#  Analyze and optimize data warehouse storage in Azure Synapse Analytics 
+### Set-up dedicated data load accounts
+1. **The first step is to connect to master and create a login.**
+   `-- Connect to master
+CREATE LOGIN loader WITH PASSWORD = 'a123STRONGpassword!';`
+2. **Next, connect to the dedicated SQL pool and create a user.**
+  `-- Connect to the SQL pool
+CREATE USER loader FOR LOGIN loader;
+GRANT ADMINISTER DATABASE BULK OPERATIONS TO loader;
+GRANT INSERT ON <yourtablename> TO loader;
+GRANT SELECT ON <yourtablename> TO loader;
+GRANT CREATE TABLE TO loader;
+GRANT ALTER ON SCHEMA::dbo TO loader;
+
+CREATE WORKLOAD GROUP DataLoads
+WITH ( 
+    MIN_PERCENTAGE_RESOURCE = 100
+    ,CAP_PERCENTAGE_RESOURCE = 100
+    ,REQUEST_MIN_RESOURCE_GRANT_PERCENT = 100
+    );
+
+CREATE WORKLOAD CLASSIFIER [wgcELTLogin]
+WITH (
+        WORKLOAD_GROUP = 'DataLoads'
+    ,MEMBERNAME = 'loader'
+);`
+
+
+
+# Analyze and optimize data warehouse storage in Azure Synapse Analytics 
 
 `%%sql`
  -- Find data skew for a distributed table
  `DBCC PDW_SHOWSPACEUSED('dbo.FactInternetSales');`
   
-## Analyze the space used by tables
+### Analyze the space used by tables
 1. **Open Synapse Studio.**
 2. **Select the Develop hub.**
 3. **From the Develop menu, select the + button (1) and choose SQL Script (2) from the context menu.**
