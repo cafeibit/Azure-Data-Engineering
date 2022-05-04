@@ -96,7 +96,7 @@ Azure Synapse Analytics is an integrated analytics platform, which combines <b>d
   * To build Power BI reports from within Azure Synapse Analytics. 
   * To build machine learning modules from within Azure Synapse Analytics. 
   
-* <a href="./blob/SynapseAnalytics/readme.md">Data Engineering with Azure Synapse Analytics</a>
+* <a href="../blob/SynapseAnalytics/readme.md">Data Engineering with Azure Synapse Analytics</a>
 * <a href="https://docs.microsoft.com/en-us/azure/synapse-analytics/sql/overview-architecture">Azure Synapse SQL architecture</a>
 
 ### Data Engineering with Azure Databricks with best practices
