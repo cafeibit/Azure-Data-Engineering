@@ -80,8 +80,76 @@ spark.conf.set(f"fs.azure.account.key.{storageAccount}.blob.core.windows.net", a
  - the connector uses a caching directory on the Azure Blob Container.
  - `forwardSparkAzureStorageCredentials` is set to `true` so that the Synapse instance can access the blob for its MPP read via Polybase
 
-  
-# Use data loading best practices in Azure Synapse Analytics 
+ `cacheDir = f"wasbs://{containerName}@{storageAccount}.blob.core.windows.net/cacheDir"
+
+  `tableName = "dbo.DimCustomer"</code>`
+
+ <code>customerDF = (spark.read</code><br>
+  <code>.format("com.databricks.spark.sqldw")</code><br>
+  <code>.option("url", jdbcURI)<br>
+  <code>.option("tempDir", cacheDir)<br>
+  <code>.option("forwardSparkAzureStorageCredentials", "true")</code>
+  <code>.option("dbTable", tableName)</code><br>
+  <code>.load())</code><br>
+
+ <code>customerDF.createOrReplaceTempView("customer_data")</code>`
+ 
+ ###  Use SQL queries to count the number of rows in the Customer table and to display table metadata.
+
+`%sql</code><br>
+<code>select count(*) from customer_data</code><br>
+
+ <code>%sql<br>
+ <code>describe customer_data`<br>
+ 
+ Note that `CustomerKey` and `CustomerAlternateKey` use a very similar naming convention.
+
+ 
+  `%sql
+  select CustomerKey, CustomerAlternateKey from customer_data limit 10:`
+ 
+ In a situation in which we may be merging many new customers into this table, we can imagine that we may have issues with uniqueness with regard to the `CustomerKey`. Let us redefine `CustomerAlternateKey` for stronger uniqueness using a [UUID](https://en.wikipedia.org/wiki/Universally_unique_identifier).
+ 
+ To do this we will define a UDF and use it to transform the `CustomerAlternateKey` column. Once this is done, we will write the updated Customer Table to a Staging table.
+ 
+ **Note:** It is a best practice to update the Synapse instance via a staging table.
+ 
+<code>import uuid</code><br>
+
+<code>from pyspark.sql.types import StringType</code><br>
+<code>from pyspark.sql.functions import udf</code><br>
+
+<code>uuidUdf = udf(lambda : str(uuid.uuid4()), StringType())</code><br>
+<code>customerUpdatedDF = customerDF.withColumn("CustomerAlternateKey", uuidUdf())</code><br>
+<code>display(customerUpdatedDF)</code><br>
+ 
+#### Use the Polybase Connector to Write to the Staging Table
+
+<code>(customerUpdatedDF.write</code><br>
+  <code>.format("com.databricks.spark.sqldw")</code><br>
+  <code>.mode("overwrite")</code><br>
+  <code>.option("url", jdbcURI)</code><br>
+  <code>.option("forward_spark_azure_storage_credentials", "true")</code><br>
+  <code>.option("dbtable", tableName + "Staging")</code><br>
+  <code>.option("tempdir", cacheDir)</code><br>
+ <code>.save())</code><br>
+
+#### Read and Display Changes from Staging Table
+
+<code>customerTempDF = (spark.read</code><br>
+  <code>.format("com.databricks.spark.sqldw")</code><br>
+  <code>.option("url", jdbcURI)</code><br>
+  <code>.option("tempDir", cacheDir)</code><br>
+  <code>.option("forwardSparkAzureStorageCredentials", "true")</code><br>
+  <code>.option("dbTable", tableName + "Staging")</code><br>
+ <code>.load())</code><br>
+
+ <code>customerTempDF.createOrReplaceTempView("customer_temp_data")</code><br>
+
+ <code> %sql</code><br>
+ <code>select CustomerKey, CustomerAlternateKey from customer_temp_data limit 10;</code><br>
+
+#  Use data loading best practices in Azure Synapse Analytics 
   
   
 #  Analyze and optimize data warehouse storage in Azure Synapse Analytics 
