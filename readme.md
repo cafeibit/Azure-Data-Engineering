@@ -98,12 +98,11 @@ customerDF.createOrReplaceTempView("customer_data")</code><br>
  
 #### Use SQL queries to count the number of rows in the Customer table and to display table metadata.
 
-<code>
- %sql<br>
- select count(*) from customer_data</code><br>
-<code>
- %sql<br>
- describe customer_data<code><br>
+<code>%sql</code><br>
+<code>select count(*) from customer_data</code><br>
+
+ <code>%sql<br>
+ <code>describe customer_data</code><br>
  
  Note that `CustomerKey` and `CustomerAlternateKey` use a very similar naming convention.
 
@@ -117,37 +116,35 @@ customerDF.createOrReplaceTempView("customer_data")</code><br>
  
  **Note:** It is a best practice to update the Synapse instance via a staging table.
  
-<code>
-import uuid<br>
+<code>import uuid</code><br>
 
-from pyspark.sql.types import StringType<br>
-from pyspark.sql.functions import udf<br>
+<code>from pyspark.sql.types import StringType</code><br>
+<code>from pyspark.sql.functions import udf</code><br>
 
-uuidUdf = udf(lambda : str(uuid.uuid4()), StringType())<br>
-customerUpdatedDF = customerDF.withColumn("CustomerAlternateKey", uuidUdf())<br>
- display(customerUpdatedDF)</code><br>
+<code>uuidUdf = udf(lambda : str(uuid.uuid4()), StringType())</code><br>
+<code>customerUpdatedDF = customerDF.withColumn("CustomerAlternateKey", uuidUdf())</code><br>
+<code>display(customerUpdatedDF)</code><br>
  
 #### Use the Polybase Connector to Write to the Staging Table
 
-<code>
-(customerUpdatedDF.write<br>
-  .format("com.databricks.spark.sqldw")<br>
-  .mode("overwrite")<br>
-  .option("url", jdbcURI)<br>
-  .option("forward_spark_azure_storage_credentials", "true")<br>
-  .option("dbtable", tableName + "Staging")<br>
-  .option("tempdir", cacheDir)<br>
- .save())</code><br>
+<code>(customerUpdatedDF.write</code><br>
+  <code>.format("com.databricks.spark.sqldw")</code><br>
+  <code>.mode("overwrite")</code><br>
+  <code>.option("url", jdbcURI)</code><br>
+  <code>.option("forward_spark_azure_storage_credentials", "true")</code><br>
+  <code>.option("dbtable", tableName + "Staging")</code><br>
+  <code>.option("tempdir", cacheDir)</code><br>
+ <code>.save())</code><br>
 
 #### Read and Display Changes from Staging Table
-<code>
-customerTempDF = (spark.read<br>
-  .format("com.databricks.spark.sqldw")<br>
-  .option("url", jdbcURI)<br>
-  .option("tempDir", cacheDir)<br>
-  .option("forwardSparkAzureStorageCredentials", "true")<br>
-  .option("dbTable", tableName + "Staging")<br>
- .load())</code><br>
+
+<code>customerTempDF = (spark.read</code><br>
+  <code>.format("com.databricks.spark.sqldw")</code><br>
+  <code>.option("url", jdbcURI)</code><br>
+  <code>.option("tempDir", cacheDir)</code><br>
+  <code>.option("forwardSparkAzureStorageCredentials", "true")</code><br>
+  <code>.option("dbTable", tableName + "Staging")</code><br>
+ <code>.load())</code><br>
 
  <code>customerTempDF.createOrReplaceTempView("customer_temp_data")</code><br>
 
