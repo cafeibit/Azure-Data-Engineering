@@ -152,4 +152,6 @@ spark.conf.set(f"fs.azure.account.key.{storageAccount}.blob.core.windows.net", a
   
 #  Analyze and optimize data warehouse storage in Azure Synapse Analytics 
 
-
+<code>%%sql
+ -- Find data skew for a distributed table<br>
+ DBCC PDW_SHOWSPACEUSED('dbo.FactInternetSales');<br></code>
