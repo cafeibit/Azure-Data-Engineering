@@ -96,7 +96,7 @@ customerDF = (spark.read<br>
 <br>
 customerDF.createOrReplaceTempView("customer_data")</code><br>
  
- Use SQL queries to count the number of rows in the Customer table and to display table metadata.
+#### Use SQL queries to count the number of rows in the Customer table and to display table metadata.
 
 <code>
  %sql<br>
@@ -116,6 +116,7 @@ customerDF.createOrReplaceTempView("customer_data")</code><br>
  To do this we will define a UDF and use it to transform the `CustomerAlternateKey` column. Once this is done, we will write the updated Customer Table to a Staging table.
  
  **Note:** It is a best practice to update the Synapse instance via a staging table.
+ 
 <code>
 import uuid<br>
 
@@ -126,7 +127,7 @@ uuidUdf = udf(lambda : str(uuid.uuid4()), StringType())<br>
 customerUpdatedDF = customerDF.withColumn("CustomerAlternateKey", uuidUdf())<br>
  display(customerUpdatedDF)</code><br>
 
- ##### Use the Polybase Connector to Write to the Staging Table
+#### Use the Polybase Connector to Write to the Staging Table
 
 <code>
 (customerUpdatedDF.write<br>
@@ -138,7 +139,7 @@ customerUpdatedDF = customerDF.withColumn("CustomerAlternateKey", uuidUdf())<br>
   .option("tempdir", cacheDir)<br>
  .save())</code><br>
 
-##### Read and Display Changes from Staging Table
+#### Read and Display Changes from Staging Table
 <code>
 customerTempDF = (spark.read<br>
   .format("com.databricks.spark.sqldw")<br>
