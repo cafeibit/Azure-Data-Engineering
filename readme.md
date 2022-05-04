@@ -81,20 +81,19 @@ spark.conf.set(f"fs.azure.account.key.{storageAccount}.blob.core.windows.net", a
  - the connector uses a caching directory on the Azure Blob Container.
  - `forwardSparkAzureStorageCredentials` is set to `true` so that the Synapse instance can access the blob for its MPP read via Polybase
 
-<code>
-cacheDir = f"wasbs://{containerName}@{storageAccount}.blob.core.windows.net/cacheDir"<br>
+<code>cacheDir = f"wasbs://{containerName}@{storageAccount}.blob.core.windows.net/cacheDir"<br>
 
-tableName = "dbo.DimCustomer"<br>
+<code>tableName = "dbo.DimCustomer"<br>
 
-customerDF = (spark.read<br>
-  .format("com.databricks.spark.sqldw")<br>
-  .option("url", jdbcURI)<br>
-  .option("tempDir", cacheDir)<br>
-  .option("forwardSparkAzureStorageCredentials", "true")<br>
-  .option("dbTable", tableName)<br>
-  .load())<br>
+<code>customerDF = (spark.read</code><br>
+  <code>.format("com.databricks.spark.sqldw")</code><br>
+  <code>.option("url", jdbcURI)<br>
+  <code>.option("tempDir", cacheDir)<br>
+  <code>.option("forwardSparkAzureStorageCredentials", "true")</code><br>
+  <code>.option("dbTable", tableName)</code><br>
+  <code>.load())</code><br>
 
-customerDF.createOrReplaceTempView("customer_data")</code><br>
+<code>customerDF.createOrReplaceTempView("customer_data")</code><br>
  
 #### Use SQL queries to count the number of rows in the Customer table and to display table metadata.
 
