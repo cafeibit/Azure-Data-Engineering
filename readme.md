@@ -84,15 +84,15 @@ spark.conf.set(f"fs.azure.account.key.{storageAccount}.blob.core.windows.net", a
 
   `tableName = "dbo.DimCustomer"`
 
- <code>customerDF = (spark.read</code><br>
-  <code>.format("com.databricks.spark.sqldw")</code><br>
-  <code>.option("url", jdbcURI)<br>
-  <code>.option("tempDir", cacheDir)<br>
-  <code>.option("forwardSparkAzureStorageCredentials", "true")</code>
-  <code>.option("dbTable", tableName)</code><br>
-  <code>.load())</code><br>
+  `customerDF = (spark.read`
+     `.format("com.databricks.spark.sqldw")`
+     `.option("url", jdbcURI)`
+     `.option("tempDir", cacheDir)`
+     `.option("forwardSparkAzureStorageCredentials", "true")`
+     `.option("dbTable", tableName)`
+     `.load())`
 
- `customerDF.createOrReplaceTempView("customer_data")`<br>
+  `customerDF.createOrReplaceTempView("customer_data")`<br>
  
  ###  Use SQL queries to count the number of rows in the Customer table and to display table metadata.
 
