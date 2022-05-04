@@ -83,7 +83,7 @@ spark.conf.set(f"fs.azure.account.key.{storageAccount}.blob.core.windows.net", a
 
 <code>
 cacheDir = f"wasbs://{containerName}@{storageAccount}.blob.core.windows.net/cacheDir"<br>
-<br>
+
 tableName = "dbo.DimCustomer"<br>
 
 customerDF = (spark.read<br>
@@ -93,7 +93,7 @@ customerDF = (spark.read<br>
   .option("forwardSparkAzureStorageCredentials", "true")<br>
   .option("dbTable", tableName)<br>
   .load())<br>
-<br>
+
 customerDF.createOrReplaceTempView("customer_data")</code><br>
  
 #### Use SQL queries to count the number of rows in the Customer table and to display table metadata.
@@ -126,7 +126,7 @@ from pyspark.sql.functions import udf<br>
 uuidUdf = udf(lambda : str(uuid.uuid4()), StringType())<br>
 customerUpdatedDF = customerDF.withColumn("CustomerAlternateKey", uuidUdf())<br>
  display(customerUpdatedDF)</code><br>
-
+ 
 #### Use the Polybase Connector to Write to the Staging Table
 
 <code>
