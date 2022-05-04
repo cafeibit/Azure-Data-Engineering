@@ -159,10 +159,10 @@ spark.conf.set(f"fs.azure.account.key.{storageAccount}.blob.core.windows.net", a
   
 ### Set-up dedicated data load accounts
 1. **The first step is to connect to master and create a login.**
-   `-- Connect to master
-CREATE LOGIN loader WITH PASSWORD = 'a123STRONGpassword!';`
+   <br>-- Connect to master
+`CREATE LOGIN loader WITH PASSWORD = 'a123STRONGpassword!';`<br>
 2. **Next, connect to the dedicated SQL pool and create a user.**
-  `-- Connect to the SQL pool
+  <br>`-- Connect to the SQL pool
 CREATE USER loader FOR LOGIN loader;
 GRANT ADMINISTER DATABASE BULK OPERATIONS TO loader;
 GRANT INSERT ON <yourtablename> TO loader;
@@ -197,7 +197,7 @@ WITH (
 3. **From the Develop menu, select the + button (1) and choose SQL Script (2) from the context menu.**
 4. **In the toolbar menu, connect to the SQLPool01 database to execute the query.**
 5. **In the query window, replace the script with the following Database Console Command (DBCC):**
-  `DBCC PDW_SHOWSPACEUSED('wwi_perf.Sale_Hash');`
+  <br><code>DBCC PDW_SHOWSPACEUSED('wwi_perf.Sale_Hash');</code>
 6. **Analyze the number of rows in each distribution.**
   
  Let's find now the distribution of per-customer transaction item counts. Run the following query: 
