@@ -68,7 +68,7 @@ containerName = "data"<br>
 accessKey = "your-storage-key"<br>
 jdbcURI = ""<br>
 
-spark.conf.set(f"fs.azure.account.key.{storageAccount}.blob.core.windows.net", accessKey)</code>
+spark.conf.set(f"fs.azure.account.key.{storageAccount}.blob.core.windows.net", accessKey)</code><br>
 
  #### Read from the Customer Table
  
@@ -81,9 +81,9 @@ spark.conf.set(f"fs.azure.account.key.{storageAccount}.blob.core.windows.net", a
  - the connector uses a caching directory on the Azure Blob Container.
  - `forwardSparkAzureStorageCredentials` is set to `true` so that the Synapse instance can access the blob for its MPP read via Polybase
 
-<code>cacheDir = f"wasbs://{containerName}@{storageAccount}.blob.core.windows.net/cacheDir"<br>
+<code>cacheDir = f"wasbs://{containerName}@{storageAccount}.blob.core.windows.net/cacheDir"</code><br>
 
-<code>tableName = "dbo.DimCustomer"<br>
+<code>tableName = "dbo.DimCustomer"</code><br>
 
 <code>customerDF = (spark.read</code><br>
   <code>.format("com.databricks.spark.sqldw")</code><br>
@@ -95,7 +95,7 @@ spark.conf.set(f"fs.azure.account.key.{storageAccount}.blob.core.windows.net", a
 
 <code>customerDF.createOrReplaceTempView("customer_data")</code><br>
  
-#### Use SQL queries to count the number of rows in the Customer table and to display table metadata.
+### Use SQL queries to count the number of rows in the Customer table and to display table metadata.
 
 <code>%sql</code><br>
 <code>select count(*) from customer_data</code><br>
