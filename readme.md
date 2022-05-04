@@ -129,7 +129,7 @@ spark.conf.set(f"fs.azure.account.key.{storageAccount}.blob.core.windows.net", a
 <code>(customerUpdatedDF.write</code><br>
   <code>.format("com.databricks.spark.sqldw")</code><br>
   <code>.mode("overwrite")</code><br>
-  `.option("url", jdbcURI)`<br>
+  <code>.option("url", jdbcURI)</code><br>
   <code>.option("forward_spark_azure_storage_credentials", "true")</code><br>
   <code>.option("dbtable", tableName + "Staging")</code><br>
   <code>.option("tempdir", cacheDir)</code><br>
