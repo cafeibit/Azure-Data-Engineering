@@ -11,9 +11,7 @@
  - leverages massively parallel processing (MPP) to quickly run complex queries across petabytes of data
  - PolyBase T-SQL queries
 
-# COMMAND 
-
- ## Synapse Connector
+ ##### Synapse Connector
  - uses Azure Blob Storage as intermediary
  - uses PolyBase in Synapse
  - enables MPP reads and writes to Synapse from Azure Databricks
@@ -36,10 +34,8 @@
                username &               in Spark
                password
  ```
-
-# COMMAND
  
- ## SQL DW Connection
+ #### SQL DW Connection
  
  Three connections are made to exchange queries and data between Databricks and Synapse
  1. **Spark driver to Synapse**
@@ -58,9 +54,7 @@
     - Synapse connector creates a database scoped credential before asking Synapse to load or unload data
     - then it deletes the database scoped credential once the loading or unloading operation is done.
 
-# COMMAND
-
- ## Enter Variables from Cloud Setup
+ #### Enter Variables from Cloud Setup
  
  Before starting this lesson, you were guided through configuring Azure Synapse and deploying a Storage Account and blob container.
  
@@ -68,18 +62,15 @@
  
  Also enter the JDBC connection string for your Azure Synapse instance. Make sure you substitute in your password as indicated within the generated string.
 
-# COMMAND
+<code>
+storageAccount = "name-of-your-storage-account"<br>
+containerName = "data"<br>
+accessKey = "your-storage-key"<br>
+jdbcURI = ""<br>
 
-storageAccount = "name-of-your-storage-account"
-containerName = "data"
-accessKey = "your-storage-key"
-jdbcURI = ""
+spark.conf.set(f"fs.azure.account.key.{storageAccount}.blob.core.windows.net", accessKey)</code>
 
-spark.conf.set(f"fs.azure.account.key.{storageAccount}.blob.core.windows.net", accessKey)
-
-# COMMAND
-
- ## Read from the Customer Table
+ #### Read from the Customer Table
  
  Next, use the Synapse Connector to read data from the Customer Table.
  
@@ -90,96 +81,74 @@ spark.conf.set(f"fs.azure.account.key.{storageAccount}.blob.core.windows.net", a
  - the connector uses a caching directory on the Azure Blob Container.
  - `forwardSparkAzureStorageCredentials` is set to `true` so that the Synapse instance can access the blob for its MPP read via Polybase
 
-# COMMAND
+<code>
+cacheDir = f"wasbs://{containerName}@{storageAccount}.blob.core.windows.net/cacheDir"<br>
+<br>
+tableName = "dbo.DimCustomer"<br>
 
-cacheDir = f"wasbs://{containerName}@{storageAccount}.blob.core.windows.net/cacheDir"
-
-tableName = "dbo.DimCustomer"
-
-customerDF = (spark.read
-  .format("com.databricks.spark.sqldw")
-  .option("url", jdbcURI)
-  .option("tempDir", cacheDir)
-  .option("forwardSparkAzureStorageCredentials", "true")
-  .option("dbTable", tableName)
-  .load())
-
-customerDF.createOrReplaceTempView("customer_data")
-
-# COMMAND
+customerDF = (spark.read<br>
+  .format("com.databricks.spark.sqldw")<br>
+  .option("url", jdbcURI)<br>
+  .option("tempDir", cacheDir)<br>
+  .option("forwardSparkAzureStorageCredentials", "true")<br>
+  .option("dbTable", tableName)<br>
+  .load())<br>
+<br>
+customerDF.createOrReplaceTempView("customer_data")</code><br>
  
  Use SQL queries to count the number of rows in the Customer table and to display table metadata.
 
-# COMMAND 
-
- %sql
- select count(*) from customer_data
-
-# COMMAND 
-
- %sql
- describe customer_data
-
-# COMMAND
+<code>
+ %sql<br>
+ select count(*) from customer_data</code><br>
+<code>
+ %sql<br>
+ describe customer_data<code><br>
  
  Note that `CustomerKey` and `CustomerAlternateKey` use a very similar naming convention.
 
-# COMMAND
-
- %sql
- select CustomerKey, CustomerAlternateKey from customer_data limit 10;
-
-# COMMAND
+ <code>
+ %sql<br>
+  select CustomerKey, CustomerAlternateKey from customer_data limit 10;</code><br>
  
  In a situation in which we may be merging many new customers into this table, we can imagine that we may have issues with uniqueness with regard to the `CustomerKey`. Let us redefine `CustomerAlternateKey` for stronger uniqueness using a [UUID](https://en.wikipedia.org/wiki/Universally_unique_identifier).
  
  To do this we will define a UDF and use it to transform the `CustomerAlternateKey` column. Once this is done, we will write the updated Customer Table to a Staging table.
  
  **Note:** It is a best practice to update the Synapse instance via a staging table.
+<code>
+import uuid<br>
 
-# COMMAND 
+from pyspark.sql.types import StringType<br>
+from pyspark.sql.functions import udf<br>
 
-import uuid
+uuidUdf = udf(lambda : str(uuid.uuid4()), StringType())<br>
+customerUpdatedDF = customerDF.withColumn("CustomerAlternateKey", uuidUdf())<br>
+ display(customerUpdatedDF)</code><br>
 
-from pyspark.sql.types import StringType
-from pyspark.sql.functions import udf
+ ##### Use the Polybase Connector to Write to the Staging Table
 
-uuidUdf = udf(lambda : str(uuid.uuid4()), StringType())
-customerUpdatedDF = customerDF.withColumn("CustomerAlternateKey", uuidUdf())
-display(customerUpdatedDF)
+<code>
+(customerUpdatedDF.write<br>
+  .format("com.databricks.spark.sqldw")<br>
+  .mode("overwrite")<br>
+  .option("url", jdbcURI)<br>
+  .option("forward_spark_azure_storage_credentials", "true")<br>
+  .option("dbtable", tableName + "Staging")<br>
+  .option("tempdir", cacheDir)<br>
+ .save())</code><br>
 
-# COMMAND
+##### Read and Display Changes from Staging Table
+<code>
+customerTempDF = (spark.read<br>
+  .format("com.databricks.spark.sqldw")<br>
+  .option("url", jdbcURI)<br>
+  .option("tempDir", cacheDir)<br>
+  .option("forwardSparkAzureStorageCredentials", "true")<br>
+  .option("dbTable", tableName + "Staging")<br>
+  .load())<br>
 
- ### Use the Polybase Connector to Write to the Staging Table
-
-# COMMAND
-
-(customerUpdatedDF.write
-  .format("com.databricks.spark.sqldw")
-  .mode("overwrite")
-  .option("url", jdbcURI)
-  .option("forward_spark_azure_storage_credentials", "true")
-  .option("dbtable", tableName + "Staging")
-  .option("tempdir", cacheDir)
-  .save())
-
-# COMMAND
-
- ## Read and Display Changes from Staging Table
-
-# COMMAND
-
-customerTempDF = (spark.read
-  .format("com.databricks.spark.sqldw")
-  .option("url", jdbcURI)
-  .option("tempDir", cacheDir)
-  .option("forwardSparkAzureStorageCredentials", "true")
-  .option("dbTable", tableName + "Staging")
-  .load())
-
-customerTempDF.createOrReplaceTempView("customer_temp_data")
-
-# COMMAND
-
- %sql
- select CustomerKey, CustomerAlternateKey from customer_temp_data limit 10;
+ customerTempDF.createOrReplaceTempView("customer_temp_data")</code><br>
+<code>
+ %sql<br>
+ select CustomerKey, CustomerAlternateKey from customer_temp_data limit 10;</code><br>
