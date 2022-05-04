@@ -183,6 +183,21 @@ WITH (
     ,MEMBERNAME = 'loader'
 );`
 
+### Simplify ingestion with the Copy Activity
+
+#### Ingest data using PolyBase
+1. **Create a new SQL script with the following to create the external data source. Be sure to replace YOURACCOUNT with the name of your ADLS Gen2 account:**
+2. **Select Run from the toolbar menu to execute the SQL command.**
+3. **In the query window, replace the script with the following to create the external file format and external data table.**
+4. **Select Run from the toolbar menu to execute the SQL command.**
+5. **In the query window, replace the script with the following to load the data into the wwi_staging.SalesHeap table.**
+
+#### Simplify ingestion with the COPY activity
+1. **In the query window, replace the script with the following to truncate the heap table and load data using the COPY statement.**
+2. **Select Run from the toolbar menu to execute the SQL command. **
+3. **In the query window, replace the script with the following to see how many rows were imported:**
+4. **Select Run from the toolbar menu to execute the SQL command.**
+
 
 
 # Analyze and optimize data warehouse storage in Azure Synapse Analytics 
