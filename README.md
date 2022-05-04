@@ -96,6 +96,9 @@ Azure Synapse Analytics is an integrated analytics platform, which combines <b>d
   * To build Power BI reports from within Azure Synapse Analytics. 
   * To build machine learning modules from within Azure Synapse Analytics. 
   
+* <a href="./SynapseAnalytics/readme.md">Data Engineering with Azure Synapse Analytics</a>
+* <a href="https://docs.microsoft.com/en-us/azure/synapse-analytics/sql/overview-architecture">Azure Synapse SQL architecture</a>
+
 ### Data Engineering with Azure Databricks with best practices
 To process and analyze data using multi-task jobs and Delta Live Tables, the Azure Databricks data processing pipeline framework. To run a Delta Live Tables pipeline as part of a data processing workflow with Databricks jobs, Apache Airflow, or Azure Data Factory. 
 
