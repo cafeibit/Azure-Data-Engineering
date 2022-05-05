@@ -100,10 +100,20 @@ With CTAS, on the other hand, you can specify both the distribution of the table
    `with(distribution=hash(col1))`<br>
    `as select col1, col2 from dbo.table group by col1, col2;`<br>
    
-   
 ### Use read committed snapshot for data consistency
 *  If you experience delays in the completion of queries, the Read Committed Snapshot Isolation level should be employed to alleviate this.
 *  To enable READ COMMITTED SNAPSHOT ISOLATION, run this command when connecting to the MASTER database.
-*  
-`ALTER DATABASE MyDatabase`<br>
-`SET READ_COMMITTED_SNAPSHOT ON`<br>
+*  `ALTER DATABASE MyDatabase`<br>
+   `SET READ_COMMITTED_SNAPSHOT ON`<br>
+   
+### Optimize common queries with result-set caching
+*  Enable result-set caching when you expect results from queries to return the same values.
+*  This option stores a copy of the result set on the control node so that queries do not need to pull data from the storage subsystem or compute nodes. 
+*  Azure Synapse SQL automatically caches query results in the user database for repetitive use. 
+*  Result-set caching allows subsequent query executions to get results directly from the persisted cache so recomputation is not needed. 
+*  Result set caching improves query performance and reduces compute resource usage.
+*  To enable result set caching, run this command when connecting to the MASTER database.
+*  `ALTER DATABASE [database_name]`<br>
+   `SET RESULT_SET_CACHING ON;`<br>
+   
+   
