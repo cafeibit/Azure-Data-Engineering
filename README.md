@@ -69,6 +69,8 @@ Azure Synapse Analytics is an integrated analytics platform, which combines <b>d
 * To choose the tools and techniques used to work with Modern Data Warehouses productively and securely within Azure Synapse Analytics. 
 * To to build Data Warehouses using modern architecture patterns by using Azure Synapse Analytics. 
 * To optimize data warehouse query performance in Azure Synapse Analytics 
+  *  The design decisions around how to split and disperse this data among the nodes and then to the storage is important to querying workloads, 
+  *  as the correct selection minimizes data movement that is a primary cause of performance issues in an Azure Synapse dedicated SQL Pool environment.
 * To integrate SQL and Apache Spark pools in Azure Synapse Analytics 
 * To manage and monitor data warehouse activities in Azure Synapse Analytics 
 * To analyze and optimize data warehouse storage in Azure Synapse Analytics 
