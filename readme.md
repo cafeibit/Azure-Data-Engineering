@@ -266,4 +266,4 @@ That is to say, data sources that contain invalid data formats, corrupted record
 `SELECT *`<br>
 `FROM [wwi_external].[DailySalesCounts]`<br>
  
- ###  <a href="./analyze-optimize.md">Analyze and optimize data warehouse storage in Azure Synapse Analytics</a>
+ ###  <a href="analyze-optimize-performamce.md">Analyze and optimize data warehouse storage in Azure Synapse Analytics</a>
