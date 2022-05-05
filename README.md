@@ -79,7 +79,6 @@ Azure Synapse Analytics is an integrated analytics platform, which combines <b>d
   *  Optimize common queries with result-set caching
 * To integrate SQL and Apache Spark pools in Azure Synapse Analytics<br>
   The integration can be helpful in use cases where you perform an ETL process predominately using SQL but need to call on the computation power of Apache Spark to   perform a portion of the extract, transform, and load (ETL) process as it is more efficient.
-  *  Authenticate in Azure Synapse Analytics
   *  Transfer data between SQL and Spark Pool in Azure Synapse Analytics
   *  Authenticate between Spark and SQL Pool in Azure Synapse Analytics
   *  Integrate SQL and Spark Pools in Azure Synapse Analytics
