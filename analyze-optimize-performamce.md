@@ -70,3 +70,11 @@ With CTAS, on the other hand, you can specify both the distribution of the table
     `GROUP BY`<br>
         `S.CustomerId`<br>
 `) T`<br>
+
+*  To check if your data warehouse has AUTO_CREATE_STATISTICS configured by running the following command:
+`SELECT name, is_auto_create_stats_on`<br>
+`FROM sys.databases`<br>
+*  If your data warehouse doesn't have AUTO_CREATE_STATISTICS enabled, it is recommended that you enable this property by running the following command:
+`ALTER DATABASE <yourdatawarehousename>`<br>
+`SET AUTO_CREATE_STATISTICS ON`<br>
+
