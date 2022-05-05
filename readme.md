@@ -235,38 +235,36 @@ GO`
  
  * Attempt to load using PolyBase
    *  to create a new external file format, external table, and load data using PolyBase:
-   *  `CREATE EXTERNAL FILE FORMAT csv_dailysales<br>
-WITH (<br>
-    FORMAT_TYPE = DELIMITEDTEXT,
-    FORMAT_OPTIONS (
-        FIELD_TERMINATOR = '.',
-        DATE_FORMAT = '',
-        USE_TYPE_DEFAULT = False
-    )
-);
-GO`
+   *  `CREATE EXTERNAL FILE FORMAT csv_dailysales`<br>
+`WITH (`<br>
+    `FORMAT_TYPE = DELIMITEDTEXT,`<br>
+   ` FORMAT_OPTIONS (`<br>
+        `FIELD_TERMINATOR = '.',`<br>
+        `DATE_FORMAT = '',`<br>
+        `USE_TYPE_DEFAULT = False`<br>
+    `)`<br>
+`);`<br>
+`GO`<br>
 
-CREATE EXTERNAL TABLE [wwi_external].DailySalesCounts
-    (
-        [Date] [int]  NOT NULL,
-        [NorthAmerica] [int]  NOT NULL,
-        [SouthAmerica] [int]  NOT NULL,
-        [Europe] [int]  NOT NULL,
-        [Africa] [int]  NOT NULL,
-        [Asia] [int]  NOT NULL
-    )
-WITH
-    (
-        LOCATION = '/campaign-analytics/dailycounts.txt',  
-        DATA_SOURCE = ABSS,
-        FILE_FORMAT = csv_dailysales
-    )  
-GO
-INSERT INTO [wwi_staging].[DailySalesCounts]
-SELECT *
-FROM [wwi_external].[DailySalesCounts]
- 
- 
+`CREATE EXTERNAL TABLE [wwi_external].DailySalesCounts`<br>
+    `(`<br>
+        `[Date] [int]  NOT NULL,`<br>
+        `[NorthAmerica] [int]  NOT NULL,`<br>
+        `[SouthAmerica] [int]  NOT NULL,`<br>
+        `[Europe] [int]  NOT NULL,`<br>
+        `[Africa] [int]  NOT NULL,`<br>
+        `[Asia] [int]  NOT NULL`<br>
+    `)`<br>
+`WITH`<br>
+    `(`<br>
+        `LOCATION = '/campaign-analytics/dailycounts.txt',`<br>  
+        `DATA_SOURCE = ABSS,`<br>
+        `FILE_FORMAT = csv_dailysales`<br>
+    `)  `<br>
+`GO`<br>
+`INSERT INTO [wwi_staging].[DailySalesCounts]`<br>
+`SELECT *`<br>
+`FROM [wwi_external].[DailySalesCounts]`<br>
  
 
 # Analyze and optimize data warehouse storage in Azure Synapse Analytics 
