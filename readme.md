@@ -199,8 +199,8 @@ WITH (
 4. **Select Run from the toolbar menu to execute the SQL command.**
 
 ##### Load a text file with non-standard row delimiters
---One of the realities of data engineering, is that many times we need to process imperfect data. 
---That is to say, data sources that contain invalid data formats, corrupted records, or custom configurations such as non-standard delimiters.
+One of the realities of data engineering, is that many times we need to process imperfect data. 
+That is to say, data sources that contain invalid data formats, corrupted records, or custom configurations such as non-standard delimiters.
 
 * Successfully load using COPY
   * One of the advantages COPY has over PolyBase is that it supports custom column and row delimiters.
@@ -211,8 +211,8 @@ WITH (
   * They must process this data and store it in Synapse Analytics.
   * To create the DailySalesCounts table and load data using the COPY statement. 
   * As before, be sure to replace YOURACCOUNT with the name of your ADLS Gen2 account:
-  * CREATE TABLE [wwi_staging].DailySalesCounts
-    (
+  * `CREATE TABLE [wwi_staging].DailySalesCounts`
+    `(
         [Date] [int]  NOT NULL,
         [NorthAmerica] [int]  NOT NULL,
         [SouthAmerica] [int]  NOT NULL,
@@ -220,21 +220,22 @@ WITH (
         [Africa] [int]  NOT NULL,
         [Asia] [int]  NOT NULL
     )
-GO
+GO`
 
--- Replace <PrimaryStorage> with the workspace default storage account name.
-COPY INTO wwi_staging.DailySalesCounts
-FROM 'https://YOURACCOUNT.dfs.core.windows.net/wwi-02/campaign-analytics/dailycounts.txt'
-WITH (
-    FILE_TYPE = 'CSV',
-    FIELDTERMINATOR='.',
-    ROWTERMINATOR=','
-)
-GO
+**Note** Replace <PrimaryStorage> with the workspace default storage account name.
+ 
+`COPY INTO wwi_staging.DailySalesCounts`
+`FROM 'https://YOURACCOUNT.dfs.core.windows.net/wwi-02/campaign-analytics/dailycounts.txt'`
+`WITH (`
+    `FILE_TYPE = 'CSV',`
+    `FIELDTERMINATOR='.',`
+    `ROWTERMINATOR=','`
+`)`
+`GO`
  
  * Attempt to load using PolyBase
    *  to create a new external file format, external table, and load data using PolyBase:
-   *  CREATE EXTERNAL FILE FORMAT csv_dailysales
+   *  `CREATE EXTERNAL FILE FORMAT csv_dailysales
 WITH (
     FORMAT_TYPE = DELIMITEDTEXT,
     FORMAT_OPTIONS (
@@ -243,7 +244,7 @@ WITH (
         USE_TYPE_DEFAULT = False
     )
 );
-GO
+GO`
 
 CREATE EXTERNAL TABLE [wwi_external].DailySalesCounts
     (
