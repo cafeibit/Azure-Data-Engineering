@@ -104,5 +104,6 @@ With CTAS, on the other hand, you can specify both the distribution of the table
 ### Use read committed snapshot for data consistency
 *  If you experience delays in the completion of queries, the Read Committed Snapshot Isolation level should be employed to alleviate this.
 *  To enable READ COMMITTED SNAPSHOT ISOLATION, run this command when connecting to the MASTER database.
+*  
 `ALTER DATABASE MyDatabase`<br>
 `SET READ_COMMITTED_SNAPSHOT ON`<br>
