@@ -211,7 +211,7 @@ That is to say, data sources that contain invalid data formats, corrupted record
   * They must process this data and store it in Synapse Analytics.
   * To create the DailySalesCounts table and load data using the COPY statement. 
   * As before, be sure to replace YOURACCOUNT with the name of your ADLS Gen2 account:
-  * `CREATE TABLE [wwi_staging].DailySalesCounts`
+  * `CREATE TABLE [wwi_staging].DailySalesCounts`<br>
     `(
         [Date] [int]  NOT NULL,
         [NorthAmerica] [int]  NOT NULL,
