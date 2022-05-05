@@ -71,6 +71,7 @@ With CTAS, on the other hand, you can specify both the distribution of the table
         `S.CustomerId`<br>
 `) T`<br>
 
+#####  Statistics in dedicated SQL pools
 *  To check if your data warehouse has AUTO_CREATE_STATISTICS configured by running the following command:
 `SELECT name, is_auto_create_stats_on`<br>
 `FROM sys.databases`<br>
@@ -78,3 +79,6 @@ With CTAS, on the other hand, you can specify both the distribution of the table
 `ALTER DATABASE <yourdatawarehousename>`<br>
 `SET AUTO_CREATE_STATISTICS ON`<br>
 
+##### Statistics in a serverless SQL pool has the same objective of using a cost-based optimizer to choose an execution plan that will execute the fastest. 
+*  
+`sys.sp_create_openrowset_statistics [ @stmt = ] N'statement_text'`
