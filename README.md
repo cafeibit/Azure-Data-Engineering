@@ -78,6 +78,14 @@ Azure Synapse Analytics is an integrated analytics platform, which combines <b>d
   *  Use read committed snapshot for data consistency
   *  Optimize common queries with result-set caching
 * To integrate SQL and Apache Spark pools in Azure Synapse Analytics 
+  *  Authenticate in Azure Synapse Analytics
+  *  Transfer data between SQL and Spark Pool in Azure Synapse Analytics
+  *  Authenticate between Spark and SQL Pool in Azure Synapse Analytics
+  *  Integrate SQL and Spark Pools in Azure Synapse Analytics
+  *  Externalize the use of Spark Pools within Azure Synapse workspace
+  *  Transfer data outside the Synapse workspace using SQL Authentication
+  *  Transfer data outside the Synapse workspace using the PySpark Connector
+  *  Transform data in Apache Spark and write back to SQL Pool in Azure Synapse Analytics
 * To manage and monitor data warehouse activities in Azure Synapse Analytics 
 * To analyze and optimize data warehouse storage in Azure Synapse Analytics 
 * To approach and implement security to protect your data with Azure Synapse Analytics such as serverless SQL pools. 
