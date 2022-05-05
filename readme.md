@@ -266,39 +266,3 @@ That is to say, data sources that contain invalid data formats, corrupted record
 `SELECT *`<br>
 `FROM [wwi_external].[DailySalesCounts]`<br>
  
-
-# Analyze and optimize data warehouse storage in Azure Synapse Analytics 
-
-`%%sql`
- -- Find data skew for a distributed table
- `DBCC PDW_SHOWSPACEUSED('dbo.FactInternetSales');`
-  
-### Analyze the space used by tables
-1. **Open Synapse Studio.**
-2. **Select the Develop hub.**
-3. **From the Develop menu, select the + button (1) and choose SQL Script (2) from the context menu.**
-4. **In the toolbar menu, connect to the SQLPool01 database to execute the query.**
-5. **In the query window, replace the script with the following Database Console Command (DBCC):**
-  <br><code>DBCC PDW_SHOWSPACEUSED('wwi_perf.Sale_Hash');</code>
-6. **Analyze the number of rows in each distribution.**
-  
- Let's find now the distribution of per-customer transaction item counts. Run the following query: 
-  
-### Use a more advanced approach to understand table space usage
-1. **Run the following script to create the `vTableSizes` view:**        
-2. **Run the following script to view the details about the structure of the tables in the wwi_perf schema:**
-
-### View column store storage details
-1. **Run the following query to create the `vColumnStoreRowGroupStats`:**      
-2. **Explore the statistics of the columnstore for the Sale_Partition01 table using the following query:**
-3. **Explore the results of the query:**
-4. **Explore the statistics of the columnstore for the Sale_Hash_Ordered table using the same query:**
-5. **Explore the results of the query:**
-  
-### Compare storage requirements between optimal and sub-optimal column data types
- 
-### Improve the execution plan of a query with a materialized view
-  
-### Understand rules for minimally logged operations & Optimize a delete operation
-  
-                        
