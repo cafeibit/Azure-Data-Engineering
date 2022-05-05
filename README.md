@@ -73,6 +73,7 @@ Azure Synapse Analytics is an integrated analytics platform, which combines <b>d
   *  The correct selection minimizes data movement that is a primary cause of performance issues in a Synapse dedicated SQL Pool environment.
   *  Selecting the correct table distribution can have an impact on the data load and query performance: Round robin / Hash  distribution, Replicated tables.
   *  Use indexes to improve query performance: Clustered columnstore index, Clustered index, Non-clustered index
+  *  Create statistics to improve query performance
 * To integrate SQL and Apache Spark pools in Azure Synapse Analytics 
 * To manage and monitor data warehouse activities in Azure Synapse Analytics 
 * To analyze and optimize data warehouse storage in Azure Synapse Analytics 
