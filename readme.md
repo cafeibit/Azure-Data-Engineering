@@ -212,15 +212,15 @@ That is to say, data sources that contain invalid data formats, corrupted record
   * To create the DailySalesCounts table and load data using the COPY statement. 
   * As before, be sure to replace YOURACCOUNT with the name of your ADLS Gen2 account:
   * `CREATE TABLE [wwi_staging].DailySalesCounts`<br>
-    `(
-        [Date] [int]  NOT NULL,
-        [NorthAmerica] [int]  NOT NULL,
-        [SouthAmerica] [int]  NOT NULL,
-        [Europe] [int]  NOT NULL,
-        [Africa] [int]  NOT NULL,
-        [Asia] [int]  NOT NULL
-    )
-GO`
+    `(`<br>
+        `[Date] [int]  NOT NULL,`<br>
+        `[NorthAmerica] [int]  NOT NULL,`<br>
+        `[SouthAmerica] [int]  NOT NULL,`<br>
+        `[Europe] [int]  NOT NULL,`<br>
+        `[Africa] [int]  NOT NULL,`<br>
+        `[Asia] [int]  NOT NULL`<br>
+    `)`<br>
+`GO`<br>
 
 **Note:** Replace <PrimaryStorage> with the workspace default storage account name.
  
