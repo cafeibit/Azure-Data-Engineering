@@ -194,11 +194,79 @@ WITH (
 
 #### Simplify ingestion with the COPY activity
 1. **In the query window, replace the script with the following to truncate the heap table and load data using the COPY statement.**
-2. **Select Run from the toolbar menu to execute the SQL command. **
+2. **Select Run from the toolbar menu to execute the SQL command.**
 3. **In the query window, replace the script with the following to see how many rows were imported:**
 4. **Select Run from the toolbar menu to execute the SQL command.**
 
+##### Load a text file with non-standard row delimiters
+--One of the realities of data engineering, is that many times we need to process imperfect data. 
+--That is to say, data sources that contain invalid data formats, corrupted records, or custom configurations such as non-standard delimiters.
 
+* Successfully load using COPY
+  * One of the advantages COPY has over PolyBase is that it supports custom column and row delimiters.
+  * Suppose you have a nightly process that ingests regional sales data from a partner analytics system and saves the files in the data lake. 
+  * The text files use non-standard column and row delimiters where columns are delimited by a . and rows by a ,:
+  * e.g. 20200421.114892.130282.159488.172105.196533,20200420.109934.108377.122039.101946.100712,20200419.253714.357583.452690.553447.653921
+  * The data has the following fields: Date, NorthAmerica, SouthAmerica, Europe, Africa, and Asia. 
+  * They must process this data and store it in Synapse Analytics.
+  * To create the DailySalesCounts table and load data using the COPY statement. 
+  * As before, be sure to replace YOURACCOUNT with the name of your ADLS Gen2 account:
+  * CREATE TABLE [wwi_staging].DailySalesCounts
+    (
+        [Date] [int]  NOT NULL,
+        [NorthAmerica] [int]  NOT NULL,
+        [SouthAmerica] [int]  NOT NULL,
+        [Europe] [int]  NOT NULL,
+        [Africa] [int]  NOT NULL,
+        [Asia] [int]  NOT NULL
+    )
+GO
+
+-- Replace <PrimaryStorage> with the workspace default storage account name.
+COPY INTO wwi_staging.DailySalesCounts
+FROM 'https://YOURACCOUNT.dfs.core.windows.net/wwi-02/campaign-analytics/dailycounts.txt'
+WITH (
+    FILE_TYPE = 'CSV',
+    FIELDTERMINATOR='.',
+    ROWTERMINATOR=','
+)
+GO
+ 
+ * Attempt to load using PolyBase
+   *  to create a new external file format, external table, and load data using PolyBase:
+   *  CREATE EXTERNAL FILE FORMAT csv_dailysales
+WITH (
+    FORMAT_TYPE = DELIMITEDTEXT,
+    FORMAT_OPTIONS (
+        FIELD_TERMINATOR = '.',
+        DATE_FORMAT = '',
+        USE_TYPE_DEFAULT = False
+    )
+);
+GO
+
+CREATE EXTERNAL TABLE [wwi_external].DailySalesCounts
+    (
+        [Date] [int]  NOT NULL,
+        [NorthAmerica] [int]  NOT NULL,
+        [SouthAmerica] [int]  NOT NULL,
+        [Europe] [int]  NOT NULL,
+        [Africa] [int]  NOT NULL,
+        [Asia] [int]  NOT NULL
+    )
+WITH
+    (
+        LOCATION = '/campaign-analytics/dailycounts.txt',  
+        DATA_SOURCE = ABSS,
+        FILE_FORMAT = csv_dailysales
+    )  
+GO
+INSERT INTO [wwi_staging].[DailySalesCounts]
+SELECT *
+FROM [wwi_external].[DailySalesCounts]
+ 
+ 
+ 
 
 # Analyze and optimize data warehouse storage in Azure Synapse Analytics 
 
