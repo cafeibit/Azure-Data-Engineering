@@ -222,21 +222,21 @@ That is to say, data sources that contain invalid data formats, corrupted record
     )
 GO`
 
-**Note** Replace <PrimaryStorage> with the workspace default storage account name.
+**Note:** Replace <PrimaryStorage> with the workspace default storage account name.
  
-`COPY INTO wwi_staging.DailySalesCounts`
-`FROM 'https://YOURACCOUNT.dfs.core.windows.net/wwi-02/campaign-analytics/dailycounts.txt'`
-`WITH (`
-    `FILE_TYPE = 'CSV',`
-    `FIELDTERMINATOR='.',`
-    `ROWTERMINATOR=','`
-`)`
-`GO`
+`COPY INTO wwi_staging.DailySalesCounts`<br>
+`FROM 'https://YOURACCOUNT.dfs.core.windows.net/wwi-02/campaign-analytics/dailycounts.txt'`<br>
+`WITH (`<br>
+    `FILE_TYPE = 'CSV',`<br>
+    `FIELDTERMINATOR='.',`<br>
+    `ROWTERMINATOR=','`<br>
+`)`<br>
+`GO`<br>
  
  * Attempt to load using PolyBase
    *  to create a new external file format, external table, and load data using PolyBase:
-   *  `CREATE EXTERNAL FILE FORMAT csv_dailysales
-WITH (
+   *  `CREATE EXTERNAL FILE FORMAT csv_dailysales<br>
+WITH (<br>
     FORMAT_TYPE = DELIMITEDTEXT,
     FORMAT_OPTIONS (
         FIELD_TERMINATOR = '.',
