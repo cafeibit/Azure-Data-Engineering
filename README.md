@@ -74,7 +74,7 @@ Azure Synapse Analytics is an integrated analytics platform, which combines <b>d
   *  Selecting the correct table distribution can have an impact on the data load and query performance: Round robin / Hash  distribution, Replicated tables.
   *  Use indexes to improve query performance: Clustered columnstore index, Clustered index, Non-clustered index
   *  Create statistics to improve query performance: Statistics in dedicated SQL pools / serverless SQL pools
-  *  Improve query performance with materialized views
+  *  Improve query performance with materialized views (prewritten queries with joins and filters saved and the results persisted to a dedicated SQL pool.)
   *  Use read committed snapshot for data consistency
   *  Optimize common queries with result-set caching
 * To integrate SQL and Apache Spark pools in Azure Synapse Analytics 
