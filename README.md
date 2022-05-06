@@ -67,7 +67,8 @@ To use Data Factory mapping data flows to process and transform the data as need
 Azure Synapse Analytics is an integrated analytics platform, which combines <b>data warehousing, big data analytics, data integration, and visualization</b> into a single environment. Azure Synapse Analytics empowers users of all abilities to gain access and quick insights across all of their data, enabling a whole new level of performance and scale.
 
 * To choose the tools and techniques used to work with Modern Data Warehouses productively and securely within Azure Synapse Analytics. 
-* To to build Data Warehouses using modern architecture patterns by using Azure Synapse Analytics. 
+* To build Data Warehouses using modern architecture patterns by using Azure Synapse Analytics. 
+  *   To use the language capabilities that are available to create data warehouses in Azure Synapse Analytics.
 * To optimize data warehouse query performance in Azure Synapse Analytics 
   *  The design decisions around how to split and disperse this data among the nodes and then to the storage is important to querying workloads, 
   *  The correct selection minimizes data movement that is a primary cause of performance issues in a Synapse dedicated SQL Pool environment.
