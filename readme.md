@@ -215,7 +215,7 @@ Exploratory data analysis can involve querying metadata about the data that is s
 *  Azure Synapse SQL pools support placing complex data processing logic into Stored procedures. 
 *  Stored procedures are great way of encapsulating one or more SQL statements or a reference to a Microsoft .NET framework Common Language Runtime (CLR) method.
 *  Stored procedures can accept input parameters and return multiple values in the form of output parameters to the calling program. 
-*  In the context of serverless SQL pools, you will perform data transformation using CREATE EXTERNAL TABLE AS SELECT (CETAS) statement as shown in the following <a href="./sqlscript/createdatawarehouses.sql">Examples</a>.
+*  In the context of serverless SQL pools, you will **perform data transformation using CREATE EXTERNAL TABLE AS SELECT (CETAS)** statement as shown in the following <a href="./sqlscript/createdatawarehouses.sql">Examples</a>.
 
 # Use data loading best practices in Azure Synapse Analytics 
 
