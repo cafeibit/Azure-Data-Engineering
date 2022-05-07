@@ -53,3 +53,8 @@ INNER JOIN dbo.Books AS b
     ON b.ID = bc.BookID
 ORDER BY Country, Downloads
 
+--Approximate execution using HyperLogLog functions
+
+```sql
+SELECT COUNT(DISTINCT CustomerId) from wwi_perf.Sale_Heap
+```
