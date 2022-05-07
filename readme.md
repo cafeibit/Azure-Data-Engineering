@@ -149,6 +149,19 @@ spark.conf.set(f"fs.azure.account.key.{storageAccount}.blob.core.windows.net", a
  <code> %sql</code><br>
  <code>select CustomerKey, CustomerAlternateKey from customer_temp_data limit 10;</code><br>`
 
+### Work With Windowning functions
+*  Window Functions
+   *  Ranking functions
+   *  Aggregate functions
+   *  Analytic functions
+   *  NEXT VALUE FOR function
+ 
+<a href="https://docs.microsoft.com/en-us/sql/t-sql/queries/select-over-clause-transact-sql?view=sql-server-ver15">Windowning Functions</a>
+
+*  Analytics Functions
+
+<a href="https://docs.microsoft.com/en-us/sql/t-sql/functions/analytic-functions-transact-sql?view=sql-server-ver15">Analytic Functions (Transact-SQL)</a>
+
 
 # Use data loading best practices in Azure Synapse Analytics 
 
