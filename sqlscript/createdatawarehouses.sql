@@ -59,3 +59,18 @@ SELECT APPROX_COUNT_DISTINCT(CustomerId) from wwi_perf.Sale_Heap
 
 --APPROX_COUNT_DISTINCT returns a result with a 2% accuracy of true cardinality on average.
 --This means, if COUNT (DISTINCT) returns 1,000,000, HyperLogLog will return a value in the range of 999,736 to 1,016,234.
+
+--Read JSON documents
+--The easiest way to see the content of your JSON file is to provide the file URL to the OPENROWSET function, specify csv FORMAT, 
+--and set the values of 0x0b for the fieldterminator and fieldquote variables. 
+--If you need to read line-delimited JSON files, then this is enough. 
+--If you have classic JSON file, you would need to set values 0x0b for rowterminator. 
+
+select top 10 * 
+from 
+    openrowset( 
+        bulk 'https://pandemicdatalake.blob.core.windows.net/public/curated/covid-19/ecdc_cases/latest/ecdc_cases.jsonl', 
+        format = 'csv', 
+        fieldterminator ='0x0b', 
+        fieldquote = '0x0b' 
+    ) with (doc nvarchar(max)) as rows
