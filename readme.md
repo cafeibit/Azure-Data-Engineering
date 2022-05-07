@@ -168,6 +168,9 @@ spark.conf.set(f"fs.azure.account.key.{storageAccount}.blob.core.windows.net", a
 
 *  The ROWS and RANGE clauses 
    *  They further limit the rows within the partition by specifying start and end points within the partition. This is done by specifying a range of rows with respect to the current row either by logical association or physical association. Physical association is achieved by using the ROWS clause.
+
+  <a href="./sqlscript/createdatawarehouses.sql">Examples</a>
+
 # Use data loading best practices in Azure Synapse Analytics 
 
 ### Load methods into Azure Synapse Analytics
