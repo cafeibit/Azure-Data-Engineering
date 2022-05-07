@@ -55,6 +55,7 @@ ORDER BY Country, Downloads
 
 --Approximate execution using HyperLogLog functions
 
-```sql
-SELECT COUNT(DISTINCT CustomerId) from wwi_perf.Sale_Heap
-```
+SELECT APPROX_COUNT_DISTINCT(CustomerId) from wwi_perf.Sale_Heap
+
+--APPROX_COUNT_DISTINCT returns a result with a 2% accuracy of true cardinality on average.
+--This means, if COUNT (DISTINCT) returns 1,000,000, HyperLogLog will return a value in the range of 999,736 to 1,016,234.
