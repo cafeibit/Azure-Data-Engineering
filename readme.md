@@ -206,7 +206,8 @@ Exploratory data analysis can involve querying metadata about the data that is s
      
      -- Line-delimited JSON files, where JSON documents are separated with new-line character. Common extensions for these types of files are jsonl, ldjson, and ndjson.
 
-
+     -- <a href="https://docs.microsoft.com/en-us/sql/t-sql/functions/openjson-transact-sql">OPENJSON</a>
+     -- <a href="https://docs.microsoft.com/en-us/sql/t-sql/functions/openrowset-transact-sql?view=sql-server-ver15">OPENROWSET</a>
 
 # Use data loading best practices in Azure Synapse Analytics 
 
