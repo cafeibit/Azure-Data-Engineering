@@ -171,6 +171,12 @@ spark.conf.set(f"fs.azure.account.key.{storageAccount}.blob.core.windows.net", a
    *  To use the FIRST_VALUE analytic function to retrieve the book title with the fewest downloads, as indicated by the ROWS UNBOUNDED PRECEDING clause over the Country partition. The UNBOUNDED PRECEDING option set the window start to the first row of the partition, giving us the title of the book with the fewest downloads for the country within the partition.
 
   <a href="./sqlscript/createdatawarehouses.sql">Examples</a>
+  
+### Work with approximate execution
+*  To perform exploratory data analysis to gain an understanding of the data that they are working with. 
+Exploratory data analysis can involve querying metadata about the data that is stored within the database, to running queries to provide a statistics information about the data such as average values for a column, through to distinct counts. Some of the activities can be time consuming, especially on large data sets.
+*  Azure Synapse Analytics supports Approximate execution using Hyperlog accuracy to reduce latency when executing queries with large datasets. 
+   Approximate execution is used to speed up the execution of queries with a compromise for a small reduction in accuracy. So if it takes too long to get basic information about the data in a large data set as you are exploring data of a big data set, then you can use the HyperLogLog accuracy and will return a result with a 2% accuracy of true cardinality on average. This is done by using the APPROX_COUNT_DISTINCT Transact-SQL function
 
 # Use data loading best practices in Azure Synapse Analytics 
 
