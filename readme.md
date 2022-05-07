@@ -194,7 +194,9 @@ Exploratory data analysis can involve querying metadata about the data that is s
    **Modify JSON data** - JSON data can be modified and queried using the following T-SQL functions providing ability to update JSON string using T-SQL and convert hierarchical data into flat tabular structure.
      -- JSON_MODIFY – modifies a value in a JSON string
      -- OPENJSON – convert JSON collection to a set of rows and columns
-You can also query JSON files using SQL serverless. The query's objective is to read the following type of JSON files using OPENROWSET.
+     
+     You can also query JSON files using SQL serverless. The query's objective is to read the following type of JSON files using OPENROWSET.
+
      -- Standard JSON files where multiple JSON documents are stored as a JSON array.
      -- Line-delimited JSON files, where JSON documents are separated with new-line character. Common extensions for these types of files are jsonl, ldjson, and ndjson.
 
