@@ -178,6 +178,22 @@ Exploratory data analysis can involve querying metadata about the data that is s
 *  Azure Synapse Analytics supports Approximate execution using Hyperlog accuracy to reduce latency when executing queries with large datasets. 
    Approximate execution is used to speed up the execution of queries with a compromise for a small reduction in accuracy. So if it takes too long to get basic information about the data in a large data set as you are exploring data of a big data set, then you can use the HyperLogLog accuracy and will return a result with a 2% accuracy of true cardinality on average. This is done by using the APPROX_COUNT_DISTINCT Transact-SQL function
 
+### Work with JSON data in SQL pools
+*  Synapse dedicated SQL Pools supports JSON format data to be stored using standard NVARCHAR table columns. 
+*  The JSON format enables representation of complex or hierarchical data structures in tables. 
+*  It allows to transform arrays of JSON objects into table format. The performance of JSON data can be optimized by using columnstore indexes and memory optimized tables.
+**Insert JSON data** - JSON data can be inserted using the usual T-SQL INSERT statements.
+**Read JSON data** - JSON data can be read using the following T-SQL functions and provides the ability to perform aggregation and filter on JSON values.
+  *  ISJSON – verify if text is valid JSON
+  *  JSON_VALUE – extract a scalar value from a JSON string
+  *  JSON_QUERY – extract a JSON object or array from a JSON string
+**Modify JSON data** - JSON data can be modified and queried using the following T-SQL functions providing ability to update JSON string using T-SQL and convert hierarchical data into flat tabular structure.
+  *  JSON_MODIFY – modifies a value in a JSON string
+  *  OPENJSON – convert JSON collection to a set of rows and columns
+You can also query JSON files using SQL serverless. The query's objective is to read the following type of JSON files using OPENROWSET.
+  *  Standard JSON files where multiple JSON documents are stored as a JSON array.
+  *  Line-delimited JSON files, where JSON documents are separated with new-line character. Common extensions for these types of files are jsonl, ldjson, and ndjson.
+
 # Use data loading best practices in Azure Synapse Analytics 
 
 ### Load methods into Azure Synapse Analytics
