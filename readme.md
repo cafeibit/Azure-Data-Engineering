@@ -200,7 +200,7 @@ Exploratory data analysis can involve querying metadata about the data that is s
      
      -- OPENJSON – convert JSON collection to a set of rows and columns
      
-     You can also query JSON files using SQL serverless. The query's objective is to read the following type of JSON files using OPENROWSET.
+     You can also query JSON files using SQL serverless. The query's objective is to read the following type of JSON files using **OPENROWSET**.
 
      -- Standard JSON files where multiple JSON documents are stored as a JSON array.
      
