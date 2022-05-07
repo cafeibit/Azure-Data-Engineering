@@ -168,6 +168,7 @@ spark.conf.set(f"fs.azure.account.key.{storageAccount}.blob.core.windows.net", a
 
 *  The ROWS and RANGE clauses 
    *  They further limit the rows within the partition by specifying start and end points within the partition. This is done by specifying a range of rows with respect to the current row either by logical association or physical association. Physical association is achieved by using the ROWS clause.
+   *  To use the FIRST_VALUE analytic function to retrieve the book title with the fewest downloads, as indicated by the ROWS UNBOUNDED PRECEDING clause over the Country partition. The UNBOUNDED PRECEDING option set the window start to the first row of the partition, giving us the title of the book with the fewest downloads for the country within the partition.
 
   <a href="./sqlscript/createdatawarehouses.sql">Examples</a>
 
