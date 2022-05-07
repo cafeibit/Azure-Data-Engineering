@@ -184,9 +184,9 @@ Exploratory data analysis can involve querying metadata about the data that is s
 *  It allows to transform arrays of JSON objects into table format. The performance of JSON data can be optimized by using columnstore indexes and memory optimized tables.
 **Insert JSON data** - JSON data can be inserted using the usual T-SQL INSERT statements.
 **Read JSON data** - JSON data can be read using the following T-SQL functions and provides the ability to perform aggregation and filter on JSON values.
-  *  ISJSON – verify if text is valid JSON
-  *  JSON_VALUE – extract a scalar value from a JSON string
-  *  JSON_QUERY – extract a JSON object or array from a JSON string
+*  ISJSON – verify if text is valid JSON
+*  JSON_VALUE – extract a scalar value from a JSON string
+*  JSON_QUERY – extract a JSON object or array from a JSON string
 **Modify JSON data** - JSON data can be modified and queried using the following T-SQL functions providing ability to update JSON string using T-SQL and convert hierarchical data into flat tabular structure.
   *  JSON_MODIFY – modifies a value in a JSON string
   *  OPENJSON – convert JSON collection to a set of rows and columns
