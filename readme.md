@@ -170,6 +170,7 @@ Azure Synapse serverless SQL pool is tailored for querying the data in the lake.
 
 *  Storage considerations when using Azure Synapse serverless SQL pools
   
+  <a href="./sqlscript/querydatausingserverlesspool.sql">Examples</a>
 
 ## Work with Data Warehouses using Azure Synapse Analytics by developer features
 ### Work With Windowning functions
