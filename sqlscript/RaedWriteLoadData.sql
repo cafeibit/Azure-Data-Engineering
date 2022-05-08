@@ -392,3 +392,53 @@ WHERE s.login_name IN ('asa.sql.workload02') and Importance
 is  not NULL AND r.[status] in ('Running','Suspended')
 ORDER BY submit_time, status
 
+
+--Monitor query execution
+
+-- Monitor active queries
+SELECT *
+FROM sys.dm_pdw_exec_requests
+WHERE status not in ('Completed','Failed','Cancelled')
+  AND session_id <> session_id()
+ORDER BY submit_time DESC;
+
+-- Find top 10 queries longest running queries
+SELECT TOP 10 *
+FROM sys.dm_pdw_exec_requests
+ORDER BY total_elapsed_time DESC;
+
+-- Query with Label
+SELECT *
+FROM sys.tables
+OPTION (LABEL = 'My Query')
+;
+
+-- Find a query with the Label 'My Query'
+-- Use brackets when querying the label column, as it it a key word
+SELECT  *
+FROM    sys.dm_pdw_exec_requests
+WHERE   [label] = 'My Query';
+
+-- Find the distribution run times for a SQL step.
+-- Replace request_id and step_index with values from Step 1 and 3.
+
+SELECT * FROM sys.dm_pdw_sql_requests
+WHERE request_id = 'QID####' AND step_index = 2;
+
+-- Find the SQL Server execution plan for a query running on a specific SQL pool or control node.
+-- Replace distribution_id and spid with values from previous query.
+
+DBCC PDW_SHOWEXECUTIONPLAN(1, 78);
+
+-- Find information about all the workers completing a Data Movement Step.
+-- Replace request_id and step_index with values from Step 1 and 3.
+
+SELECT * FROM sys.dm_pdw_dms_workers
+WHERE request_id = 'QID####' AND step_index = 2;
+
+-- Find the SQL Server estimated plan for a query running on a specific SQL pool Compute or control node.
+-- Replace distribution_id and spid with values from previous query.
+
+DBCC PDW_SHOWEXECUTIONPLAN(55, 238);
+
+
