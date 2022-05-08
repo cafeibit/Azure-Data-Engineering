@@ -381,7 +381,15 @@ That is to say, data sources that contain invalid data formats, corrupted record
      *  Index and statistics information
  
      *  Resource blocking and locking activity
-Data movement service activity
-Errors
+ 
+     * Data movement service activity
+
+     * Errors
+ 
+ -- All logins to your data warehouse are logged to sys.dm_pdw_exec_sessions. The session_id is the primary key and is assigned sequentially for each new logon.
+ 
+ -- Other Active Connections
+ 
+`SELECT * FROM sys.dm_pdw_exec_sessions where status <> 'Closed' and session_id <> session_id();`
  
  
