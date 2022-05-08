@@ -442,3 +442,116 @@ WHERE request_id = 'QID####' AND step_index = 2;
 DBCC PDW_SHOWEXECUTIONPLAN(55, 238);
 
 
+--Column level security in Azure Synapse Analytics
+
+GRANT <permission> [ ,...n ] ON
+    [ OBJECT :: ][ schema_name ]. object_name [ ( column [ ,...n ] ) ] // specifying the column access
+    TO <database_principal> [ ,...n ]
+    [ WITH GRANT OPTION ]
+    [ AS <database_principal> ]
+<permission> ::=
+    SELECT
+  | UPDATE
+<database_principal> ::=
+      Database_user // specifying the database user
+    | Database_role // specifying the database role 
+    | Database_user_mapped_to_Windows_User
+    | Database_user_mapped_to_Windows_Group
+    
+    --Example
+    
+    CREATE TABLE Membership
+  (MemberID int IDENTITY,
+   FirstName varchar(100) NULL,
+   SSN char(9) NOT NULL,
+   LastName varchar(100) NOT NULL,
+   Phone varchar(12) NULL,
+   Email varchar(100) NULL);
+   
+   GRANT SELECT ON Membership(MemberID, FirstName, LastName, Phone, Email) TO TestUser;
+   
+   SELECT * FROM Membership;
+
+-- Msg 230, Level 14, State 1, Line 12
+-- The SELECT permission was denied on the column 'SSN' of the object 'Membership', database 'CLS_TestDW', schema 'dbo'.
+
+--run in master
+CREATE LOGIN Manager WITH PASSWORD = '<user_password>'
+GO
+CREATE LOGIN Sales1 WITH PASSWORD = '<user_password>'
+GO
+CREATE LOGIN Sales2 WITH PASSWORD = '<user_password>'
+GO
+
+--run in master and your SQL pool database
+CREATE USER Manager FOR LOGIN Manager;  
+CREATE USER Sales1  FOR LOGIN Sales1;  
+CREATE USER Sales2  FOR LOGIN Sales2 ;
+
+CREATE TABLE Sales  
+    (  
+    OrderID int,  
+    SalesRep sysname,  
+    Product varchar(10),  
+    Qty int  
+    );
+    
+    INSERT INTO Sales VALUES (1, 'Sales1', 'Valve', 5);
+INSERT INTO Sales VALUES (2, 'Sales1', 'Wheel', 2);
+INSERT INTO Sales VALUES (3, 'Sales1', 'Valve', 4);
+INSERT INTO Sales VALUES (4, 'Sales2', 'Bracket', 2);
+INSERT INTO Sales VALUES (5, 'Sales2', 'Wheel', 5);
+INSERT INTO Sales VALUES (6, 'Sales2', 'Seat', 5);
+-- View the 6 rows in the table  
+SELECT * FROM Sales;
+
+CREATE MASTER KEY ENCRYPTION BY PASSWORD = '<user_password>';
+
+CREATE DATABASE SCOPED CREDENTIAL msi_cred WITH IDENTITY = 'Managed Service Identity';
+
+CREATE EXTERNAL DATA SOURCE ext_datasource_with_abfss WITH (TYPE = hadoop, LOCATION = 'abfss://<file_system_name@storage_account>.dfs.core.windows.net', CREDENTIAL = msi_cred);
+
+CREATE EXTERNAL FILE FORMAT MSIFormat  WITH (FORMAT_TYPE=DELIMITEDTEXT);
+  
+CREATE EXTERNAL TABLE Sales_ext WITH (LOCATION='<your_table_name>', DATA_SOURCE=ext_datasource_with_abfss, FILE_FORMAT=MSIFormat, REJECT_TYPE=Percentage, REJECT_SAMPLE_VALUE=100, REJECT_VALUE=100)
+AS SELECT * FROM sales;
+
+GRANT SELECT ON Sales_ext TO Sales1;  
+GRANT SELECT ON Sales_ext TO Sales2;  
+GRANT SELECT ON Sales_ext TO Manager;
+
+CREATE SCHEMA Security;  
+GO  
+  
+CREATE FUNCTION Security.fn_securitypredicate(@SalesRep AS sysname)  
+    RETURNS TABLE  
+WITH SCHEMABINDING  
+AS  
+    RETURN SELECT 1 AS fn_securitypredicate_result
+WHERE @SalesRep = USER_NAME() OR USER_NAME() = 'Manager';
+
+CREATE SECURITY POLICY SalesFilter_ext
+ADD FILTER PREDICATE Security.fn_securitypredicate(SalesRep)
+ON dbo.Sales_ext  
+WITH (STATE = ON);
+
+SELECT * FROM Sales_ext;
+
+ALTER SECURITY POLICY SalesFilter_ext  
+WITH (STATE = OFF);
+
+DROP USER Sales1;
+DROP USER Sales2;
+DROP USER Manager;
+
+DROP SECURITY POLICY SalesFilter_ext;
+DROP TABLE Sales;
+DROP EXTERNAL TABLE Sales_ext;
+DROP EXTERNAL DATA SOURCE ext_datasource_with_abfss ;
+DROP EXTERNAL FILE FORMAT MSIFormat;
+DROP DATABASE SCOPED CREDENTIAL msi_cred; 
+DROP MASTER KEY;
+
+DROP LOGIN Sales1;
+DROP LOGIN Sales2;
+DROP LOGIN Manager;
