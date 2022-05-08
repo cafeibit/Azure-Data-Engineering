@@ -339,3 +339,23 @@ That is to say, data sources that contain invalid data formats, corrupted record
 `FROM [wwi_external].[DailySalesCounts]`<br>
  
  ###  <a href="analyze-optimize-performamce.md">Analyze and optimize data warehouse storage in Azure Synapse Analytics</a>
+
+ 
+ # Manage and monitor data warehouse activities in Azure Synapse Analytics 
+ 
+ ### Scale compute resources in Azure Synapse Analytics
+ 
+ *  You can scale a Synapse SQL pool either through the Azure portal, Azure Synapse Studio or programmatically using TSQL or PowerShell.
+ 
+ **SQL**
+ `ALTER DATABASE mySampleDataWarehouse`
+ 
+ `MODIFY (SERVICE_OBJECTIVE = 'DW300c');`
+ 
+ **PowerShell**
+ 
+ `Set-AzSqlDatabase -ResourceGroupName "resourcegroupname" -DatabaseName "mySampleDataWarehouse" -ServerName "sqlpoolservername" -RequestedServiceObjectiveName "DW300c"`
+ 
+ 
+ 
+ 
