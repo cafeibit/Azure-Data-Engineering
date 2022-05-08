@@ -93,6 +93,7 @@ Azure Synapse Analytics is an integrated analytics platform, which combines <b>d
   *  Use dynamic management views to identify and troubleshoot query performance 
 * To analyze and optimize data warehouse storage in Azure Synapse Analytics 
 * To approach and implement security to protect your data with Azure Synapse Analytics such as serverless SQL pools. 
+  * Conditional Access is a feature that enables you to define the conditions under which a user can connect to your Azure subscription and access services.
 * Build data analytics solutions using Azure Synapse serverless SQL pools
   * To query and prepare data in an interactive way on files placed in Azure Storage such as querying the different file types stored in a data lake. 
   * To create objects to help you query data or optimize your existing data transformation pipeline through Azure Synapse serverless SQL pools
