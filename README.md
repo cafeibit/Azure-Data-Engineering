@@ -14,7 +14,7 @@ Primary responsibilities include using services and tools to ingest, egress, and
 * Ensure business continuity in uncommon conditions by using techniques for high availability and disaster recovery. 
 * Monitor to ensure that the systems run properly and are cost-effective. 
 
-### Data Engineering with Azure Data Factory / Azure Synapse Pipeline
+## Data Engineering with Azure Data Factory / Azure Synapse Pipeline
 To orchestrate big data, integrate data sources, ingest data from on-premises, multiple-cloud, and software as a service (SaaS) data sources; create and schedule data-driven workflows to ingest data from different data stores, build complex ETL processes to transform this data visually with compute services or with data flows. <br> To build complex and iterative processing logic within the pipelines you create with Azure Data Factory, which supports the creation of diverse data integration patterns such as building a modern data warehouse.
 
 * Connect and Collect (Ingest)
@@ -63,7 +63,7 @@ To use Data Factory mapping data flows to process and transform the data as need
 * <a href="https://docs.microsoft.com/en-us/azure/data-factory/data-factory-tutorials">Azure Data Factory tutorials</a>
 * <a href="https://docs.microsoft.com/en-ca/azure/data-factory/">Azure Data Factory documentation</a>
 
-### Data Engineering with Azure Synapse Analytics (Descriptive/Diagnostic/Predictive/Prescriptive analytics) 
+## Data Engineering with Azure Synapse Analytics (Descriptive/Diagnostic/Predictive/Prescriptive analytics) 
 Azure Synapse Analytics is an integrated analytics platform, which combines <b>data warehousing, big data analytics, data integration, and visualization</b> into a single environment. Azure Synapse Analytics empowers users of all abilities to gain access and quick insights across all of their data, enabling a whole new level of performance and scale.
 
 * To choose the tools and techniques used to work with Modern Data Warehouses productively and securely within Azure Synapse Analytics. 
@@ -119,7 +119,7 @@ Azure Synapse Analytics is an integrated analytics platform, which combines <b>d
 * <a href="../SynapseAnalytics/readme.md">Data Engineering with Azure Synapse Analytics</a>
 * <a href="https://docs.microsoft.com/en-us/azure/synapse-analytics/sql/overview-architecture">Azure Synapse SQL architecture</a>
 
-### Data Engineering with Azure Databricks with best practices
+## Data Engineering with Azure Databricks with best practices
 To process and analyze data using multi-task jobs and Delta Live Tables, the Azure Databricks data processing pipeline framework. To run a Delta Live Tables pipeline as part of a data processing workflow with Databricks jobs, Apache Airflow, or Azure Data Factory. 
 
 * Azure Databricks/Delta Lake architecture/performance/features programming by Scala/Python/Java
