@@ -64,11 +64,28 @@ To use Data Factory mapping data flows to process and transform the data as need
 * <a href="https://docs.microsoft.com/en-ca/azure/data-factory/">Azure Data Factory documentation</a>
 
 ## Data Engineering with Azure Synapse Analytics (Descriptive/Diagnostic/Predictive/Prescriptive analytics) 
+
 Azure Synapse Analytics is an integrated analytics platform, which combines <b>data warehousing, big data analytics, data integration, and visualization</b> into a single environment. Azure Synapse Analytics empowers users of all abilities to gain access and quick insights across all of their data, enabling a whole new level of performance and scale.
 
 * To choose the tools and techniques used to work with Modern Data Warehouses productively and securely within Azure Synapse Analytics. 
 * To build Data Warehouses using modern architecture patterns by using Azure Synapse Analytics. 
   *   To use the language capabilities that are available to create data warehouses in Azure Synapse Analytics.
+* To analyze and optimize data warehouse storage in Azure Synapse Analytics 
+* Build data analytics solutions using Azure Synapse serverless SQL pools
+  * To query and prepare data in an interactive way on files placed in Azure Storage such as querying the different file types stored in a data lake. 
+  * To create objects to help you query data or optimize your existing data transformation pipeline through Azure Synapse serverless SQL pools
+  * To use CREATE EXTERNAL TABLE AS SELECT statements to transform data and encapsulate the transformation logic in stored procedures.
+  * To serve and make use of the data that is queried or transformed by Azure Synapse serverless SQL pool.
+  * To set up security when using Azure Synapse serverless SQL pools
+* To perform data engineering with Azure Synapse Apache Spark Pools, to boost the performance of big-data analytic applications by in-memory cluster computing. 
+  * To ingest data using Apache Spark Notebooks in Azure Synapse Analytics.
+  * To transform data using DataFrames in Apache Spark Pools in Azure Synapse Analytics. 
+  * To integrate SQL and Apache Spark pools in Azure Synapse Analytics.
+  * To monitor and manage data engineering workloads with Apache Spark in Azure Synapse Analytics.
+* To approach and implement security to protect your data with Azure Synapse Analytics such as serverless SQL pools. 
+  * Conditional Access is a feature that enables you to define the conditions under which a user can connect to your Azure subscription and access services.
+  * Configure authentication and Manage authorization through column and row level security
+  * Manage sensitive data with Dynamic Data Masking and Implement encryption in Azure Synapse Analytics
 * To optimize data warehouse query performance in Azure Synapse Analytics 
   *  The design decisions around how to split and disperse this data among the nodes and then to the storage is important to querying workloads, 
   *  The correct selection minimizes data movement that is a primary cause of performance issues in a Synapse dedicated SQL Pool environment.
@@ -91,23 +108,6 @@ Azure Synapse Analytics is an integrated analytics platform, which combines <b>d
   *  Scale and Pause compute resources in Azure Synapse Analytics
   *  Manage workloads in Azure Synapse Analytics and Use Azure Advisor to review recommendations
   *  Use dynamic management views to identify and troubleshoot query performance 
-* To analyze and optimize data warehouse storage in Azure Synapse Analytics 
-* To approach and implement security to protect your data with Azure Synapse Analytics such as serverless SQL pools. 
-  * Conditional Access is a feature that enables you to define the conditions under which a user can connect to your Azure subscription and access services.
-  * Configure authentication and Manage authorization through column and row level security
-  * Manage sensitive data with Dynamic Data Masking and Implement encryption in Azure Synapse Analytics
-* Build data analytics solutions using Azure Synapse serverless SQL pools
-  * To query and prepare data in an interactive way on files placed in Azure Storage such as querying the different file types stored in a data lake. 
-  * To create objects to help you query data or optimize your existing data transformation pipeline through Azure Synapse serverless SQL pools
-  * To create objects to help you query data or optimize your existing data transformation pipeline through Azure Synapse serverless SQL pools.
-  * To use CREATE EXTERNAL TABLE AS SELECT statements to transform data and encapsulate the transformation logic in stored procedures.
-  * To serve and make use of the data that is queried or transformed by Azure Synapse serverless SQL pool.
-  * To set up security when using Azure Synapse serverless SQL pools
-* To perform data engineering with Azure Synapse Apache Spark Pools, to boost the performance of big-data analytic applications by in-memory cluster computing. 
-  * To ingest data using Apache Spark Notebooks in Azure Synapse Analytics.
-  * To transform data using DataFrames in Apache Spark Pools in Azure Synapse Analytics. 
-  * To integrate SQL and Apache Spark pools in Azure Synapse Analytics.
-  * To monitor and manage data engineering workloads with Apache Spark in Azure Synapse Analytics.
 * Work with Hybrid Transactional and Analytical Processing Solutions using Azure Synapse Analytics, to perform operational analytics against Azure Cosmos DB using the Azure Synapse Link feature within Azure Synapse Analytics. 
   * To configure and enable Azure Synapse Link to interact with Azure Cosmos DB. 
   * To perform analytics against Azure Cosmos DB using Azure Synapse Link.
