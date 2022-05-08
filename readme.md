@@ -149,6 +149,28 @@ spark.conf.set(f"fs.azure.account.key.{storageAccount}.blob.core.windows.net", a
  <code> %sql</code><br>
  <code>select CustomerKey, CustomerAlternateKey from customer_temp_data limit 10;</code><br>`
 
+
+##  Query data in the lake using Azure Synapse serverless SQL pools 
+
+Azure Synapse serverless SQL pool is tailored for querying the data in the lake. It supports querying CSV, JSON, and Parquet file formats directly.
+
+--To craft queries to read a file (with specific format) and multiple files or folders. 
+
+--To extract specific data out of the files you are interested in. 
+
+--To query the different file types that can be stored in a data lake.
+
+*  Query a CSV file using Azure Synapse serverless SQL pools
+
+*  Query a Parquet file using Azure Synapse serverless SQL pools
+
+*  Query a JSON file using Azure Synapse serverless SQL pools
+
+*  Query multiple files and folders using Azure Synapse serverless SQL pools
+
+*  Storage considerations when using Azure Synapse serverless SQL pools
+  
+
 ## Work with Data Warehouses using Azure Synapse Analytics by developer features
 ### Work With Windowning functions
 *  Window Functions
