@@ -392,4 +392,26 @@ That is to say, data sources that contain invalid data formats, corrupted record
  
 `SELECT * FROM sys.dm_pdw_exec_sessions where status <> 'Closed' and session_id <> session_id();`
  
+ *  Monitor query execution
  
+   *  All queries executed on SQL pool are logged to sys.dm_pdw_exec_requests. 
+ 
+   *  The request_id uniquely identifies each query and is the primary key for this DMV. 
+ 
+   *  The request_id is assigned sequentially for each new query and is prefixed with QID, which stands for query ID. 
+ 
+   *  Querying this DMV for a given session_id shows all queries for a given logon.
+ 
+   --**Step 1** The first step is to identify the query you want to investigate
+ 
+   --To simplify the lookup of a query in the sys.dm_pdw_exec_requests table, use LABEL to assign a comment to your query, which can be looked up in the sys.dm_pdw_exec_requests view.
+ 
+   --**Step 2**  Use the Request ID to retrieve the queries distributed SQL (DSQL) plan from sys.dm_pdw_request_steps
+ To investigate further details about a single step, the operation_type column of the long-running query step and note the Step Index:
+
+   --Proceed with Step 3 for SQL operations: OnOperation, RemoteOperation, ReturnOperation.
+
+   --Proceed with Step 4 for Data Movement operations: ShuffleMoveOperation, BroadcastMoveOperation, TrimMoveOperation, PartitionMoveOperation, MoveOperation, CopyOperation.
+ 
+ 
+<a href="https://docs.microsoft.com/en-us/azure/synapse-analytics/sql-data-warehouse/sql-data-warehouse-manage-monitor">Monitor your Azure Synapse Analytics dedicated SQL pool workload using DMVs</a>
