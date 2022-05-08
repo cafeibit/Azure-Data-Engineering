@@ -87,7 +87,10 @@ Azure Synapse Analytics is an integrated analytics platform, which combines <b>d
   *  Transfer data outside the Synapse workspace using SQL Authentication
   *  Transfer data outside the Synapse workspace using the PySpark Connector
   *  Transform data in Apache Spark and write back to SQL Pool in Azure Synapse Analytics
-* To manage and monitor data warehouse activities in Azure Synapse Analytics 
+* To manage and monitor data warehouse activities in Azure Synapse Analytics
+  *  Scale and Pause compute resources in Azure Synapse Analytics
+  *  Manage workloads in Azure Synapse Analytics and Use Azure Advisor to review recommendations
+  *  Use dynamic management views to identify and troubleshoot query performance 
 * To analyze and optimize data warehouse storage in Azure Synapse Analytics 
 * To approach and implement security to protect your data with Azure Synapse Analytics such as serverless SQL pools. 
 * Build data analytics solutions using Azure Synapse serverless SQL pools
