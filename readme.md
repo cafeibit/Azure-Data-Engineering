@@ -366,6 +366,22 @@ That is to say, data sources that contain invalid data formats, corrupted record
    *  Autoscale then monitors the resource requirements of the load and scales the number of nodes up or down. 
  
  
+ ### Use dynamic management views to identify and troubleshoot query performance
  
+ *  Dynamic Management Views provide a programmatic experience for monitoring the Azure Synapse Analytics SQL pool activity by using the Transact-SQL language. 
+ 
+ *  The views that are provided, not only enable you to troubleshoot and identify performance bottlenecks with the workloads working on your system, but they are also used by other services such as Azure Advisor to provide recommendations about Azure Synapse Analytics.
+
+ *  There are over 90 Dynamic Management Views that can queried against dedicated SQL pools to retrieve information about the following areas of the service:
+
+     *  Connection information and activity
+ 
+     *  SQL execution requests and queries
+ 
+     *  Index and statistics information
+ 
+     *  Resource blocking and locking activity
+Data movement service activity
+Errors
  
  
