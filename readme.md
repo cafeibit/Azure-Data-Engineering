@@ -348,6 +348,7 @@ That is to say, data sources that contain invalid data formats, corrupted record
  *  You can scale a Synapse SQL pool either through the Azure portal, Azure Synapse Studio or programmatically using TSQL or PowerShell.
  
  **SQL**
+ 
  `ALTER DATABASE mySampleDataWarehouse`
  
  `MODIFY (SERVICE_OBJECTIVE = 'DW300c');`
@@ -355,6 +356,15 @@ That is to say, data sources that contain invalid data formats, corrupted record
  **PowerShell**
  
  `Set-AzSqlDatabase -ResourceGroupName "resourcegroupname" -DatabaseName "mySampleDataWarehouse" -ServerName "sqlpoolservername" -RequestedServiceObjectiveName "DW300c"`
+ 
+ * Scaling Apache Spark pools in Azure Synapse Analytics
+ 
+   *  Apache Spark pools for Azure Synapse Analytics uses an Autoscale feature that automatically scales the number of nodes in a cluster instance up and down.
+ 
+   *  During the creation of a new Spark pool, a minimum and maximum number of nodes can be set when Autoscale is selected. 
+ 
+   *  Autoscale then monitors the resource requirements of the load and scales the number of nodes up or down. 
+ 
  
  
  
