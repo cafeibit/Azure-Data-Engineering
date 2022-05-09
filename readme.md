@@ -288,6 +288,26 @@ WITH (
     DATA_SOURCE = sqlondemanddemo, 
     FILE_FORMAT = QuotedCSVWithHeaderFormat 
 );`
+
+  --Create an external table on public data
+  
+  You can create external tables that read data from the files placed on publicly available Azure storage. This setup script will create a public external data source with a Parquet file format definition that is used in the following query:
+
+ `CREATE EXTERNAL TABLE Taxi ( 
+    vendor_id VARCHAR(100) COLLATE Latin1_General_BIN2,  
+    pickup_datetime DATETIME2,  
+    dropoff_datetime DATETIME2, 
+    passenger_count INT, 
+    trip_distance FLOAT, 
+    fare_amount FLOAT, 
+    tip_amount FLOAT, 
+    tolls_amount FLOAT, 
+    total_amount FLOAT 
+) WITH ( 
+        LOCATION = 'puYear=*/puMonth=*/*.parquet', 
+        DATA_SOURCE = YellowTaxi, 
+        FILE_FORMAT = ParquetFormat 
+);`
    
 * Create views in Azure Synapse serverless SQL pools
 
