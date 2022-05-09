@@ -171,6 +171,25 @@ Azure Synapse serverless SQL pool is tailored for querying the data in the lake.
 *  Storage considerations when using Azure Synapse serverless SQL pools
   
   <a href="./sqlscript/querydatausingserverlesspool.sql">Examples</a>
+  
+## Create metadata objects in Azure Synapse serverless SQL pools
+
+To query data or optimize your existing data transformation pipeline through Azure Synapse serverless SQL pools.
+
+* Create databases in Azure Synapse serverless SQL pools
+  *  To create a new database as an Azure Synapse serverless SQL pool, go to the Data hub, click + button and select SQL database.
+  *  Choose one of the following two pool type options: Serverless/Dedicated
+  *  Select Serverless if it isn’t already selected, type in a database name and press the button Create.
+  *  You can execute the following Transact-SQL statement in the serverless SQL pool:
+  *  `CREATE DATABASE [YourDatabaseName]`
+* Create and manage credentials in Azure Synapse serverless SQL pools
+  * 
+* Create external data sources in Azure Synapse serverless SQL pools
+  * 
+* Create external tables in Azure Synapse serverless SQL pools
+  * 
+* Create views in Azure Synapse serverless SQL pools
+  *  
 
 ## Work with Data Warehouses using Azure Synapse Analytics by developer features
 ### Work With Windowning functions
