@@ -393,8 +393,64 @@ Once you prepare your data transformation query, you can encapsulate the transfo
   
 ### Use Azure Synapse serverless SQL pool stored procedures from Synapse Pipelines
 
- * <a href="./sqlscript/transformbycetas.sql">Examples</a>
+ * You can use Azure Synapse Pipelines to operationalize data transformations using serverless SQL pool by performing the following steps.
 
+   * Open your Azure Synapse Analytics workspace, go to the Data hub
+
+   * Click +, choose Connect to external data and select Azure Data Lake Storage Gen2
+
+   * Fill in Name field with DestinationStorage
+
+   * Pick the Subscription where your storage is
+
+   * Pick the Storage account name (use the same storage you used in CREATE EXTERNAL DATA SOURCE statement above)
+
+   * Create new linked service to destination storage account:
+
+   * Click Test connection to make sure linked service is properly configured
+
+   * Click Create
+  
+* Create pipeline:
+
+  * Go to the Integrate hub
+  
+  * Click + and then choose Pipeline to create new pipeline
+ 
+  * In pipeline properties, fill in Name field with MyAggregatingPipeline
+
+* Add Delete activity to delete destination storage folder:
+
+  * From Activities, under the group General, drag the Delete activity to canvas
+
+  * In the Activity General tab, fill in the Name with DeleteFolder
+
+  * In the Source tab click New Dataset, choose Azure Data Lake Storage Gen2 and then click Continue
+
+  * Fill in the Name field with CETASDestination
+
+  * For the Linked service pick DestinationStorage
+
+  * Fill in File path with name of container you used in the CREATE EXTERNAL DATA SOURCE
+
+  * Fill in Directory with LOCATION you used in the CETAS within the CREATE PROCEDURE statement
+  
+* Add Stored procedure activity that will execute stored procedure:
+
+  * From Activities, under the group General, drag Stored procedure activity to canvas
+
+  * In Activity General tab, fill in Name with AggregateByYearAndState  
+  
+  * In Activity Settings tab, click New to create new Linked service – here we will create connection to serverless SQL pool
+
+  * In New linked service panel:
+  
+  * In Activity Settings tab, pick population_by_year_state for Stored Procedure Name
+  
+* Link Delete and Stored procedure activities to define order of execution of activities:
+
+ * Drag green connector from the Delete activity to Stored procedure activity.
+Click OK
 
 ## Work with Data Warehouses using Azure Synapse Analytics by developer features
 ### Work With Windowning functions
