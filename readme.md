@@ -488,7 +488,7 @@ To serve and make use of the data that is queried or transformed by Azure Synaps
 
 ### Issue queries programmatically on Azure Synapse serverless SQL pool
 
-* Example
+* <a href="./sqlscript/queriesbycs.cs">Example</a>
 
 
 ## Work with Data Warehouses using Azure Synapse Analytics by developer features
