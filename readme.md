@@ -221,8 +221,15 @@ SECRET = 'sv=2018-03-28&ss=bf&srt=sco&sp=rl&st=2019-10-14T12%3A10%3A25Z&se=2061-
    *  External data source are typically used in the OPENROWSET function or as part of the external table definition.
   
 * Create external tables in Azure Synapse serverless SQL pools
-  * 
+
+  External tables are useful when you want to control access to external data in serverless SQL pools and is commonly used in PolyBase activities. If you want to use tools, such as Power BI, in conjunction with serverless SQL pools, then external tables are needed. External tables can access two types of storage:
+
+  * Public storage where users access public storage files.
+  
+  * Protected storage where users access storage files using SAS credential, Azure AD identity, or the Managed Identity of an Azure Synapse workspace.
+  
 * Create views in Azure Synapse serverless SQL pools
+
   *  
 
 ## Work with Data Warehouses using Azure Synapse Analytics by developer features
