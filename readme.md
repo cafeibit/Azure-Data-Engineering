@@ -228,6 +228,67 @@ SECRET = 'sv=2018-03-28&ss=bf&srt=sco&sp=rl&st=2019-10-14T12%3A10%3A25Z&se=2061-
   
   * Protected storage where users access storage files using SAS credential, Azure AD identity, or the Managed Identity of an Azure Synapse workspace.
   
+  * Example: 
+  
+  --First step is to create a database where the tables will be created. 
+  
+  --Then initialize the objects by executing the following setup script on that database. 
+  
+  https://sqlondemandstorage.blob.core.windows.net Azure storage account. DATABASE SCOPED CREDENTIAL sqlondemand that enables access to SAS-protected
+  
+  `CREATE DATABASE SCOPED CREDENTIAL [sqlondemand]`
+  
+  `WITH IDENTITY='SHARED ACCESS SIGNATURE',   
+   SECRET = 'sv=2018-03-28&ss=bf&srt=sco&sp=rl&st=2019-10-14T12%3A10%3A25Z&se=2061-12-31T12%3A10%3A00Z&sig=KlSU2ullCscyTS0An0nozEpo4tO5JAgGBvw%2FJX2lguw%3D'`
+   
+   `CREATE EXTERNAL DATA SOURCE SqlOnDemandDemo WITH (` 
+   
+   `LOCATION = 'https://sqlondemandstorage.blob.core.windows.net', `
+   
+    `CREDENTIAL = sqlondemand `
+    
+   `); `
+   `GO `
+   
+   `CREATE EXTERNAL DATA SOURCE YellowTaxi` 
+   
+   `WITH ( LOCATION = 'https://azureopendatastorage.blob.core.windows.net/nyctlc/yellow/')`
+  
+   --Next you will create a file format named QuotedCSVWithHeaderFormat and FORMAT_TYPE of parquet that defines two file types. CSV and parquet.
+   
+   `CREATE EXTERNAL FILE FORMAT QuotedCsvWithHeaderFormat `
+   
+   `WITH (`
+   
+    `FORMAT_TYPE = DELIMITEDTEXT, `
+    
+    `FORMAT_OPTIONS ( FIELD_TERMINATOR = ',', STRING_DELIMITER = '"', FIRST_ROW = 2   ) `
+    
+    `); `
+    
+   `GO `
+   
+   `CREATE EXTERNAL FILE FORMAT ParquetFormat WITH (  FORMAT_TYPE = PARQUET );`
+   
+   --Create an external table on protected data
+   
+   With the database scoped credential, external data source, and external file format defined, you can create external tables that access data on an Azure storage account that allows access to users with some Azure AD identity or SAS key. You can create external tables the same way you create regular SQL Server external tables. 
+   
+   `USE [mydbname]; 
+GO 
+CREATE EXTERNAL TABLE populationExternalTable 
+( 
+    [country_code] VARCHAR (5) COLLATE Latin1_General_BIN2, 
+    [country_name] VARCHAR (100) COLLATE Latin1_General_BIN2, 
+    [year] smallint, 
+    [population] bigint 
+) 
+WITH ( 
+    LOCATION = 'csv/population/population.csv', 
+    DATA_SOURCE = sqlondemanddemo, 
+    FILE_FORMAT = QuotedCSVWithHeaderFormat 
+);`
+   
 * Create views in Azure Synapse serverless SQL pools
 
   *  
