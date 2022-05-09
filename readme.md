@@ -180,10 +180,26 @@ To query data or optimize your existing data transformation pipeline through Azu
   *  To create a new database as an Azure Synapse serverless SQL pool, go to the Data hub, click + button and select SQL database.
   *  Choose one of the following two pool type options: Serverless/Dedicated
   *  Select Serverless if it isn’t already selected, type in a database name and press the button Create.
-  *  You can execute the following Transact-SQL statement in the serverless SQL pool:
+  *  Also, you can execute the following Transact-SQL statement in the serverless SQL pool:
   *  `CREATE DATABASE [YourDatabaseName]`
 * Create and manage credentials in Azure Synapse serverless SQL pools
-  * 
+  * Azure Synapse serverless SQL pool accesses the storage to read the files using credentials. 
+  * There are 3 types of credentials that are supported: Azure Active Directory pass-through, Managed Identity, Shared access signature (SAS).
+  * To explicitly specify an identity of a logged in user, you need to create a database scoped credential as follows:
+    --`CREATE DATABASE SCOPED CREDENTIAL [sqlondemand]`
+    
+    --`WITH IDENTITY='User Identity'`
+  * To instruct the serverless SQL pool to use a managed identity, create a credential as follows.
+    --`CREATE DATABASE SCOPED CREDENTIAL [sqlondemand] 
+    
+    --`WITH IDENTITY='Managed Identity'`
+    
+  * A Shared access signature (SAS) is a storage feature, that enables you to give a time bound permissions at a storage account file system or directory level . 
+    --`CREATE DATABASE SCOPED CREDENTIAL [sqlondemand]`
+    
+    --`WITH IDENTITY='SHARED ACCESS SIGNATURE',   
+SECRET = 'sv=2018-03-28&ss=bf&srt=sco&sp=rl&st=2019-10-14T12%3A10%3A25Z&se=2061-12-31T12%3A10%3A00Z&sig=KlSU2ullCscyTS0An0nozEpo4tO5JAgGBvw%2FJX2lguw%3D'  `
+
 * Create external data sources in Azure Synapse serverless SQL pools
   * 
 * Create external tables in Azure Synapse serverless SQL pools
