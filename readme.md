@@ -205,7 +205,21 @@ To query data or optimize your existing data transformation pipeline through Azu
 SECRET = 'sv=2018-03-28&ss=bf&srt=sco&sp=rl&st=2019-10-14T12%3A10%3A25Z&se=2061-12-31T12%3A10%3A00Z&sig=KlSU2ullCscyTS0An0nozEpo4tO5JAgGBvw%2FJX2lguw%3D'  `
 
 * Create external data sources in Azure Synapse serverless SQL pools
-  * 
+
+  * An external data source is used to define the location of the data and the credential that should be used to access it. You can create external data source to a public storage account as follows:
+  
+  `CREATE EXTERNAL DATA SOURCE YellowTaxi 
+   WITH ( LOCATION = 'https://azureopendatastorage.blob.core.windows.net/nyctlc/yellow/')`
+
+  * If the storage account is protected, you must specify which credentials should be used like this:
+  
+  `CREATE EXTERNAL DATA SOURCE SqlOnDemandDemo WITH ( 
+    LOCATION = 'https://sqlondemandstorage.blob.core.windows.net', 
+    CREDENTIAL = sqlondemand 
+   );`
+   
+   *  External data source are typically used in the OPENROWSET function or as part of the external table definition.
+  
 * Create external tables in Azure Synapse serverless SQL pools
   * 
 * Create views in Azure Synapse serverless SQL pools
