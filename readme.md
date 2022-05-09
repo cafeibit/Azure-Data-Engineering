@@ -449,8 +449,47 @@ Once you prepare your data transformation query, you can encapsulate the transfo
   
 * Link Delete and Stored procedure activities to define order of execution of activities:
 
- * Drag green connector from the Delete activity to Stored procedure activity.
-Click OK
+ * Drag green connector from the Delete activity to Stored procedure activity. Click OK
+
+
+## Serve the data from Azure Synapse serverless SQL pool
+
+To serve and make use of the data that is queried or transformed by Azure Synapse serverless SQL pool.
+
+### Use Synapse Studio to analyze and visualize data via Azure Synapse serverless SQL pool
+
+* Azure Synapse serverless SQL pool provides a look and feel of SQL Server to the clients connecting to it. This enables a huge number of clients to interact with serverless SQL pool to query the data in the lake.
+
+* Azure Synapse Studio is the web-native experience that ties everything together for all users, providing one location to do every task you need to build a complete solution.
+
+* To open Synapse Studio, navigate to the Azure Synapse workspace resource in the Azure portal and click on the Open link available in the overview page:
+
+### Use Azure Synapse serverless SQL pools as a data source in Synapse Pipelines
+
+* Azure Synapse Pipelines are a cloud ETL service for scale-out serverless data integration and data transformation. 
+* It offers a code-free UI for intuitive authoring and single-pane-of-glass monitoring and management. 
+* You can use Azure Synapse Pipeline to orchestrate data integration jobs and serverless SQL pool can be used as part of these jobs. 
+* To use serverless SQL pool in Azure Synapse Pipeline, you need to ensure that the built-in serverless SQL pool is properly linked to the Synapse Pipeline. 
+* Select the Manage hub in the Azure Synapse Studio menu on the left side, than select Linked services.
+* Now navigate to the Integrate hub in the menu on the left side, click on + button and select Pipeline.
+
+### Use Power BI to visualize the data from Azure Synapse serverless SQL pool
+
+* Power BI can be linked to the Azure Synapse workspace. 
+* To link your Power BI instance select the Manage hub in the menu on the left, then select the Linked Services item. 
+* If your Power BI instance is not already in the linked services list, click on the + New button in command menu. 
+* In the page that will appear on the right select Power BI, then find the Power BI instance you want to connect to the workspace. 
+* Once that is done, your Power BI instance is linked to the Azure Synapse workspace.
+
+* To start creating Power BI reports using serverless SQL pool, select the Develop hub in the menu on the left, expand the Power BI item, select your Power BI instance, and select Power BI data sets. 
+* In the command bar select + New Power BI dataset. A page on the right will appear with databases available in the Azure Synapse workspace. 
+* Click on Download .pbids file next to the database you previously created that belongs to the built-in serverless SQL pool.
+
+
+### Issue queries programmatically on Azure Synapse serverless SQL pool
+
+* Example
+
 
 ## Work with Data Warehouses using Azure Synapse Analytics by developer features
 ### Work With Windowning functions
