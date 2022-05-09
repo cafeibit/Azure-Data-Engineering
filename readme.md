@@ -382,13 +382,18 @@ Azure Synapse serverless SQL pools can be used for data transformations. If you 
   
   *  Export, in parallel, the results of a Transact-SQL SELECT statement to the data lake.
 
-  * Examples
+  * <a href="">Examples</a>
   
   
 ### Operationalize data transformation with Azure Synapse serverless SQL pools using stored procedures
 
+Once you prepare your data transformation query, you can encapsulate the transformation logic using stored procedures. Stored procedures can accept input parameters and return multiple values in the form of output parameters to the calling program. 
+
+  * <a href="./sqlscript/transformbycetas.sql">Examples</a>
+  
 ### Use Azure Synapse serverless SQL pool stored procedures from Synapse Pipelines
 
+ * <a href="./sqlscript/transformbycetas.sql">Examples</a>
 
 
 ## Work with Data Warehouses using Azure Synapse Analytics by developer features
