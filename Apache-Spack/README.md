@@ -11,6 +11,7 @@ To differentiate between Apache Spark, Azure Databricks, HDInsight, and SQL Pool
 ##  Ingest data with Apache Spark notebooks in Azure Synapse Analytics
 
 
+
 ##  Transform data with DataFrames in Apache Spark Pools in Azure Synapse Analytics
 
 
