@@ -311,7 +311,62 @@ WITH (
    
 * Create views in Azure Synapse serverless SQL pools
 
-  *  
+Views will allow you to reuse queries that you create. Views are also needed if you want to use tools such as Power BI to access the data in conjunction with serverless SQL pools.
+
+  *  Prerequisites
+  
+  Your first step is to create a database where you will execute the queries. Then initialize the objects by executing the following setup script on that database. This setup script will create the data sources, database scoped credentials, and external file formats that are used in these samples.
+  
+  --Create a view
+  
+  You can create views in the same way you create regular SQL Server views. The following query creates a view that reads population.csv file.
+  
+  `USE [mydbname]; 
+GO 
+ 
+DROP VIEW IF EXISTS populationView; 
+GO 
+ 
+CREATE VIEW populationView AS 
+SELECT *  
+FROM OPENROWSET( 
+        BULK 'csv/population/population.csv', 
+        DATA_SOURCE = 'SqlOnDemandDemo', 
+        FORMAT = 'CSV',  
+        FIELDTERMINATOR =',',  
+        ROWTERMINATOR = '\n' 
+    ) 
+WITH ( 
+    [country_code] VARCHAR (5) COLLATE Latin1_General_BIN2, 
+    [country_name] VARCHAR (100) COLLATE Latin1_General_BIN2, 
+    [year] smallint, 
+    [population] bigint 
+) AS [r];`
+
+--The view in this example uses the OPENROWSET function that uses an absolute path to the underlying files. If you have EXTERNAL DATA SOURCE with a root URL of your storage, you can use OPENROWSET with DATA_SOURCE and relative file path:
+
+`CREATE VIEW TaxiView 
+AS SELECT *, nyc.filepath(1) AS [year], nyc.filepath(2) AS [month] 
+FROM 
+    OPENROWSET( 
+        BULK 'parquet/taxi/year=*/month=*/*.parquet', 
+        DATA_SOURCE = 'sqlondemanddemo', 
+        FORMAT='PARQUET' 
+    ) AS nyc`
+    
+    
+    `USE [mydbname]; 
+GO 
+ 
+ --Use view
+ 
+SELECT 
+    country_name, population 
+FROM populationView 
+WHERE 
+    [year] = 2019 
+ORDER BY 
+    [population] DESC;`
 
 ## Work with Data Warehouses using Azure Synapse Analytics by developer features
 ### Work With Windowning functions
