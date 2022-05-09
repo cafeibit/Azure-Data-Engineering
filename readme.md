@@ -367,6 +367,29 @@ WHERE
     [year] = 2019 
 ORDER BY 
     [population] DESC;`
+    
+## Use Azure Synapse serverless SQL pools for transforming the data in the lake
+
+To use CREATE EXTERNAL TABLE AS SELECT statements to transform data and encapsulate the transformation logic in stored procedures.
+
+### Transform data with Azure Synapse serverless SQL pools using CREATE EXTERNAL TABLE AS SELECT statement
+
+* Transform data with Azure Synapse serverless SQL pools using CREATE EXTERNAL TABLE AS SELECT statement
+
+Azure Synapse serverless SQL pools can be used for data transformations. If you are familiar with Transact-SQL syntax, you can craft a SELECT statement that executes the specific transformation you are interested in, and store the results of the SELECT statement in a selected file format. You can use CREATE EXTERNAL TABLE AS SELECT (CETAS) in a dedicated SQL pool or serverless SQL pool to complete the following tasks:
+
+  *  Create an external table.
+  
+  *  Export, in parallel, the results of a Transact-SQL SELECT statement to the data lake.
+
+  * Examples
+  
+  
+### Operationalize data transformation with Azure Synapse serverless SQL pools using stored procedures
+
+### Use Azure Synapse serverless SQL pool stored procedures from Synapse Pipelines
+
+
 
 ## Work with Data Warehouses using Azure Synapse Analytics by developer features
 ### Work With Windowning functions
