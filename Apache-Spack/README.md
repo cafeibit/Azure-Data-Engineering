@@ -167,11 +167,15 @@ DataFrames are a collection of data organized into named columns. DataFrames ena
    *  Read data from the primary storage account
    
    `%%spark`
+   
    `spark.sql("CREATE DATABASE IF NOT EXISTS nyctaxi")`
+   
    `val df = spark.read.sqlanalytics("SQLPOOL1.dbo.Trip") `
+   
    `df.write.mode("overwrite").saveAsTable("nyctaxi.trip")`
    
    --In this code example, the spark.sql method is used to create a database named nyctaxi. A DataFrame named df reads data from a table named Trip in the SQLPOOL1 dedicated SQL pool instance. Finally, the DataFrame df writes data into it and used the saveAsTable method to save it as nyctaxi.trip.
+   
    
 ###   Create a Spark table
    
