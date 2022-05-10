@@ -1,8 +1,13 @@
+# Work with Data Warehouses using Azure Synapse Analytics
+
 ## Reading and Writing to Synapse
 ##  Query data in the lake using Azure Synapse serverless SQL pools 
 ## Create metadata objects in Azure Synapse serverless SQL pools
 ## Use Azure Synapse serverless SQL pools for transforming the data in the lake
 ## Serve the data from Azure Synapse serverless SQL pool
+
+# Perform data engineering with Azure Synapse Apache Spark Pools
+
 ## Work with Data Warehouses using Azure Synapse Analytics by developer features
 ## Use data loading best practices in Azure Synapse Analytics 
 ## Manage and monitor data warehouse activities in Azure Synapse Analytics 
