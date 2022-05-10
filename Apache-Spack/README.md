@@ -124,6 +124,18 @@ Notebooks also enable you to write multiple languages in one notebook by using t
    
    *     Example 3: Read data from the primary storage account
    
+   *     Example 4: Ingest and explore Parquet files from a data lake with Apache Spark for Azure Synapse
+   
+         *  By using the Data hub to view the Parquet files in the connected storage account, then use the new notebook context menu to create a new Synapse notebook that loads a Spark DataFrame with the contents of a selected Parquet file.
+   
+         *  Add the following code beneath the code in the cell to define a variable named datalake whose value is the name of the primary storage account (replace the REPLACE_WITH_YOUR_DATALAKE_NAME value with the name of the storage account in line 2): `datalake = 'REPLACE_WITH_YOUR_DATALAKE_NAME'`
+   
+         *  By default, the cell outputs to a table view when we use the `display()` function. Let's select the Chart visualization to see a different view of the data.
+   
+         *  The Apache Spark engine can analyze the Parquet files and infer the schema. To do so, enter the below code in the new cell and run it: `data_path.printSchema()`
+   
+         --Note: Apache Spark evaluates the file contents to infer the schema. This automatic inference is sufficient for data exploration and most transformation tasks. However, when you load data to an external resource like a SQL pool table, sometimes you need to declare your own schema and apply that to the dataset. For now, the schema looks good.
+   
    <a href="./loadinnotebook.py">Examples</a>
 
 ##  Transform data with DataFrames in Apache Spark Pools in Azure Synapse Analytics
