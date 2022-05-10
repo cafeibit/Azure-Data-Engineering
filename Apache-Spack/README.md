@@ -59,7 +59,7 @@ Notebooks also enable you to write multiple languages in one notebook by using t
    
    It is possible to use multiple languages in one notebook by specifying the language using a magic command at the beginning of a cell. The following table lists the magic commands to switch cell languages:
    
-   <img src="./magicword.pg"/>
+   <img src="./magicword.png" />
    
 ###  Create a Spark Notebook in Azure Synapse Analytics
 
