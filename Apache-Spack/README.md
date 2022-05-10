@@ -93,7 +93,7 @@ Notebooks also enable you to write multiple languages in one notebook by using t
    
 ### Develop/Run/Load data/Save Spark Notebooks
 
-*   To develop solutions in a notebook, you work with cells. Cells are individual blocks of code or text that can be run independently or as a group. There are a range of actions that can be performed against a cell including:
+*  To develop solutions in a notebook, you work with cells. Cells are individual blocks of code or text that can be run independently or as a group. There are a range of actions that can be performed against a cell including:
    *  Move a cell.
    *  Delete a cell.
    *  Collapse Cell in and output.
