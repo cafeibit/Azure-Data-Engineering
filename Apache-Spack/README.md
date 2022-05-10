@@ -26,6 +26,14 @@ Notebooks also enable you to write multiple languages in one notebook by using t
   
     *   Be productive with enhanced authoring capabilities and built-in data visualization.
   
+*   There are various use cases that make using notebooks compelling within Azure Synapse Analytics   
+   
+    *   To perform exploratory data analysis using a familiar paradigm
+   
+    *   To integrate notebooks as part of a broader data transformation process
+   
+    *   You wish to perform advanced analytics using notebooks with Azure Machine Learning Services
+   
 ###  Create a Spark Notebook in Azure Synapse Analytics
 
 ### Develop Spark Notebooks
