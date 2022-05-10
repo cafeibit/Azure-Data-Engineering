@@ -110,36 +110,30 @@ Notebooks also enable you to write multiple languages in one notebook by using t
 *  Load data in spark notebooks
    In order to ingest data into a notebook, there are several options. Currently it is possible to load data from an Azure Storage Account, and an Azure Synapse Analytics dedicated SQL pool.
 
-   *     Some examples for reading data in a notebook are:
-
+   *  Some examples for reading data in a notebook are:
          --Read a CSV from Azure Data Lake Store Gen2 as an Apache Spark DataFrame
-   
          --Read a CSV from Azure Storage Account as an Apache Spark DataFrame
-   
          --Read data from the primary storage account
    
-   *     Example 1: Read a CSV file from an Azure Data Lake Store Gen2 store as an Apache Spark DataFrame.
+   *  Example 1: Read a CSV file from an Azure Data Lake Store Gen2 store as an Apache Spark DataFrame.
+   *  Example 2: Read a CSV file from Azure Storage Account as a Spark DataFrame.
+   *  Example 3: Read data from the primary storage account
+   *  Example 4: Ingest and explore Parquet files from a data lake with Apache Spark for Azure Synapse
    
-   *     Example 2: Read a CSV file from Azure Storage Account as a Spark DataFrame.
+   *  By using the Data hub to view the Parquet files in the connected storage account, then use the new notebook context menu to create a new Synapse notebook that loads a Spark DataFrame with the contents of a selected Parquet file.
    
-   *     Example 3: Read data from the primary storage account
+   *  Add the following code beneath the code in the cell to define a variable named datalake whose value is the name of the primary storage account (replace the REPLACE_WITH_YOUR_DATALAKE_NAME value with the name of the storage account in line 2): `datalake = 'REPLACE_WITH_YOUR_DATALAKE_NAME'`
    
-   *     Example 4: Ingest and explore Parquet files from a data lake with Apache Spark for Azure Synapse
+   *  By default, the cell outputs to a table view when we use the `display()` function. Let's select the Chart visualization to see a different view of the data.
    
-         *  By using the Data hub to view the Parquet files in the connected storage account, then use the new notebook context menu to create a new Synapse notebook that loads a Spark DataFrame with the contents of a selected Parquet file.
+   *  The Apache Spark engine can analyze the Parquet files and infer the schema. To do so, enter the below code in the new cell and run it: `data_path.printSchema()`
    
-         *  Add the following code beneath the code in the cell to define a variable named datalake whose value is the name of the primary storage account (replace the REPLACE_WITH_YOUR_DATALAKE_NAME value with the name of the storage account in line 2): `datalake = 'REPLACE_WITH_YOUR_DATALAKE_NAME'`
-   
-         *  By default, the cell outputs to a table view when we use the `display()` function. Let's select the Chart visualization to see a different view of the data.
-   
-         *  The Apache Spark engine can analyze the Parquet files and infer the schema. To do so, enter the below code in the new cell and run it: `data_path.printSchema()`
-   
-         --Note: Apache Spark evaluates the file contents to infer the schema. This automatic inference is sufficient for data exploration and most transformation tasks. However, when you load data to an external resource like a SQL pool table, sometimes you need to declare your own schema and apply that to the dataset. For now, the schema looks good.
+   --Note: Apache Spark evaluates the file contents to infer the schema. This automatic inference is sufficient for data exploration and most transformation tasks. However, when you load data to an external resource like a SQL pool table, sometimes you need to declare your own schema and apply that to the dataset. For now, the schema looks good.
    
    <a href="./loadinnotebook.py">Examples</a>
 
 *  Save spark notebooks
-   
+
    When you have finished with your work in the notebooks, it is possible to save a single notebook or all of notebooks that you've created within Azure Synapse Studio notebooks.
 
    *  To save changes you made to a single notebook, select the Publish button on the notebook command bar.
