@@ -34,6 +34,8 @@ Notebooks also enable you to write multiple languages in one notebook by using t
    
     *   You wish to perform advanced analytics using notebooks with Azure Machine Learning Services
 
+###  Create a Spark Notebook in Azure Synapse Analytics
+   
 *   Exercise: Create a spark notebook in Azure Synapse Analytics
    
     *    In the Azure portal, navigate to the Azure Synapse workspace you want to use, and select Open Synapse Studio.
@@ -89,11 +91,43 @@ Notebooks also enable you to write multiple languages in one notebook by using t
 
    Available cell magics: %%time, %%timeit, %%capture, %%writefile, %%sql, %%pyspark, %%spark, %%csharp
    
-###  Create a Spark Notebook in Azure Synapse Analytics
+### Develop/Run/Load data/Save Spark Notebooks
 
-### Develop Spark Notebooks
+*     To develop solutions in a notebook, you work with cells. Cells are individual blocks of code or text that can be run independently or as a group. There are a range of actions that can be performed against a cell including:
+   
+   *     Move a cell.
+   *     Delete a cell.
+   *     Collapse Cell in and output.
+   *     Undo Cell operations.
 
-### Run Spark Notebooks, Load data in Spark Notebooks and Save Spark Notebooks
+*  Run spark notebooks
+   
+   *     Run a Cell
+   *     Run all cells
+   *     Cancel a running cell
+   *     Cell Status indicator
+   *     Spark progress indicator
+   *     Spark session config
+   
+*  Load data in spark notebooks
+   
+   In order to ingest data into a notebook, there are several options. Currently it is possible to load data from an Azure Storage Account, and an Azure Synapse Analytics dedicated SQL pool.
+
+   *     Some examples for reading data in a notebook are:
+
+         --Read a CSV from Azure Data Lake Store Gen2 as an Apache Spark DataFrame
+   
+         --Read a CSV from Azure Storage Account as an Apache Spark DataFrame
+   
+         --Read data from the primary storage account
+   
+   *     Example 1: Read a CSV file from an Azure Data Lake Store Gen2 store as an Apache Spark DataFrame.
+   
+   *     Example 2: Read a CSV file from Azure Storage Account as a Spark DataFrame.
+   
+   *     Example 3: Read data from the primary storage account
+   
+   <a href="./loadinnotebook.py">Examples</a>
 
 ##  Transform data with DataFrames in Apache Spark Pools in Azure Synapse Analytics
 
