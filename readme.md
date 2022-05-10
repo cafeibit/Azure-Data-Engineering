@@ -1,4 +1,15 @@
-# Reading and Writing to Synapse
+## Reading and Writing to Synapse
+##  Query data in the lake using Azure Synapse serverless SQL pools 
+## Create metadata objects in Azure Synapse serverless SQL pools
+## Use Azure Synapse serverless SQL pools for transforming the data in the lake
+## Serve the data from Azure Synapse serverless SQL pool
+## Work with Data Warehouses using Azure Synapse Analytics by developer features
+## Use data loading best practices in Azure Synapse Analytics 
+## Manage and monitor data warehouse activities in Azure Synapse Analytics 
+ 
+ 
+ 
+## Reading and Writing to Synapse
  
  ## Objectives
 
@@ -492,6 +503,7 @@ To serve and make use of the data that is queried or transformed by Azure Synaps
 
 
 ## Work with Data Warehouses using Azure Synapse Analytics by developer features
+
 ### Work With Windowning functions
 *  Window Functions
    *  Ranking functions
@@ -564,7 +576,7 @@ Exploratory data analysis can involve querying metadata about the data that is s
    *  Eases maintenance
    *  Improved performance
 
-# Use data loading best practices in Azure Synapse Analytics 
+## Use data loading best practices in Azure Synapse Analytics 
 
 ### Load methods into Azure Synapse Analytics
 1. **Data loads directly from Azure storage with transact-sql and the copy statement**
@@ -683,7 +695,7 @@ That is to say, data sources that contain invalid data formats, corrupted record
  ###  <a href="analyze-optimize-performamce.md">Analyze and optimize data warehouse storage in Azure Synapse Analytics</a>
 
  
- # Manage and monitor data warehouse activities in Azure Synapse Analytics 
+ ## Manage and monitor data warehouse activities in Azure Synapse Analytics 
  
  ### Scale compute resources in Azure Synapse Analytics
  
