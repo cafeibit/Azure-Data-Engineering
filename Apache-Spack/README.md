@@ -6,7 +6,11 @@ To perform data engineering with Azure Synapse Apache Spark Pools, which enable 
 
 To differentiate between Apache Spark, Azure Databricks, HDInsight, and SQL Pools, as well as understanding the use-cases of data-engineering with Apache Spark in Azure Synapse Analytics.
 
+* When do you use Apache Spark pools in Azure Synapse Analytics
 
+With the variety of Apache Spark data services that are available on Azure, the following table outlines where Azure Synapse Analytics Apache Spark pools fit in the ecosystem.
+
+<img src="./whentouseapachespark.png" />
 
 ##  Ingest data with Apache Spark notebooks in Azure Synapse Analytics
 
