@@ -14,11 +14,23 @@ With the variety of Apache Spark data services that are available on Azure, the 
 
 ##  Ingest data with Apache Spark notebooks in Azure Synapse Analytics
 
-* Create a Spark Notebook in Azure Synapse Analytics
+Notebooks also enable you to write multiple languages in one notebook by using the magic commands expressed by using the %%<Name of Language> syntax. As a result you could create a temporary table to store ingested data within the notebook, and then use the magic command to enable multiple languages to work with this data.
 
-* Develop Spark Notebooks
+*   With an Azure Synapse Studio notebook, you can:
 
-* Run Spark Notebooks, Load data in Spark Notebooks and Save Spark Notebooks
+    *   Get started with zero setup effort.
+  
+    *   Keep data secure with built-in enterprise security features.
+  
+    *   Analyze data across raw formats (CSV, txt, JSON, etc.), processed file formats (parquet, Delta Lake, ORC, etc.), and SQL tabular data files against Apache Spark and SQL.
+  
+    *   Be productive with enhanced authoring capabilities and built-in data visualization.
+  
+###  Create a Spark Notebook in Azure Synapse Analytics
+
+### Develop Spark Notebooks
+
+### Run Spark Notebooks, Load data in Spark Notebooks and Save Spark Notebooks
 
 ##  Transform data with DataFrames in Apache Spark Pools in Azure Synapse Analytics
 
