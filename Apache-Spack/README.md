@@ -14,7 +14,11 @@ With the variety of Apache Spark data services that are available on Azure, the 
 
 ##  Ingest data with Apache Spark notebooks in Azure Synapse Analytics
 
+* Create a Spark Notebook in Azure Synapse Analytics
 
+* Develop Spark Notebooks
+
+* Run Spark Notebooks, Load data in Spark Notebooks and Save Spark Notebooks
 
 ##  Transform data with DataFrames in Apache Spark Pools in Azure Synapse Analytics
 
