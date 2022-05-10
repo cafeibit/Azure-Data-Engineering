@@ -488,10 +488,10 @@ The Azure Synapse Analytics environment enables you to use both technologies wit
 
 * The Apache Spark and SQL integration that is available within Azure Synapse analytics provides several benefits:
 
- * You can take advantage of the big data computational power that Apache Spark offers
- * There is flexibility in the use of Apache Spark and SQL languages and frameworks on one platform
- * The integration is seamless and doesn’t require a complex setup
- * SQL and Apache Spark share the same underlying metadata store to transfer data easily
+  * You can take advantage of the big data computational power that Apache Spark offers
+  * There is flexibility in the use of Apache Spark and SQL languages and frameworks on one platform
+  * The integration is seamless and doesn’t require a complex setup
+  * SQL and Apache Spark share the same underlying metadata store to transfer data easily
  
 ### Transfer data between SQL and Spark Pool in Azure Synapse Analytics
 
