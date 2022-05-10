@@ -94,23 +94,20 @@ Notebooks also enable you to write multiple languages in one notebook by using t
 ### Develop/Run/Load data/Save Spark Notebooks
 
 *   To develop solutions in a notebook, you work with cells. Cells are individual blocks of code or text that can be run independently or as a group. There are a range of actions that can be performed against a cell including:
-   
-   *     Move a cell.
-   *     Delete a cell.
-   *     Collapse Cell in and output.
-   *     Undo Cell operations.
+   *  Move a cell.
+   *  Delete a cell.
+   *  Collapse Cell in and output.
+   *  Undo Cell operations.
 
 *  Run spark notebooks
-   
-   *     Run a Cell
-   *     Run all cells
-   *     Cancel a running cell
-   *     Cell Status indicator
-   *     Spark progress indicator
-   *     Spark session config
+   *  Run a Cell
+   *  Run all cells
+   *  Cancel a running cell
+   *  Cell Status indicator
+   *  Spark progress indicator
+   *  Spark session config
    
 *  Load data in spark notebooks
-   
    In order to ingest data into a notebook, there are several options. Currently it is possible to load data from an Azure Storage Account, and an Azure Synapse Analytics dedicated SQL pool.
 
    *     Some examples for reading data in a notebook are:
