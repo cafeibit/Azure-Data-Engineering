@@ -143,6 +143,36 @@ Notebooks also enable you to write multiple languages in one notebook by using t
    
 ##  Transform data with DataFrames in Apache Spark Pools in Azure Synapse Analytics
 
+DataFrames are a collection of data organized into named columns. DataFrames enable Apache Spark to understand the schema of the data, and optimize any execution plans on queries that will access the data held in the DataFrame. DataFrames are designed to process a large volume of data from a wide variety of data sources from structured data sources through to Resilient Distributed Datasets (RDDs) in either a batch or streaming data architecture. In short, DataFrames are to Apache Spark, what tables are to relational databases.
+   
+*  The first step is to construct a DataFrame. You can create a DataFrame and populate it with data at execution time as shown in the above example:   
+*  However, it is more common to ingest data from a data source such as a file into a DataFrame as shown in the next example:
+   
+   `from azureml.opendatasets import NycTlcYellow`
+
+   `data = NycTlcYellow()`
+   
+   `data_df = data.to_spark_dataframe()`
+   
+   `display(data_df.limit(10))`
+   
+   --Once you're at the stage where you have populated a DataFrame with data, you manipulate the data stored in a DataFrame. The manipulation of data can be done with User Defined Functions (UDFs) that are column-based and help you transform and manipulate the data stored in a DataFrame.
+   
+###   Load data into a Spark DataFrame
+   
+   
+###   Create a Spark table
+   
+   
+###   Write Data to and from a storage account
+   
+   
+###   Load a streaming DataFrame into Apache Spark
+   
+   
+###   Flatten nested structures and explode arrays with Apache Spark
+   
+   
 
 ##  Integrate SQL and Apache Spark pools in Azure Synapse Analytics
 
