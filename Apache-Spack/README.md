@@ -191,7 +191,7 @@ A common use case for using Apache Spark pools in Azure Synapse Analytics is for
 
 *  With Azure Synapse Apache Spark pools, it's easy to transform nested structures into columns and array elements into multiple rows.   
 
-*  In the example, the following steps show the techniques involved to deal with complex data types by creating multiple DataFrames to achieve the desired result.
+*  In the <a href="./loadinnotebook.py">Examples</a>, the following steps show the techniques involved to deal with complex data types by creating multiple DataFrames to achieve the desired result.
    
    *  Step 1: Define a function for flattening
 
