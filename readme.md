@@ -482,11 +482,17 @@ The Azure Synapse Analytics environment enables you to use both technologies wit
 
 * The Azure Synapse Apache Spark to Synapse SQL connector is designed to efficiently transfer data between serverless Apache Spark pools and dedicated SQL pools in Azure Synapse. At the moment, the Azure Synapse Apache Spark to Synapse SQL connector works on dedicated SQL pools only, it doesn't work with serverless SQL pools.
 
-* Therefore, a new approach is to use both JDBC and PolyBase. First, the JDBC opens a connection and issues Create External Tables As Select (CETAS) statements and sends filters and projections. The filters and projections are then applied to the data warehouse and exports the data in parallel using PolyBase. Apache Spark reads the data in parallel based on the user-provisioned workspace and the default data lake storage.
+ * Therefore, a new approach is to use both JDBC and PolyBase. First, the JDBC opens a connection and issues Create External Tables As Select (CETAS) statements and sends filters and projections. The filters and projections are then applied to the data warehouse and exports the data in parallel using PolyBase. Apache Spark reads the data in parallel based on the user-provisioned workspace and the default data lake storage.
 
-* As a result, you can use the Azure Synapse Apache Spark Pool to Synapse SQL connector to transfer data between a Data Lake store via Apache Spark and dedicated SQL Pools efficiently.
+ * As a result, you can use the Azure Synapse Apache Spark Pool to Synapse SQL connector to transfer data between a Data Lake store via Apache Spark and dedicated SQL Pools efficiently.
 
+* The Apache Spark and SQL integration that is available within Azure Synapse analytics provides several benefits:
 
+ * You can take advantage of the big data computational power that Apache Spark offers
+ * There is flexibility in the use of Apache Spark and SQL languages and frameworks on one platform
+ * The integration is seamless and doesn’t require a complex setup
+ * SQL and Apache Spark share the same underlying metadata store to transfer data easily
+ 
 ### Transfer data between SQL and Spark Pool in Azure Synapse Analytics
 
 ### Authenticate between Spark and SQL Pool in Azure Synapse Analytics
