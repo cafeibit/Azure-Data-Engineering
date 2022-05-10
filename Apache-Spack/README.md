@@ -160,7 +160,7 @@ DataFrames are a collection of data organized into named columns. DataFrames ena
    
 ###   Load data into a Spark DataFrame
    
-*  You can load data into an Apache Spark DataFrame from different file types stored in an Azure Storage Account, or from data stored in a dedicated SQL pool. Some examples of loading data are:
+*  You can load data into an Apache Spark DataFrame from different file types stored in an Azure Storage Account, or from data stored in a dedicated SQL pool. Some <a href="./loadinnotebook.py">Examples</a> of loading data are:
 
    *  Read a CSV from Azure Data Lake Store Gen2 as an Apache Spark DataFrame
    *  Read a CSV from Azure Storage Account as an Apache Spark DataFrame
@@ -177,19 +177,40 @@ DataFrames are a collection of data organized into named columns. DataFrames ena
    --In this code example, the spark.sql method is used to create a database named nyctaxi. A DataFrame named df reads data from a table named Trip in the SQLPOOL1 dedicated SQL pool instance. Finally, the DataFrame df writes data into it and used the saveAsTable method to save it as nyctaxi.trip.
    
    
-###   Create a Spark table
-   
-   
-###   Write Data to and from a storage account
-   
-   
-###   Load a streaming DataFrame into Apache Spark
-   
-   
 ###   Flatten nested structures and explode arrays with Apache Spark
    
-   
+A common use case for using Apache Spark pools in Azure Synapse Analytics is for transforming complex data structures using DataFrames. It can help for the following reasons:
 
+*  Complex data types are increasingly common and represent a challenge for data engineers because analyzing nested schema and data arrays often include time-consuming and complex SQL queries.
+   
+*  It can be difficult to rename or cast the nested column data type.
+   
+*  Performance issues arise when working with deeply nested objects. Data Engineers need to understand how to efficiently process complex data types and make them easily accessible to everyone. In the following example, Apache Spark for Azure Synapse is used to read and transform objects into a flat structure through data frames.
+   
+*  Apache Synapse SQL serverless is used to query such objects directly and return those results as a regular table.
+
+*  With Azure Synapse Apache Spark pools, it's easy to transform nested structures into columns and array elements into multiple rows.   
+
+*  In the example, the following steps show the techniques involved to deal with complex data types by creating multiple DataFrames to achieve the desired result.
+   
+   *  Step 1: Define a function for flattening
+
+   We create a function that will flatten the nested schema.
+
+   *  Step 2: Flatten nested schema
+   
+   We will define the function you create to flatten the nested schema from one DataFrame into a new DataFrame.
+
+   *  Step 3: Explode Arrays
+   
+   Here you will transform the data array from the DataFrame created in step 2 into a new DataFrame.
+
+   *  Step 4: Flatten child nested Schema
+   
+   Finally, you use the transformed DataFrame created in step 3 and load the cleansed data into a destination DataFrame to complete the work.
+   
+   
+   
 ##  Integrate SQL and Apache Spark pools in Azure Synapse Analytics
 
 
