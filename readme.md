@@ -492,10 +492,54 @@ The Azure Synapse Analytics environment enables you to use both technologies wit
   * There is flexibility in the use of Apache Spark and SQL languages and frameworks on one platform
   * The integration is seamless and doesn’t require a complex setup
   * SQL and Apache Spark share the same underlying metadata store to transfer data easily
- 
-### Transfer data between SQL and Spark Pool in Azure Synapse Analytics
+  
+* The integration can be helpful in use cases where you perform an ETL process predominately using SQL but need to call on the computation power of Apache Spark to perform a portion of the extract, transform, and load (ETL) process as it is more efficient.
+
+  * Let's say you would like to write data to a SQL pool after you've performed engineering tasks in Apache Spark. You can reference the dedicated SQL pool data as a source for joining with an Apache Spark DataFrame that can contain data from other files. The method makes use of the Azure Synapse Apache Spark to Synapse SQL connector to efficiently transfer data between the Apache Spark and SQL Pools.
+  
+  * The Azure Synapse Apache Spark pool to Synapse SQL connector is a data source implementation for Apache Spark. It uses the Azure Data Lake Storage Gen2 and PolyBase in SQL pools to efficiently transfer data between the Spark cluster and the Synapse SQL instance.
+  
+  * The other thing to keep in mind is that beyond the capabilities mentioned above, the Azure Synapse Studio experience gives you an integrated notebook experience. Within this notebook experience, you can attach a SQL or Apache Spark pool, and develop and execute transformation pipelines using Python, Scala, and native Spark SQL.
 
 ### Authenticate between Spark and SQL Pool in Azure Synapse Analytics
+
+The authentication between the two systems is made seamless in Azure Synapse Analytics. The Token Service connects with Azure Active Directory to obtain the security tokens to be used when accessing the storage account or the data warehouse in the dedicated SQL pool.
+
+For this reason, there's no need to create credentials or specify them in the connector API if Azure AD-Auth is configured at the storage account and the dedicated SQL pool. If not, SQL Authentication can be specified. The only constraint is that this connector only works in Scala.
+
+* There are some prerequisites to authenticate correctly:
+
+  * The account used needs to be a member of the db_exporter role in the database or SQL pool from which you want to transfer data to or from.
+  * The account used needs to be a member of the Storage Blob Data Contributor role on the default storage account.
+  * If you want to create users, you need to connect to the dedicated SQL pool database from which you want transfer data to or from as shown in the following example: 
+  
+  `--SQL Authenticated User`
+  
+  `CREATE USER Leo FROM LOGIN Leo;`
+
+  `--Azure Active Directory User`
+  
+  `CREATE USER [chuck@contoso.com] FROM EXTERNAL PROVIDER;`
+
+  * When you want to assign the user account to a role, you can use the following script as an example:
+
+  `--SQL Authenticated user`
+  
+  `EXEC sp_addrolemember 'db_exporter', 'Leo';`
+
+  `--Azure Active Directory User`
+
+  `EXEC sp_addrolemember 'db_exporter',[chuck@contoso.com]`
+  
+  * Once the authentication is in place, you can transfer data to or from a dedicated SQL pool attached within the workspace.
+
+### Transfer data between SQL and spark pool in Azure Synapse Analytics
+
+By using Azure Active Directory to transfer data to and from an Apache Spark pool and a dedicated SQL pool attached within the workspace you have created for your Azure Synapse Analytics account. If you're using the notebook experience from the Azure Synapse Studio environment linked to your workspace resource, you don’t have to use import statements. Import statements are only required when you don't go through the integrated notebook experience.
+
+It is important that the Constants and the SqlAnalyticsConnector are set up as shown below:
+
+
 
 ### Integrate SQL and Spark Pools in Azure Synapse Analytics
 
