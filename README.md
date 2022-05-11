@@ -112,18 +112,20 @@ Azure Synapse Analytics is an integrated analytics platform, which combines <b>d
   *  Use dynamic management views to identify and troubleshoot query performance 
 * Work with Hybrid Transactional and Analytical Processing Solutions using Azure Synapse Analytics
 
-To perform operational analytics against Azure Cosmos DB using the Azure Synapse Link feature within Azure Synapse Analytics. 
+  To perform operational analytics against Azure Cosmos DB using the Azure Synapse Link feature within Azure Synapse Analytics. 
 
-  * Design hybrid transactional and analytical processing using Azure Synapse Analytics
-  * To configure and enable Azure Synapse Link to interact with Azure Cosmos DB. 
-  * To perform analytics against Azure Cosmos DB using Azure Synapse Link.
-  * to use the Synapse serverless SQL pools to query the Azure Cosmos DB data made available by Azure Synapse Link. 
+  *  Design hybrid transactional and analytical processing using Azure Synapse Analytics
+  *  To configure and enable Azure Synapse Link to interact with Azure Cosmos DB. 
+  *  To perform analytics against Azure Cosmos DB using Azure Synapse Link.
+  *  to use the Synapse serverless SQL pools to query the Azure Cosmos DB data made available by Azure Synapse Link. 
+  
 * To capture, store and analyze data in real-time or near-real time with features such as Azure Synapse Link, or through the integration of services such as Azure Stream Analytics and Azure Data Explorer.
-  * Azure Stream Analytics 
-  * Azure Data Explorer
+  *  Azure Stream Analytics 
+  *  Azure Data Explorer
+  
 * Integrate Azure Synapse Analytics with Azure Data and AI services
-  * To build Power BI reports from within Azure Synapse Analytics. 
-  * To build machine learning modules from within Azure Synapse Analytics. 
+  *  To build Power BI reports from within Azure Synapse Analytics. 
+  *  To build machine learning modules from within Azure Synapse Analytics. 
   
 * <a href="../SynapseAnalytics/readme.md">Data Engineering with Azure Synapse Analytics</a>
 * <a href="https://docs.microsoft.com/en-us/azure/synapse-analytics/sql/overview-architecture">Azure Synapse SQL architecture</a>
