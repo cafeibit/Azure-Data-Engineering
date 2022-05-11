@@ -636,7 +636,7 @@ The Write API using SQL Auth looks as follows:
 `sqlanalytics("<DBName>.<Schema>.<TableName>", <TableType>)`
  
 
-### Integrate SQL and Spark Pools in Azure Synapse Analytics
+* Integrate SQL and Spark Pools in Azure Synapse Analytics by <a href="./sqlscript/synapse-integrate.sql"> examples</a>
 
 ### Externalize the use of Spark Pools within Azure Synapse workspace
 
