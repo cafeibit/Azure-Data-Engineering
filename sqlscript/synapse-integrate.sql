@@ -97,39 +97,63 @@ sqlanalytics("<DBName>.<Schema>.<TableName>", <TableType>)
 --It uses the Azure Data Lake Storage Gen2 and PolyBase in SQL pools to efficiently transfer data 
 --between the Spark cluster and the Synapse SQL instance.
 
-#PySpark
+#1. If we want to use the Apache Spark pool to Synapse SQL connector (sqlanalytics), 
+#one option is to create a temporary view of the data within the DataFrame. 
+#Execute the code below in a new cell to create a view named top_purchases:
 
-# Create a temporary view for top purchases 
+%%PySpark
+#Create a temporary view for top purchases 
 topPurchases.createOrReplaceTempView("top_purchases")
+
+#We created a new temporary view from the topPurchases dataframe that we created earlier 
+#and which contains the flattened JSON user purchases data.
+
+#2. We must execute code that uses the Apache Spark pool to Synapse SQL connector in Scala. 
+#To do so, we add the %%spark magic to the cell. Execute the code below in a new cell to read from the top_purchases view:
 
 %%spark
 // Make sure the name of the SQL pool (SQLPool01 below) matches the name of your SQL pool.
 val df = spark.sqlContext.sql("select * from top_purchases")
 df.write.sqlanalytics("SQLPool01.wwi.TopPurchases", Constants.INTERNAL)
 
---Return to the notebook and execute the code below in a new cell to read sales data 
---from all the Parquet files located in the sale-small/Year=2019/Quarter=Q4/Month=12/ folder:
+#After the cell finishes executing, let's take a look at the list of SQL pool tables to verify that the table was successfully created for us.
 
-#PySpark
+#3. Leave the notebook open, then navigate to the Data hub (if not already selected).
+#4. Select the Workspace tab (1), expand the SQL pool, select the ellipses (...) on Tables (2) and select Refresh (3). 
+#Expand the wwi.TopPurchases table and columns (4).
+#5. Return to the notebook and execute the code below in a new cell to read sales data 
+#from all the Parquet files located in the sale-small/Year=2019/Quarter=Q4/Month=12/ folder:
+
+%%PySpark
 dfsales = spark.read.load('abfss://wwi-02@' + datalake + '.dfs.core.windows.net/sale-small/Year=2019/Quarter=Q4/Month=12/*/*.parquet', format='parquet')
 display(dfsales.limit(10))
 
---To read from the TopSales SQL pool table and save it to a temporary view:
+#Next, let's load the TopSales data from the SQL pool table we created earlier into a new Apache Spark DataFrame, 
+#then join it with this new dfsales DataFrame. To do so, we must once again use the %%spark magic on a new cell 
+#since we'll use the Apache Spark pool to Synapse SQL connector to retrieve data from the SQL pool. 
+#Then we need to add the DataFrame contents to a new temporary view so we can access the data from Python.
+
+#6. Execute the code below in a new cell to read from the TopSales SQL pool table and save it to a temporary view:
 
 %%spark
 // Make sure the name of the SQL pool (SQLPool01 below) matches the name of your SQL pool.
 val df2 = spark.read.sqlanalytics("SQLPool01.wwi.TopPurchases")
 df2.createTempView("top_purchases_sql")
-
 df2.head(10)
 
---To create a new DataFrame in Python from the top_purchases_sql temporary view, then display the first 10 results:
+#The cell's language is set to Scala by using the %%spark magic (1) at the top of the cell. 
+#We declared a new variable named df2 as a new DataFrame created by the spark.read.sqlanalytics method, 
+#which reads from the TopPurchases table (2) in the SQL pool. Then we populated a new temporary view named top_purchases_sql (3). 
+#Finally, we showed the first 10 records with the df2.head(10)) line (4). The cell output displays the DataFrame values (5).
+
+#7. Execute the code below in a new cell to create a new DataFrame in Python from the top_purchases_sql temporary view, then display the first 10 results:
+
+%%PySpark
 
 dfTopPurchasesFromSql = sqlContext.table("top_purchases_sql")
-
 display(dfTopPurchasesFromSql.limit(10))
 
---To join the data from the sales Parquet files and the TopPurchases SQL pool:
+#8. Execute the code below in a new cell to join the data from the sales Parquet files and the TopPurchases SQL pool:
 
 #PySpark
 inner_join = dfsales.join(dfTopPurchasesFromSql,
@@ -146,14 +170,16 @@ inner_join_agg = (inner_join.select("CustomerId","TotalAmount","Quantity","items
 display(inner_join_agg.limit(100))
 
 
---To allow other users to use the Azure Synapse Apache Spark to Synapse SQL connector in your Azure Synapse workspace.
---Transfer data outside the synapse workspace using the PySpark connector
+#To allow other users to use the Azure Synapse Apache Spark to Synapse SQL connector in your Azure Synapse workspace.
+#Transfer data outside the synapse workspace using the PySpark connector
 
---You can transfer data to and from a dedicated SQL pool using a Pyspark Connector, which currently works with Scala.
+#You can transfer data to and from a dedicated SQL pool using a Pyspark Connector, which currently works with Scala.
 
---Let's say that you have created or loaded a DataFrame called "pyspark_df", 
---and then assume that you want to write that DataFrame into the data warehouse. How would you go about that task?
---The first thing to do is to create a temporary table in a DataFrame in PySpark using the createOrReplaceTempView method
+#Let's say that you have created or loaded a DataFrame called "pyspark_df", 
+#and then assume that you want to write that DataFrame into the data warehouse. How would you go about that task?
+#The first thing to do is to create a temporary table in a DataFrame in PySpark using the createOrReplaceTempView method
+
+%%PySpark
 
 pyspark_df.createOrReplaceTempView("pysparkdftemptable")
 
