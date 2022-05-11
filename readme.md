@@ -638,13 +638,45 @@ The Write API using SQL Auth looks as follows:
 
 * Integrate SQL and Spark Pools in Azure Synapse Analytics by <a href="./sqlscript/synapse-integrate.sql"> examples</a>
 
+ * Transferring data between Apache Spark pools and SQL pools can be done using JavaDataBaseConnectivity (JDBC). However, given two distributed systems such as Apache Spark and SQL pools, JDBC tends to be a bottleneck with serial data transfer.
+
+ * The Azure Synapse Apache Spark pool to Synapse SQL connector is a data source implementation for Apache Spark. It uses the Azure Data Lake Storage Gen2 and PolyBase in SQL pools to efficiently transfer data between the Spark cluster and the Synapse SQL instance.
+ 
 ### Externalize the use of Spark Pools within Azure Synapse workspace
+
+* You can allow other users to use the Azure Synapse Apache Spark to Synapse SQL connector in your Azure Synapse workspace.
+
+  * First of all, it is necessary to be a Storage Blob Data Owner in relation to the Azure Data Lake Gen 2 storage account that is connected to your workspace. The reason why the user account has to be a member of that role is so that you can alter missing permissions for others. In addition to the above, the user needs to have access to the Azure Synapse workspace. Finally, in order to allow other users to use the connector, it's imperative that the user has permissions to run the notebooks.
+
+* You can configure the ACLs for all folders from "synapse" and downward from Azure portal. If you want to configure the ACLs from the root "/" folder, there are some extra instructions you should follow:
+
+  * Connect to the storage account that is connected to the Azure Synapse workspace. You can use Azure Storage Explorer to do so.
+  * Select your Account and give the Azure Data Lake Storage Gen 2 URL, and the default file system for the Azure Synapse workspace.
+  * If you see the storage account listed, right-click on the listing workspace and make sure you select "Manage Access".
+  * Add the user to the root "/" folder with "Execute" access permission and select "Ok".
+
 
 ### Transfer data outside the Synapse workspace using SQL Authentication
 
-### Transfer data outside the Synapse workspace using the PySpark Connector
+You can transfer data to and from a dedicated SQL pool using a Pyspark Connector, which currently works with Scala.
 
-### Transform data in Apache Spark and write back to SQL Pool in Azure Synapse Analytics
+Let's say that you have created or loaded a DataFrame called "pyspark_df", and then assume that you want to write that DataFrame into the data warehouse. How would you go about that task?
+
+* The first thing to do is to create a temporary table in a DataFrame in `PySpark` using the createOrReplaceTempView method
+
+`pyspark_df.createOrReplaceTempView("pysparkdftemptable")`
+
+* The parameter that is passed through is the temporary table name, which in this case is called: "pysparkdftemptable". We are still using the pyspark_df DataFrame as you can see in the beginning of the statement. Next, you would have to run a Scala cell in the PySpark notebook using magics (since we're using different languages, and it will only work in Scala):
+
+`%%spark`
+
+`val scala_df = spark.sqlContext.sql ("select * from pysparkdftemptable")`
+
+`scala_df.write.sqlanalytics("sqlpool.dbo.PySparkTable", Constants.INTERNAL)`
+
+* By using "val scala_df", we create a fixed value for the scala_dataframe, and then use the statement "select * from pysparkdftemptable", that returns all the data that we created in the temporary table in the previous step, and storing it in a table named sqlpool.dbo.PySparkTable
+
+* Should you wish to read data using the PySpark connector, keep in mind that you read the data using scala first, then write it into a temporary table. Finally you use the Spark SQL in PySpark to query the temporary table into a DataFrame.
 
 
 ## Serve the data from Azure Synapse serverless SQL pool
