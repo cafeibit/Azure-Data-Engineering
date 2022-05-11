@@ -587,11 +587,8 @@ By using Azure Active Directory to transfer data to and from an Apache Spark poo
  The example is shown below:
  
  `df.write.
- 
     option(Constants.DATA_SOURCE, <DataSourceName>).
-    
     option(Constants.FILE_FORMAT, <FileFormatName>).
-    
     sqlanalytics("<DBName>.<Schema>.<TableName>", Constants.EXTERNAL)`
     
     
