@@ -131,6 +131,7 @@ Azure Synapse Analytics is an integrated analytics platform, which combines <b>d
 * <a href="https://docs.microsoft.com/en-us/azure/synapse-analytics/sql/overview-architecture">Azure Synapse SQL architecture</a>
 
 ## Data Engineering with Azure Databricks with best practices
+
 To process and analyze data using multi-task jobs and Delta Live Tables, the Azure Databricks data processing pipeline framework. To run a Delta Live Tables pipeline as part of a data processing workflow with Databricks jobs, Apache Airflow, or Azure Data Factory. 
 
 * Azure Databricks/Delta Lake architecture/performance/features programming by Scala/Python/Java
@@ -144,3 +145,10 @@ To process and analyze data using multi-task jobs and Delta Live Tables, the Azu
   * Read data from Synapse and Write data to Synapse
 * Implement CI/CD with Azure DevOps - an automated process version control, testing capabilities, and controls for deployment approvals
 
+## Data Engineering with Azure Cosmos DB
+
+Azure Cosmos DB is a globally distributed database system that allows you to read and write data from the local replicas of your database and it transparently replicates the data to all the regions associated with your Cosmos account.
+
+* To implement partitions are organized in Azure Cosmos DB and how to choose an appropriate partition key for your solution.
+* To develop client and server-side programming solutions on Azure Cosmos DB.
+* 
