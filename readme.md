@@ -571,37 +571,38 @@ By using Azure Active Directory to transfer data to and from an Apache Spark poo
  
   --For an external table, you need to pre-create the data source and file format in dedicated SQL pool using **SQL** queries:
   
- `CREATE EXTERNAL DATA SOURCE <DataSourceName>`
+ `CREATE EXTERNAL DATA SOURCE <DataSourceName>
  
- `WITH`
+ WITH
  
-  `( LOCATION = 'abfss://...' ,`
+  ( LOCATION = 'abfss://...' ,
   
-    `TYPE = HADOOP`
+    TYPE = HADOOP
     
-  `) ;`
+  ) ;
   
- `CREATE EXTERNAL FILE FORMAT <FileFormatName>`
+ CREATE EXTERNAL FILE FORMAT <FileFormatName>
 
- `WITH (  `
+ WITH (  
  
-    `FORMAT_TYPE = PARQUET,`
+    FORMAT_TYPE = PARQUET,
     
-    `DATA_COMPRESSION = 'org.apache.hadoop.io.compress.SnappyCodec'  `
+    DATA_COMPRESSION = 'org.apache.hadoop.io.compress.SnappyCodec'  
 
- `);`
+ );`
  
 * It is not necessary to create an EXTERNAL CREDENTIAL object if you are using Azure AD pass-through authentication from the storage account. The only thing you need to keep in mind is that you need to be a member of the "Storage Blob Data Contributor" role on the storage account. The next step is to use the df.write command within **Scala** with DATA_SOURCE, FILE_FORMAT, and the sqlanalytics command in a similar way to writing data to an internal table.
 
  The example is shown below:
  
- `df.write.`
+ `df.write.
  
-    `option(Constants.DATA_SOURCE, <DataSourceName>).`
+    option(Constants.DATA_SOURCE, <DataSourceName>).
     
-    `option(Constants.FILE_FORMAT, <FileFormatName>).`
+    option(Constants.FILE_FORMAT, <FileFormatName>).
     
-    `sqlanalytics("<DBName>.<Schema>.<TableName>", Constants.EXTERNAL)`
+    sqlanalytics("<DBName>.<Schema>.<TableName>", Constants.EXTERNAL)`
+    
     
 ### Authenticate between spark and SQL pool in Azure Synapse Analytics
 
