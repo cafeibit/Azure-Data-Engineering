@@ -112,7 +112,7 @@ Azure Synapse Analytics is an integrated analytics platform, which combines <b>d
   *  Use dynamic management views to identify and troubleshoot query performance 
 * Work with Hybrid Transactional and Analytical Processing Solutions using Azure Synapse Analytics
 
-  To perform operational analytics against Azure Cosmos DB using the Azure Synapse Link feature within Azure Synapse Analytics. 
+  To perform operational analytics against Azure Cosmos DB using the Azure Synapse Link feature within Azure Synapse Analytic and solves the issue of making operational data available for analytical query in near real time. 
 
   *  Design hybrid transactional and analytical processing using Azure Synapse Analytics
   *  To configure and enable Azure Synapse Link to interact with Azure Cosmos DB. 
