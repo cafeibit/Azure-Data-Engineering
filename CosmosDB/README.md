@@ -21,6 +21,10 @@ Azure Cosmos DB is a globally distributed database system that allows you to rea
 
 * As more and more businesses move to digital processes, they increasingly recognize the value of being able to respond to opportunities by making faster and well-informed decisions. HTAP (Hybrid Transactional/Analytical processing) enables business to run advanced analytics in near-real-time on data stored and processed by OLTP systems.
 
+* Azure Synapse Link for Azure Cosmos DB
+
+  Azure Synapse Link for Azure Cosmos DB is a cloud-native HTAP capability that enables you to run near-real-time analytics over operational data stored in Azure Cosmos DB. Azure Synapse Link creates a tight seamless integration between Azure Cosmos DB and Azure Synapse Analytics.
+
 <img src="./synapse-analytics-cosmos-db-architecture.png" />
 
 
