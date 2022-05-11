@@ -501,7 +501,7 @@ The Azure Synapse Analytics environment enables you to use both technologies wit
   
   * The other thing to keep in mind is that beyond the capabilities mentioned above, the Azure Synapse Studio experience gives you an integrated notebook experience. Within this notebook experience, you can attach a SQL or Apache Spark pool, and develop and execute transformation pipelines using Python, Scala, and native Spark SQL.
 
-### Authenticate between Spark and SQL Pool in Azure Synapse Analytics
+### Authenticate in Azure Synapse Analytics
 
 The authentication between the two systems is made seamless in Azure Synapse Analytics. The Token Service connects with Azure Active Directory to obtain the security tokens to be used when accessing the storage account or the data warehouse in the dedicated SQL pool.
 
@@ -603,8 +603,39 @@ By using Azure Active Directory to transfer data to and from an Apache Spark poo
     
     `sqlanalytics("<DBName>.<Schema>.<TableName>", Constants.EXTERNAL)`
     
+### Authenticate between spark and SQL pool in Azure Synapse Analytics
 
+Another way to authenticate is using SQL Authentication, instead of Azure Active Directory (Azure AD) with the Azure Synapse Apache Spark Pool to Synapse SQL connector. Currently, the Azure Synapse Apache Spark Pool to Synapse SQL connector does not support a token-based authentication to a dedicated SQL pool that is outside of the workspace of Synapse Analytics. In order to establish and transfer data to a dedicated SQL pool that is outside of the workspace without Azure AD, you would have to use SQL Authentication.
+
+* To read data from a dedicated SQL pool outside your workspace without Azure AD, you use the Read API. The Read API works for Internal tables (Managed Tables) and External Tables in the dedicated SQL pool.
+
+The Read API looks as follows when using SQL Authentication:
+
+`val df = spark.read.`
+
+`option(Constants.SERVER, "samplews.database.windows.net").`
+
+`option(Constants.USER, <SQLServer Login UserName>).`
+
+`option(Constants.PASSWORD, <SQLServer Login Password>).`
+
+ `sqlanalytics("<DBName>.<Schema>.<TableName>")`
  
+* In order to write data to a dedicated SQL Pool, you use the Write API. The Write API creates the table in the dedicated SQL pool, and then uses Polybase to load the data into the table that was created.
+
+The Write API using SQL Auth looks as follows:
+
+`df.write.`
+
+`option(Constants.SERVER, "samplews.database.windows.net").`
+
+`option(Constants.USER, <SQLServer Login UserName>).`
+
+`option(Constants.PASSWORD, <SQLServer Login Password>).`
+
+`sqlanalytics("<DBName>.<Schema>.<TableName>", <TableType>)`
+ 
+
 ### Integrate SQL and Spark Pools in Azure Synapse Analytics
 
 ### Externalize the use of Spark Pools within Azure Synapse workspace
