@@ -468,7 +468,7 @@ Once you prepare your data transformation query, you can encapsulate the transfo
 
  * Drag green connector from the Delete activity to Stored procedure activity. Click OK
 
-## Integrate SQL and Apache Spark pools in Azure Synapse Analytics
+## Integrate SQL and Apache Spark pools in Azure Synapse Analytics <a href="./Apache-Spack/dataengineeringbyspark.scala">Example</a>
 
 The Azure Synapse Analytics environment enables you to use both technologies within one integrated platform. The integrated platform experience allows you to switch between Apache Spark and SQL based data engineering tasks applicable to the expertise you have in-house. As a result, an Apache Spark-orientated data engineer can easily communicate and work with a SQL-based data engineer on the same platform.
 
@@ -572,23 +572,14 @@ By using Azure Active Directory to transfer data to and from an Apache Spark poo
   --For an external table, you need to pre-create the data source and file format in dedicated SQL pool using **SQL** queries:
   
   `CREATE EXTERNAL DATA SOURCE <DataSourceName>
- 
   WITH
- 
    ( LOCATION = 'abfss://...' ,
-  
     TYPE = HADOOP
-    
   ) ;
-  
  CREATE EXTERNAL FILE FORMAT <FileFormatName>
-
  WITH (  
- 
     FORMAT_TYPE = PARQUET,
-    
     DATA_COMPRESSION = 'org.apache.hadoop.io.compress.SnappyCodec'  
-
  );`
  
 * It is not necessary to create an EXTERNAL CREDENTIAL object if you are using Azure AD pass-through authentication from the storage account. The only thing you need to keep in mind is that you need to be a member of the "Storage Blob Data Contributor" role on the storage account. The next step is to use the df.write command within **Scala** with DATA_SOURCE, FILE_FORMAT, and the sqlanalytics command in a similar way to writing data to an internal table.
@@ -635,13 +626,14 @@ The Write API using SQL Auth looks as follows:
 `option(Constants.PASSWORD, <SQLServer Login Password>).`
 
 `sqlanalytics("<DBName>.<Schema>.<TableName>", <TableType>)`
- 
 
 * Integrate SQL and Spark Pools in Azure Synapse Analytics by <a href="./sqlscript/synapse-integrate.sql"> examples</a>
 
  * Transferring data between Apache Spark pools and SQL pools can be done using JavaDataBaseConnectivity (JDBC). However, given two distributed systems such as Apache Spark and SQL pools, JDBC tends to be a bottleneck with serial data transfer.
 
  * The Azure Synapse Apache Spark pool to Synapse SQL connector is a data source implementation for Apache Spark. It uses the Azure Data Lake Storage Gen2 and PolyBase in SQL pools to efficiently transfer data between the Spark cluster and the Synapse SQL instance.
+ 
+ <a href="./Apache-Spack/dataengineeringbyspark.scala">Example</a>
  
 ### Externalize the use of Spark Pools within Azure Synapse workspace
 
@@ -656,7 +648,9 @@ The Write API using SQL Auth looks as follows:
   * If you see the storage account listed, right-click on the listing workspace and make sure you select "Manage Access".
   * Add the user to the root "/" folder with "Execute" access permission and select "Ok".
 
-
+  <a href="./Apache-Spack/dataengineeringbyspark.scala">Example</a>
+  
+  
 ### Transfer data outside the Synapse workspace using SQL Authentication
 
 You can transfer data to and from a dedicated SQL pool using a Pyspark Connector, which currently works with Scala.
