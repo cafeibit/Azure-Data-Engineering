@@ -120,7 +120,8 @@ Azure Synapse Analytics is an integrated analytics platform, which combines <b>d
   *  To configure and enable Azure Synapse Link to interact with Azure Cosmos DB. 
   *  To perform analytics against Azure Cosmos DB using Azure Synapse Link.
   *  to use the Synapse serverless SQL pools to query the Azure Cosmos DB data made available by Azure Synapse Link. 
-  
+  * <a href="../SynapseAnalytics/CosmosDB/README.md">Data Engineering with Azure Cosmos DB using Synapse Analytics</a>
+
 * To capture, store and analyze data in real-time or near-real time with features such as Azure Synapse Link, or through the integration of services such as Azure Stream Analytics and Azure Data Explorer.
   *  Azure Stream Analytics 
   *  Azure Data Explorer
@@ -153,4 +154,4 @@ Azure Cosmos DB is a globally distributed database system that allows you to rea
 
 * To implement partitions are organized in Azure Cosmos DB and how to choose an appropriate partition key for your solution.
 * To develop client and server-side programming solutions on Azure Cosmos DB.
-* 
+* <a href="../SynapseAnalytics/CosmosDB/README.md">Data Engineering with Azure Cosmos DB using Synapse Analytics</a>
