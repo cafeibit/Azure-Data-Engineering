@@ -1,6 +1,6 @@
 # Data Engineering with Azure Cosmos DB
 
-Azure Cosmos DB is a globally distributed database system that allows you to read and write data from the local replicas of your database and it transparently replicates the data to all the regions associated with your Cosmos account.
+Azure Cosmos DB is a globally distributed database system that allows you to read and write data from the local replicas of your database and it transparently replicates the data to all the regions associated with your Cosmos account. Azure Cosmos DB analytical store is a fully isolated column store for enabling large-scale analytics against operational data in your Azure Cosmos DB, without any impact to your transactional workloads.
 
 * To implement partitions are organized in Azure Cosmos DB and how to choose an appropriate partition key for your solution.
 * To develop client and server-side programming solutions on Azure Cosmos DB.
