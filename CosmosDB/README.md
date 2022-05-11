@@ -33,7 +33,12 @@ Azure Cosmos DB is a globally distributed database system that allows you to rea
 
     <img src="./synapse-analytics-cosmos-db-architecture.png" />
     
-    
+* There are common use cases for using Azure Synapse Link for Azure Cosmos DB capability to address real-world business needs using operational analytics: 
+
+    *   Supply chain analytics, forecasting and reporting.
+    *   Retail real-time personalization.
+    *   Predictive maintenance using anomaly detection with IOT
+   
 ###  To configure and enable Azure Synapse Link to interact with Azure Cosmos DB. 
 
 
