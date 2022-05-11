@@ -571,11 +571,11 @@ By using Azure Active Directory to transfer data to and from an Apache Spark poo
  
   --For an external table, you need to pre-create the data source and file format in dedicated SQL pool using **SQL** queries:
   
- `CREATE EXTERNAL DATA SOURCE <DataSourceName>
+  `CREATE EXTERNAL DATA SOURCE <DataSourceName>
  
- WITH
+  WITH
  
-  ( LOCATION = 'abfss://...' ,
+   ( LOCATION = 'abfss://...' ,
   
     TYPE = HADOOP
     
