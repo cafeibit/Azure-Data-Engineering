@@ -10,6 +10,10 @@ Azure Cosmos DB is a globally distributed database system that allows you to rea
 
 * To develop client and server-side programming solutions on Azure Cosmos DB.
 
+  *   Identify classes and methods used to create resources
+  *   Create resources by using the Azure Cosmos DB .NET v3 SDK
+  *   Write stored procedures, triggers, and user-defined functions by using JavaScript
+
 ## Work with Hybrid Transactional and Analytical Processing Solutions using Azure Synapse Analytics
 
   To perform operational analytics against Azure Cosmos DB using the Azure Synapse Link feature within Azure Synapse Analytic and solves the issue of making operational data available for analytical query in near real time. 
