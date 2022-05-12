@@ -41,8 +41,35 @@ Azure Cosmos DB is a globally distributed database system that allows you to rea
    
 ###  To configure and enable Azure Synapse Link to interact with Azure Cosmos DB. 
 
+* Enable Cosmos DB account to use Azure Synapse Link
 
+  Before we can create an Azure Cosmos DB container with an analytical store, we must first enable Azure Synapse Link on the Azure Cosmos DB account. Today you cannot disable the Synapse Link feature once it is enabled on the account, you cannot disable it. Enabling Synapse Link on the account has no billing implications until containers are created with the analytical store enabled.
+
+* Enabling Synapse Link on Azure Cosmos DB SQL (Core) API account
+
+  *   Navigate to the Azure portal and select the Azure Cosmos DB account.
+  *   Navigate to your previously created Azure Cosmos DB SQL (Core) API account.
+  *   Select Data Explorer in the left-hand menu (3)
+  *   Then click Enable Azure Synapse Link button at the top of the screen (4)
+  *   Then click Enable Azure Synapse Link on the pop-up dialog box.
+  *   Select Features in the left-hand menu (1)
+  *   Verify that the Azure Synapse Link feature shows with a Status of on (2), this will indicate that the Azure Cosmos DB account has been enabled for Azure Synapse Link.
+
+* Enabling Synapse Link on Azure Cosmos DB API for MongoDB account
+
+  *   Navigate to the Azure portal (https://portal.azure.com) and select the Azure Cosmos DB account.
+  *   Navigate to your previously created Azure Cosmos DB API for MongoDB account.
+  *   Select Features in the left-hand menu (3)
+  *   Then click on the Azure Synapse Link entry in the features table (4).
+  *   The click the Enable button on the dialog box on the right (5)
+
+* Create an analytical store enabled container
+
+  Before we can query our data using Azure Synapse Analytics using Azure Synapse Link, we must first create the container that is going to hold our data at the same time enabling it to have an analytical store.
+  
+  *   Create a new Azure Cosmos DB Core (SQL) API container
 ### To perform analytics against Azure Cosmos DB using Azure Synapse Link.
+
 
 
 ### To use the Synapse serverless SQL pools to query the Azure Cosmos DB data made available by Azure Synapse Link. 
