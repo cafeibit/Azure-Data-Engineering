@@ -379,13 +379,112 @@ SELECT  SalesOrderId, SalesOrders.customerId CustomerId,
   *   Here you can see we are using the WITH clause (C) again to specify the path to our property values, notably including the data type suffix (D) of the property as part of the path to the property in order to access the values when using the full fidelity schema. In this example, we need to specify “$.shipDate.string” rather than just “$.shipDate”.
 
       We are joining it back to our Customers view using the CustomerId key present in both (E), and doing some explicit type conversion for our date values using the CONVERT function to project them as SQL date data types.
-                
-* Work with windowing function
-
 
 * Perform complex queries with JSON data
 
+  *   Let us focus on extracting the data from sales order details for now. To do that we are going to want to look at the SalesOrderId (contained within the _id property of the document) and the details property that contains the array of sales order details.
 
-Visualize Azure Cosmos DB data in Power BI
+  `SELECT TOP(10) SalesOrderId, details
+   FROM OPENROWSET('CosmosDB',
+                'Account=adventureworks-mongodb;Database=AdventureWorks;Key=v2mtZ85W0AMCv1ZrY7jMUOWpfBTi1BrUz0Y3Rwmvj9SXSSIKDU7EQVu5kdEMcwAQfvJBnmHSMyxy50c3gD3v4g==',
+                SalesOrder)
+                WITH 
+                (   SalesOrderId varchar(max) '$._id', 
+                    details varchar(max) '$.details'
+                )  As SalesOrders`
+                
+  *   Here we can see the SalesOrderId column (A) is retuning a JSON fragment including the data type of the document _id property, in this case string along with the property values. The details column (B) is also retuning a JSON fragment in this case indicating that the data type is an array (C) and that it contains multiple array elements (D).
+
+  Let us now access these properties by correctly specifying the path including the type suffix for each property (in this case “string” for _id and “array” for the details attributes) by:          
+  
+  `SELECT TOP(10) SalesOrderId, details
+   FROM OPENROWSET('CosmosDB',
+                'Account=adventureworks-mongodb;Database=AdventureWorks;Key=v2mtZ85W0AMCv1ZrY7jMUOWpfBTi1BrUz0Y3Rwmvj9SXSSIKDU7EQVu5kdEMcwAQfvJBnmHSMyxy50c3gD3v4g==',
+                SalesOrder)
+                  WITH 
+                    (   SalesOrderId varchar(max) '$._id.string', 
+                        details varchar(max) '$.details.array'
+                    )  As SalesOrderDetails`
+                    
+  *   Now we can see that the SalesOrderId column contains just the appropriate value and the details column now just contains the JSON array itself starting with the array designator “[“ and ending with “]” and can contain multiple array elements (H) of object type as indicated in the JSON with object type suffix (I).
+
+      Let now create a SalesOrderDetails view by:
+
+`CREATE VIEW SalesOrderDetails
+AS
+SELECT SalesOrderId, SalesOrderArray.[key]+1 as SalesOrderLine, SKUCode, SKUName,Price, Quantity
+   FROM OPENROWSET('CosmosDB',
+                'Account=adventureworks-mongodb;Database=AdventureWorks;Key=v2mtZ85W0AMCv1ZrY7jMUOWpfBTi1BrUz0Y3Rwmvj9SXSSIKDU7EQVu5kdEMcwAQfvJBnmHSMyxy50c3gD3v4g==',
+                SalesOrder) 
+                    WITH 
+                    (   SalesOrderId varchar(max) '$._id.string', 
+                        details varchar(max) '$.details.array'
+                    )  As SalesOrders 
+        CROSS APPLY OPENJSON(SalesOrders.details) AS SalesOrderArray
+            CROSS APPLY OPENJSON(SalesOrderArray.[value]) 
+            WITH
+                (SKUCode varchar(max) '$.object.sku.string',
+                SKUName varchar(max)    '$.object.name.string',
+                Price decimal(10,4) '$.object.price.float64' ,
+                Quantity int    '$.object.quantity.int32'
+            ) As SalesOrderDetails`
+ 
+  *   The first OPENJSON clause provides the SalesOrders.details value we extracted in using the WITH clause of the OPENROWSET. When you call OPENJSON without a WITH clause and provide it with a JSON fragment that represents an array (as is the case in our example) the function returns a table with the following columns:
+
+      Key- A value that contains the zero-based index of the element in the specified array.
+      Value - An nvarchar(max) value that contains the value of the property itself. This will be the object value for each of the array elements in our example.
+      Type -An int value that contains the type of the value, which we don’t use in our example.
+      The second OPENJSON clause is provided with an input value of the value returned by the first OPENJSON clause, in our example the JSON fragment that represents the object of each element within the array. In this case, we use the WITH clause to further specify the column alias, and the column data type and the element path we want to access (remembering to include the type suffix).
+
+      Lastly, we will project all the needed columns including key value returned by the first OPENJSON function (L) which will provide us with the SalesOrderLine, which by convention starts at 1 for each order at AdventureWorks, so needs to be adjusted from its zero-based value.
+ 
+* Work with windowing function
+
+  Adventure Works wanted to be able to understand how the sales order volume and revenue is distributed by city for those customers where they have address details. In the previous units, we prepared a SalesOrderView that contains a row for every customer sales order with the country and city information for that customer where that information was available and a SalesOrderDetailsView that contains a row for every sale order line with information on the price and quantity and details of the product sold
+
+  If we join the SalesOrders and SalesOrderDetails views, we have created in the previous units using the SalesOrderId of both we will get a result set (A) where single row has both the dimensions across which we want to summarize this data along with the values that we wish to measure.
+  
+  `SELECT TOP(10) * FROM 
+        SalesOrders
+            INNER JOIN SalesOrderDetails
+                ON SalesOrders.SalesOrderId = SalesOrderDetails.SalesOrderID`
+                
+  `CREATE VIEW SalesOrderStats
+AS
+SELECT
+      o.Country, o.City,
+      COUNT(DISTINCT o.CustomerId) Total_Customers,
+      COUNT(DISTINCT d.SalesOrderId) Total_Orders,
+      COUNT(d.SalesOrderId) Total_OrderLines,
+      SUM(d.Quantity*d.Price) AS Total_Revenue,
+      dense_rank() OVER (ORDER BY SUM(d.Quantity*d.Price) DESC) as Rank_Revenue,
+      dense_rank() OVER (ORDER BY COUNT(DISTINCT d.SalesOrderId) DESC) as Rank_Orders,
+      dense_rank() OVER (ORDER BY COUNT(d.SalesOrderId) DESC) as Rank_OrderLines,
+      dense_rank() OVER (PARTITION BY o.Country ORDER BY SUM(d.Quantity*d.Price) DESC) as Rank_Revenue_Country
+FROM SalesOrders o
+ INNER JOIN SalesOrderDetails d
+    ON o.SalesOrderId = d.SalesOrderId
+WHERE Country IS NOT NULL OR City IS NOT NULL
+GROUP BY o.Country, o.City
+GO
+
+SELECT * FROM SalesOrderStats
+GO`
+
+The query captured in this view answers the many parts of the questions being asked through traditional aggregation, because we are mostly interested in understanding the number (COUNT) or total (SUM) of values a GROUP BY clause that covers both Country and City (B) can answer most of the questions with absolute values for the total number of customers, orders and order lines and the sum of revenue by City (C).
+
+To answer the ranking part of the question, we use window functions. In essence, a window function calculates a result for every row of a table based on a group of rows, called the frame. Every row can have a unique frame associated with it for that window function allowing you to concisely express and solve ranking, analytic, and aggregation problems in powerful yet simple a manner no other approach does.
+
+Here we use the dense_rank() function to calculate the rank of each city by revenue, number of orders and total order lines (D).
+
+As well as the rank of each city within each country, by partitioning the dense_rank() window function by the country.
+
+
+
+
+* Visualize Azure Cosmos DB data in Power BI
+
+
+
 
 
