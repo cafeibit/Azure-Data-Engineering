@@ -121,11 +121,15 @@ The Apache Spark DataFrame API provides a rich set of functions (select columns,
 *  To do more complex queries, use filter, groupBy and join: 
    These join types are supported: inner, cross, outer, full, full_outer, left, left_outer, right, right_outer, left_semi, and left_anti. Note that filter is an alias for where.
 
-   `people \
-  .filter(people.age > 30) \
-  .join(department, people.deptId == department.id) \
-  .groupBy(department.name, "gender")
-  .agg({"salary": "avg", "age": "max"})`
+   `people \`
+   
+   `.filter(people.age > 30) \`
+   
+   `.join(department, people.deptId == department.id) \`
+   
+   `.groupBy(department.name, "gender")`
+   
+   `.agg({"salary": "avg", "age": "max"})`
   
 *  To use columns aggregations using windows:
 
