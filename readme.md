@@ -121,6 +121,16 @@ Your data processing in Azure Databricks is accomplished by defining DataFrames 
 
 Spark uses 3 different APIs: RDDs, DataFrames, and DataSets. The architectural foundation is the resilient distributed dataset (RDD). The DataFrame API was released as an abstraction on top of the RDD, followed later by the Dataset API. We'll only use DataFrames in our notebook examples. DataFrames are the distributed collections of data, organized into rows and columns. Each column in a DataFrame has a name and an associated type. Spark DataFrames can be created from various sources, such as CSV files, JSON, Parquet files, Hive tables, log tables, and external databases.
 
+ * Use the count() method to count rows in a DataFrame
+ * Use the display() function to display a DataFrame in the Notebook
+ * Cache a DataFrame for quicker operations if the data is needed a second time
+ * Use the limit function to display a small set of rows from a larger DataFrame
+ * Use select() to select a subset of columns from a DataFrame
+ * Use distinct() and dropDuplicates to remove duplicate data
+ * Use drop() to remove columns from a DataFrame
+ * <a href="./notebook/Working with DataFrames.ipynb">Examples</a>
+
+
 ##  Describe lazy evaluation and other performance features in Azure Databricks
 
 Understand the difference between a transform and an action, lazy and eager evaluations, Wide and Narrow transformations, and other optimizations in Azure Databricks.
