@@ -150,6 +150,8 @@ To process and analyze data using multi-task jobs and Delta Live Tables, the Azu
 
 * <a href="../Databricks/readme.md">Data Engineering with Azure Databricks</a>
 * <a href="https://docs.microsoft.com/en-us/azure/databricks/data-engineering/">This guide shows how to process and analyze data using Azure Databricks jobs, Delta Live Tables; the Azure Databricks data processing pipeline framework, and common workflow tools including Apache Airflow and Azure Data Factory.</a>
+* <a href="https://docs.microsoft.com/en-us/azure/databricks/scenarios/databricks-extract-load-sql-data-warehouse">Tutorial: Extract, transform, and load data by using Azure Databricks</a>
+
 ## Data Engineering with Azure Cosmos DB
 
 Azure Cosmos DB is a globally distributed database system that allows you to read and write data from the local replicas of your database and it transparently replicates the data to all the regions associated with your Cosmos account.
