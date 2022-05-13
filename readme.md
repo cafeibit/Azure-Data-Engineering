@@ -103,7 +103,71 @@ The Apache Spark DataFrame API provides a rich set of functions (select columns,
    `df.withColumn('isHoliday', False)`
   
    `df.withColumnRenamed('isDayOff', 'isHoliday')`
+   
+*  To use aliases for the whole DataFrame or specific columns:
 
+   `df.alias("myTrips")`
+   
+   `df.select(df.passengerCount.alias("numberOfPassengers"))`  
+   
+*  To create a temporary view:
+
+   `df.createOrReplaceTempView("tripsView")`
+   
+*  To aggregate on the entire DataFrame without groups use agg:
+
+   `df.agg({"age": "max"})` 
+   
+*  To do more complex queries, use filter, groupBy and join: 
+   These join types are supported: inner, cross, outer, full, full_outer, left, left_outer, right, right_outer, left_semi, and left_anti. Note that filter is an alias for where.
+
+   `people \
+  .filter(people.age > 30) \
+  .join(department, people.deptId == department.id) \
+  .groupBy(department.name, "gender")
+  .agg({"salary": "avg", "age": "max"})`
+  
+*  To use columns aggregations using windows:
+
+   `w = Window.partitionBy("name").orderBy("age").rowsBetween(-1, 1)`
+   
+   `df.select(rank().over(w), min('age').over(window))`
+   
+*  To use a list of conditions for a column and return an expression use when:
+
+   `df.select(df.name, F.when(df.age > 4, 1).when(df.age < 3, -1).otherwise(0)).show()`
+   
+*  To check the presence of data use isNull or isNotNull:
+
+   `df.filter(df.passengerCount.isNotNull())`
+   
+   `df.filter(df.totalAmount.isNull())`  
+   
+*  To clean the data use dropna, fillna or dropDuplicates:
+
+   `df1.fillna(1) #replace nulls with specified value`
+   
+   `df2.dropna #drop rows containing null values`
+   
+   `df3.dropDuplicates #drop duplicate rows`  
+   
+*  To get statistics about the DataFrame use summary or describe:
+
+   `df.summary().show()`
+   
+   `df.summary("passengerCount", "min", "25%", "75%", "max").show()`
+   
+   `df.describe(['age']).show()`  
+   
+   Available statistics are: Count, Mean, Stddev, Min, Max, Arbitrary approximate percentiles specified as a percentage (for example, 75%).
+
+*  To find correlations between specific columns use corr. This operation currently only supports the Pearson Correlation Coefficient:
+
+   `df.corr('tripDistance', 'totalAmount')`
+   
+   More information: for more information about the Spark API, see the <a href="https://spark.apache.org/docs/2.4.0/api/python/pyspark.sql.html#pyspark.sql.DataFrame?azure-portal=true">DataFrame API</a> and the <a href="https://spark.apache.org/docs/2.4.0/api/python/pyspark.sql.html#pyspark.sql.Column?azure-portal=true">Column API</a> in the Spark documentation.
+   
+   
 ##  Describe platform architecture, security, and data protection in Azure Databricks
 
 Understand the Azure Databricks platform components and best practices for securing your workspace through Databricks native features and by integrating with Azure services.
