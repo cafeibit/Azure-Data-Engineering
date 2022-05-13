@@ -8,12 +8,28 @@ To harness the power of Apache Spark and powerful clusters running on the Azure 
 
 Discover the capabilities of Azure Databricks and the Apache Spark notebook for processing huge files. Understand the Azure Databricks platform and identify the types of tasks well-suited for Apache Spark. Azure Databricks runs on top of a proprietary data processing engine called Databricks Runtime, an optimized version of Apache Spark. It allows up to 50x performance for Apache Spark workloads. Apache Spark is the core technology. Spark is an open-source analytics engine for large-scale data processing. It provides an interface for programming entire clusters with implicit data parallelism and fault tolerance. In a nutshell: Azure Databricks offers a fast, easy, and collaborative Spark based analytics service. It is used to accelerate big data analytics, artificial intelligence, performant data lakes, interactive data science, machine learning, and collaboration.
 
+When talking about the Azure Databricks workspace, we refer to two different things. The first reference is the logical Azure Databricks environment in which clusters are created, data is stored (via DBFS), and in which the server resources are housed. The second reference is the more common one used within the context of Azure Databricks. That is the special root folder for all of your organization's Databricks assets, including notebooks, libraries, and dashboards. 
 
+*  You can use Apache Spark notebooks to:
+
+   *  Read and process huge files and data sets
+   *  Query, explore, and visualize data sets
+   *  Join disparate data sets found in data lakes
+   *  Train and evaluate machine learning models
+   *  Process live streams of data
+   *  Perform analysis on large graph data sets and social networks
 
 ##  Spark architecture fundamentals
 
 Understand the architecture of an Azure Databricks Spark Cluster and Spark Jobs.
 
+Azure Databricks provides a notebook-oriented Apache Spark as-a-service workspace environment. It is the most feature-rich hosted service available to run Spark workloads in Azure. Apache Spark is a unified analytics engine for large-scale data processing and machine learning. Suppose you work with Big Data as a data engineer or a data scientist, and you must process data that you can describe as having one or more of the following characteristics:
+
+   *  High volume - You must process an extremely large volume of data and need to scale out your compute accordingly
+   *  High velocity - You require streaming and real-time processing capabilities
+   *  Variety - Your data types are varied, from structured relational data sets and financial transactions to unstructured data such as chat and SMS messages, IoT devices, images, logs, MRIs, etc.
+
+These characteristics are oftentimes called the "3 Vs of Big Data". When it comes to working with Big Data in a unified way, whether you process it real time as it arrives or in batches, Apache Spark provides a fast and capable engine that also supports data science processes, like machine learning and advanced analytics.
 
 ##  Read and write data in Azure Databricks
 
