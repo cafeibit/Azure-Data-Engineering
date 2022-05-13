@@ -105,14 +105,13 @@ Work with large amounts of data from multiple sources in different raw formats. 
    *  We have seen the .sql() method, which allows to run arbitrary SQL queries on table data. 
    *  Another option is to use the Spark domain-specific language for structured data manipulation, available in Scala, Java, Python, and R.
     
-* Complete the following notebook: Open the 1.Reading Data - CSV notebook. Make sure you attach your cluster to the notebook before following the instructions and running the cells within. Within the notebook, you will:
-
- * Start working with the API documentation
- * Introduce the class SparkSession and other entry points
- * Introduce the class DataFrameReader
- * Read data from:
- * CSV without a Schema
- * CSV with a Schema
+* Complete the following notebook: 
+  *  Start working with the API documentation
+  *  Introduce the class SparkSession and other entry points
+  *  Introduce the class DataFrameReader
+  *  Read data from: CSV without a Schema, CSV with a Schema
+  *  Read data from: JSON without a Schema, JSON with a Schema
+  *  
 
 
 ##  Work with DataFrames in Azure Databricks
