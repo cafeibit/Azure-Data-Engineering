@@ -17,13 +17,39 @@ Understand the architecture of an Azure Databricks Spark Cluster and Spark Jobs.
 
 Work with large amounts of data from multiple sources in different raw formats. Azure Databricks supports day-to-day data-handling functions, such as reads, writes, and queries.
 
+* Using Spark to load table/file/DBFS data
 
+ *  We can use Spark to load the table data by using the sql method with Python:
+    `df = spark.sql("SELECT * FROM nyc_taxi_csv")`
+
+ *  We can also read the data from the original files we've uploaded; or indeed from any other file available in the DBFS. The code is the same regardless of whether a file is local or in remote storage that was mounted, thanks to DBFS mountpoints (Python). Spark supports many different data formats, such as CSV, JSON, XML, Parquet, Avro, ORC and more.
+    `df = spark.read.csv('dbfs:/FileStore/tables/nyc_taxi.csv', header=True, inferSchema=True)
+    
+* DataFrame size/structure/contents
+
+ *  To get the number of rows available in a DataFrame, we can use the count() method.
+    `df.count`
+    
+ *  To get the schema metadata for a given DataFrame, we can use the printSchema() method. Each column in a given DataFrame has a name, a type, and a nullable flag.
+    `df.printSchema`
+    
+ *  Spark has a built-in function that allows to print the rows inside a DataFrame: show()
+    `df.show
+     df.show(100, truncate=False) #show more lines, do not truncate`
+     
+     By default it will only show the first 20 lines in your DataFrame and it will truncate long columns. Additional parameters are available to override these settings.
+     
+* Query dataframes
+  DataFrames allow the processing of huge amounts of data. Spark uses an optimization engine to generate logical queries. Data is distributed over your cluster and you get huge performance for massive amounts of data. Spark SQL is a component that introduced the DataFrames, which provides support for structured and semi-structured data. Spark has multiple interfaces (APIs) for dealing with DataFrames: 
+  *  We have seen the .sql() method, which allows to run arbitrary SQL queries on table data. 
+  *  Another option is to use the Spark domain-specific language for structured data manipulation, available in Scala, Java, Python, and R.
+    
 
 ##  Work with DataFrames in Azure Databricks
 
 Your data processing in Azure Databricks is accomplished by defining DataFrames to read and process the Data. Learn how to perform data transformations in DataFrames and execute actions to display the transformed data.
 
-
+Spark uses 3 different APIs: RDDs, DataFrames, and DataSets. The architectural foundation is the resilient distributed dataset (RDD). The DataFrame API was released as an abstraction on top of the RDD, followed later by the Dataset API. We'll only use DataFrames in our notebook examples. DataFrames are the distributed collections of data, organized into rows and columns. Each column in a DataFrame has a name and an associated type. Spark DataFrames can be created from various sources, such as CSV files, JSON, Parquet files, Hive tables, log tables, and external databases.
 
 ##  Describe lazy evaluation and other performance features in Azure Databricks
 
@@ -42,7 +68,41 @@ Use the DataFrame Column class in Azure Databricks to apply column-level transfo
 
 Use advanced DataFrame functions operations to manipulate data, apply aggregates, and perform date and time operations in Azure Databricks.
 
+The Apache Spark DataFrame API provides a rich set of functions (select columns, filter, join, aggregate, and so on) that allow you to solve common data analysis problems efficiently. A complex operation where tables are joined, filtered, and restructured is easy to write, easy to understand, type safe, feels natural for people with prior sql experience, and comes with the added speed of parallel processing given by the Spark engine.
 
+* To load or save data use read and write (Python):
+
+  `df = spark.read.format('json').load('sample/trips.json')`
+  
+  `df.write.format('parquet').bucketBy(100, 'year', 'month').mode("overwrite").saveAsTable('table1'))`
+  
+ * To get the available data in a DataFrame use select:
+
+  `df.select('*')`
+  
+  `df.select('tripDistance', 'totalAmount')`
+  
+* To extract the first rows, use take:
+
+  `df.take(15)`
+  
+* To order the data, use the sort method:
+
+  `df.sort(df.tripDistance.desc())`
+  
+* To combine the rows in multiple DataFrames use union:
+
+  `df1.union(df2)`
+  
+  This operation is equivalent to UNION ALL in SQL. To do a SQL-style set union (that does deduplication of elements), use this function followed by distinct().
+
+  The dataframes must have the same structure/schema.
+
+* To add or update columns use withColumn or withColumnRenamed:
+
+  `df.withColumn('isHoliday', False)`
+  
+  `df.withColumnRenamed('isDayOff', 'isHoliday')`
 
 ##  Describe platform architecture, security, and data protection in Azure Databricks
 
