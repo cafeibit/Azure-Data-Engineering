@@ -39,6 +39,17 @@ The unit of distribution is a Spark Cluster. Every Cluster has a Driver and one 
 
 <img src="spark-cluster-tasks.png" />
 
+Jobs & stages
+  * Each parallelized action is referred to as a Job.
+  * The results of each Job (parallelized/distributed action) is returned to the Driver.
+  * Depending on the work required, multiple Jobs will be required.
+  * Each Job is broken down into Stages.
+  * This would be analogous to building a house (the job)
+  * The first stage would be to lay the foundation.
+  * The second stage would be to erect the walls.
+  * The third stage would be to add the room.
+  * Attempting to do any of these steps out of order just won't make sense, if not just impossible.
+
 ##  Read and write data in Azure Databricks
 
 Work with large amounts of data from multiple sources in different raw formats. Azure Databricks supports day-to-day data-handling functions, such as reads, writes, and queries.
