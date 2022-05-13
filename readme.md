@@ -78,9 +78,9 @@ The Apache Spark DataFrame API provides a rich set of functions (select columns,
   
  * To get the available data in a DataFrame use select:
 
-  `df.select('*')`
+   `df.select('*')`
   
-  `df.select('tripDistance', 'totalAmount')`
+   `df.select('tripDistance', 'totalAmount')`
   
 * To extract the first rows, use take:
 
