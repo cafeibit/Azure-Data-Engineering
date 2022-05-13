@@ -88,21 +88,21 @@ The Apache Spark DataFrame API provides a rich set of functions (select columns,
   
 * To order the data, use the sort method:
 
-  `df.sort(df.tripDistance.desc())`
+   `df.sort(df.tripDistance.desc())`
   
 * To combine the rows in multiple DataFrames use union:
 
-  `df1.union(df2)`
+   `df1.union(df2)`
   
-  This operation is equivalent to UNION ALL in SQL. To do a SQL-style set union (that does deduplication of elements), use this function followed by distinct().
+   This operation is equivalent to UNION ALL in SQL. To do a SQL-style set union (that does deduplication of elements), use this function followed by distinct().
 
-  The dataframes must have the same structure/schema.
+   The dataframes must have the same structure/schema.
 
 * To add or update columns use withColumn or withColumnRenamed:
 
-  `df.withColumn('isHoliday', False)`
+   `df.withColumn('isHoliday', False)`
   
-  `df.withColumnRenamed('isDayOff', 'isHoliday')`
+   `df.withColumnRenamed('isDayOff', 'isHoliday')`
 
 ##  Describe platform architecture, security, and data protection in Azure Databricks
 
