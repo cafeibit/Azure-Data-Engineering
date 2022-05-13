@@ -33,6 +33,7 @@ These characteristics are oftentimes called the "3 Vs of Big Data". When it come
 
 In Databricks, the notebook interface is the driver program. This driver program contains the main loop for the program and creates distributed datasets on the cluster, then applies operations (transformations & actions) to those datasets. Driver programs access Apache Spark through a SparkSession object regardless of deployment location.
 
+<img src="azure-databricks-architecture.png" />
 
 ##  Read and write data in Azure Databricks
 
