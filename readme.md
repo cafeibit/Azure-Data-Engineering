@@ -67,19 +67,24 @@ Work with large amounts of data from multiple sources in different raw formats. 
     `df = spark.sql("SELECT * FROM nyc_taxi_csv")`
 
     *  We can also read the data from the original files we've uploaded; or indeed from any other file available in the DBFS. The code is the same regardless of whether a file is local or in remote storage that was mounted, thanks to DBFS mountpoints (Python). Spark supports many different data formats, such as CSV, JSON, XML, Parquet, Avro, ORC and more.
+    
     `df = spark.read.csv('dbfs:/FileStore/tables/nyc_taxi.csv', header=True, inferSchema=True)`
     
 * DataFrame size/structure/contents
       
     *  To get the number of rows available in a DataFrame, we can use the count() method.
+    
     `df.count`
     
     *  To get the schema metadata for a given DataFrame, we can use the printSchema() method. Each column in a given DataFrame has a name, a type, and a nullable flag.
+    
     `df.printSchema`
     
    *  Spark has a built-in function that allows to print the rows inside a DataFrame: show()
-    `df.show
-     df.show(100, truncate=False) #show more lines, do not truncate`
+   
+    `df.show`
+    
+     `df.show(100, truncate=False) #show more lines, do not truncate`
      
      By default it will only show the first 20 lines in your DataFrame and it will truncate long columns. Additional parameters are available to override these settings.
      
