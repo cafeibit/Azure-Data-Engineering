@@ -19,10 +19,10 @@ Work with large amounts of data from multiple sources in different raw formats. 
 
 * Using Spark to load table/file/DBFS data
 
- *  We can use Spark to load the table data by using the sql method with Python:
+    *  We can use Spark to load the table data by using the sql method with Python:
     `df = spark.sql("SELECT * FROM nyc_taxi_csv")`
 
- *  We can also read the data from the original files we've uploaded; or indeed from any other file available in the DBFS. The code is the same regardless of whether a file is local or in remote storage that was mounted, thanks to DBFS mountpoints (Python). Spark supports many different data formats, such as CSV, JSON, XML, Parquet, Avro, ORC and more.
+    *  We can also read the data from the original files we've uploaded; or indeed from any other file available in the DBFS. The code is the same regardless of whether a file is local or in remote storage that was mounted, thanks to DBFS mountpoints (Python). Spark supports many different data formats, such as CSV, JSON, XML, Parquet, Avro, ORC and more.
     `df = spark.read.csv('dbfs:/FileStore/tables/nyc_taxi.csv', header=True, inferSchema=True)
     
 * DataFrame size/structure/contents
