@@ -26,14 +26,14 @@ Work with large amounts of data from multiple sources in different raw formats. 
     `df = spark.read.csv('dbfs:/FileStore/tables/nyc_taxi.csv', header=True, inferSchema=True)
     
 * DataFrame size/structure/contents
-
- *  To get the number of rows available in a DataFrame, we can use the count() method.
+      
+    *  To get the number of rows available in a DataFrame, we can use the count() method.
     `df.count`
     
- *  To get the schema metadata for a given DataFrame, we can use the printSchema() method. Each column in a given DataFrame has a name, a type, and a nullable flag.
+    *  To get the schema metadata for a given DataFrame, we can use the printSchema() method. Each column in a given DataFrame has a name, a type, and a nullable flag.
     `df.printSchema`
     
- *  Spark has a built-in function that allows to print the rows inside a DataFrame: show()
+   *  Spark has a built-in function that allows to print the rows inside a DataFrame: show()
     `df.show
      df.show(100, truncate=False) #show more lines, do not truncate`
      
@@ -41,8 +41,8 @@ Work with large amounts of data from multiple sources in different raw formats. 
      
 * Query dataframes
   DataFrames allow the processing of huge amounts of data. Spark uses an optimization engine to generate logical queries. Data is distributed over your cluster and you get huge performance for massive amounts of data. Spark SQL is a component that introduced the DataFrames, which provides support for structured and semi-structured data. Spark has multiple interfaces (APIs) for dealing with DataFrames: 
-  *  We have seen the .sql() method, which allows to run arbitrary SQL queries on table data. 
-  *  Another option is to use the Spark domain-specific language for structured data manipulation, available in Scala, Java, Python, and R.
+   *  We have seen the .sql() method, which allows to run arbitrary SQL queries on table data. 
+   *  Another option is to use the Spark domain-specific language for structured data manipulation, available in Scala, Java, Python, and R.
     
 
 ##  Work with DataFrames in Azure Databricks
