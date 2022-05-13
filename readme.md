@@ -35,6 +35,10 @@ In Databricks, the notebook interface is the driver program. This driver program
 
 <img src="azure-databricks-architecture.png" />
 
+The unit of distribution is a Spark Cluster. Every Cluster has a Driver and one or more executors. Work submitted to the Cluster is split into as many independent Jobs as needed. This is how work is distributed across the Cluster's nodes. Jobs are further subdivided into tasks. The input to a job is partitioned into one or more partitions. These partitions are the unit of work for each slot. In between tasks, partitions may need to be re-organized and shared over the network.
+
+<img src="spark-cluster-slots.png" />
+
 ##  Read and write data in Azure Databricks
 
 Work with large amounts of data from multiple sources in different raw formats. Azure Databricks supports day-to-day data-handling functions, such as reads, writes, and queries.
