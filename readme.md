@@ -50,6 +50,13 @@ Jobs & stages
   * The third stage would be to add the room.
   * Attempting to do any of these steps out of order just won't make sense, if not just impossible.
 
+From a developer's and learner's perspective my primary focus is on...
+  * The number of Partitions my data is divided into.
+  * The number of Slots I have for parallel execution.
+  * How many Jobs am I triggering?
+  * And lastly the Stages those jobs are divided into.
+
+
 ##  Read and write data in Azure Databricks
 
 Work with large amounts of data from multiple sources in different raw formats. Azure Databricks supports day-to-day data-handling functions, such as reads, writes, and queries.
