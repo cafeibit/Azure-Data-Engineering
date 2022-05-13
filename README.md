@@ -61,6 +61,7 @@ To use Data Factory mapping data flows to process and transform the data as need
   * After successfully built and deployed data integration pipeline, to monitor your scheduled activities and pipelines. This enables you to track success and failure rates by using one of following: Azure Monitor, API, PowerShell, Azure Monitor logs, and Health panels in the Azure portal 
 
 * <a href="https://docs.microsoft.com/en-us/azure/data-factory/data-factory-tutorials">Azure Data Factory tutorials</a>
+* <a href="https://docs.microsoft.com/en-us/azure/data-factory/concepts-pipelines-activities?tabs=data-factory">Pipelines and activities in Azure Data Factory and Azure Synapse Analytics</a>
 * <a href="https://docs.microsoft.com/en-ca/azure/data-factory/">Azure Data Factory documentation</a>
 
 ## Data Engineering with Azure Synapse Analytics (Descriptive/Diagnostic/Predictive/Prescriptive analytics) 
