@@ -113,7 +113,7 @@ Work with large amounts of data from multiple sources in different raw formats. 
   *  Read data from: JSON without a Schema, JSON with a Schema
   *  Read data from: Parquet files without a schema, Parquet files with a schema
   *  Read data from tables/views, Write data to a Parquet file, Read the Parquet file back and display the results
-  *  <a href="./notebook/Read Write Query with DataFrame.html">Examples</a>
+  *  <a href="./notebook/Read Write Query with DataFrame.ipynb">Examples</a>
 
 ##  Work with DataFrames in Azure Databricks
 
