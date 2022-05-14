@@ -237,11 +237,79 @@ Tungsten prevents the need for expensive serialization and de-serialization of o
   * When we shuffle data, it creates what is known as a stage boundary.
   * Stage boundaries represent a process bottleneck.
 
+### Actions
+
+In production code, actions will generally **write data to persistent storage** using the DataFrameWriter discussed in other Azure Databricks learning path modules.
+
+During interactive code development in Databricks notebooks, the `display` method will frequently be used to **materialize a view of the data** after logic has been applied.
+
+A number of other actions provide the ability to return previews or specify physical execution plans for how logic will map to data. For the complete list, review the [API docs](https://spark.apache.org/docs/latest/api/scala/index.html#org.apache.spark.sql.Dataset).
+
+| Method | Return | Description |
+|--------|--------|-------------|
+| `collect()` | Collection | Returns an array that contains all of Rows in this Dataset. |
+| `count()` | Long | Returns the number of rows in the Dataset. |
+| `first()` | Row | Returns the first row. |
+| `foreach(f)` | - | Applies a function f to all rows. |
+| `foreachPartition(f)` | - | Applies a function f to each partition of this Dataset. |
+| `head()` | Row | Returns the first row. |
+| `reduce(f)` | Row | Reduces the elements of this Dataset using the specified binary function. |
+| `show(..)` | - | Displays the top 20 rows of Dataset in a tabular form. |
+| `take(n)` | Collection | Returns the first n rows in the Dataset. |
+| `toLocalIterator()` | Iterator | Return an iterator that contains all of Rows in this Dataset. |
+
+<img alt="Caution" title="Caution" style="vertical-align: text-bottom; position: relative; height:1.3em; top:0.0em" src="https://files.training.databricks.com/static/images/icon-warning.svg"/> Actions such as `collect` can lead to out of memory errors by forcing the collection of all data.
+
+### Transformations
+
+Transformations have the following key characteristics:
+* They eventually return another `DataFrame`.
+* They are immutable - that is each instance of a `DataFrame` cannot be altered once it's instantiated.
+  * This means other optimizations are possible - such as the use of shuffle files (to be discussed in detail later)
+* Are classified as either a Wide or Narrow operation
+
+Most operations in Spark are **transformations**. While many transformations are [DataFrame operations](https://spark.apache.org/docs/latest/api/scala/index.html#org.apache.spark.sql.Dataset), writing efficient Spark code will require importing methods from the `sql.functions` module, which contains [transformations corresponding to SQL built-in operations](https://spark.apache.org/docs/latest/api/scala/index.html#org.apache.spark.sql.functions$).
+
+### Types of Transformations
+
+A transformation may be wide or narrow.
+
+A wide transformation requires sharing data across workers. 
+
+A narrow transformation can be applied per partition/worker with no need to share or shuffle data to other workers. 
+
+### Narrow Transformations
+
+The data required to compute the records in a single partition reside in at most one partition of the parent Dataframe.
+
+Examples include:
+* `filter(..)`
+* `drop(..)`
+* `coalesce()`
+
+![](https://databricks.com/wp-content/uploads/2018/05/Narrow-Transformation.png)
+
+`from pyspark.sql.functions import col`
+
+`display(countsDF.filter(col("NAME").like("%TX%")))`
+
+### Wide Transformations
+
+The data required to compute the records in a single partition may reside in many partitions of the parent Dataframe. These operations require that data is **shuffled** between executors.
+
+Examples include:
+* `distinct()`
+* `groupBy(..).sum()`
+* `repartition(n)`
+
+![](https://databricks.com/wp-content/uploads/2018/05/Wide-Transformation.png)
+
 
 ##  Work with DataFrames columns in Azure Databricks
 
 Use the DataFrame Column class in Azure Databricks to apply column-level transformations, such as sorts, filters and aggregations.
 
+`display(countsDF.groupBy("UNIT").sum("counts"))`
 
 
 ##  Work with DataFrames advanced methods in Azure Databricks
