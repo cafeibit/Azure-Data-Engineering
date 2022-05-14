@@ -181,6 +181,8 @@ Laziness is at the core of Scala and Spark. It has a number of benefits:
   * N different transformations can be processed on a single data element, on a single thread, on a single machine.
 * Optimizations can be applied prior to code compilation
 
+### Describe the fundamentals of how the Catalyst Optimizer works
+
 Because the Databricks API is declarative, a large number of optimizations are available to us. Some of the examples include:
   * Optimizing data type for storage
   * Rewriting queries for performance
