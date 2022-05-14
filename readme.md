@@ -220,16 +220,23 @@ When you execute code, Spark SQL uses Catalyst's general tree transformation fra
 Some actions induce in a shuffle. Good examples would include the operations count() and reduce(..). For more details on shuffling, refer to the RDD Programming Guide.
 
 * UnsafeRow (also known as Tungsten Binary Format)
-  * Sharing data from one worker to another can be a costly operation.
-  * Spark has optimized this operation by using a format called Tungsten.
 
-* Tungsten prevents the need for expensive serialization and de-serialization of objects in order to get data from one JVM to another. The data that is "shuffled" is in a format known as UnsafeRow, or more commonly, the Tungsten Binary Format. UnsafeRow is the in-memory storage format for Spark SQL, DataFrames & Datasets. Advantages include:
-  * Compactness:
+Sharing data from one worker to another can be a costly operation.
+
+Spark has optimized this operation by using a format called Tungsten.
+
+Tungsten prevents the need for expensive serialization and de-serialization of objects in order to get data from one JVM to another. The data that is "shuffled" is in a format known as UnsafeRow, or more commonly, the Tungsten Binary Format. UnsafeRow is the in-memory storage format for Spark SQL, DataFrames & Datasets. Advantages include:
+
+* Compactness:
   * Column values are encoded using custom encoders, not as JVM objects (as with RDDs).
+  * The benefit of using Spark 2.x's custom encoders is that you get almost the same compactness as Java serialization, but significantly faster encoding/decoding speeds. 
+  * Also, for custom data types, it is possible to write custom encoders from scratch.
+* Efficiency: Spark can operate directly out of Tungsten, without first deserializing Tungsten data into JVM objects.
 
-The benefit of using Spark 2.x's custom encoders is that you get almost the same compactness as Java serialization, but significantly faster encoding/decoding speeds. Also, for custom data types, it is possible to write custom encoders from scratch.
+* Stages
+  * When we shuffle data, it creates what is known as a stage boundary.
+  * Stage boundaries represent a process bottleneck.
 
-Efficiency: Spark can operate directly out of Tungsten, without first deserializing Tungsten data into JVM objects.
 
 ##  Work with DataFrames columns in Azure Databricks
 
