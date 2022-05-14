@@ -144,7 +144,7 @@ Understand the difference between a transform and an action, lazy and eager eval
 
 When you execute code, Spark SQL uses Catalyst's general tree transformation framework in four phases, as shown below: (1) analyzing a logical plan to resolve references, (2) logical plan optimization, (3) physical planning, and (4) code generation to compile parts of the query to Java bytecode. In the physical planning phase, Catalyst may generate multiple plans and compare them based on cost. All other phases are purely rule-based.
 
-<img src="" />
+<img src="catalyst-diagram.png" />
 
 * Catalyst is based on functional programming constructs in Scala and designed with these key two purposes:
 
