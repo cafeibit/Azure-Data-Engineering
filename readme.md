@@ -135,7 +135,46 @@ Spark uses 3 different APIs: RDDs, DataFrames, and DataSets. The architectural f
 
 Understand the difference between a transform and an action, lazy and eager evaluations, Wide and Narrow transformations, and other optimizations in Azure Databricks.
 
-* Because the Databricks API is declarative, a large number of optimizations are available to us. Some of the examples include:
+Fundamental to Apache Spark are the notions that
+* Transformations are **LAZY**
+* Actions are **EAGER**
+
+The following code condenses the logic from the DataFrames modules in this learning path, and uses the DataFrames API to:
+- Specify a schema, format, and file source for the data to be loaded
+- Select columns to `GROUP BY`
+- Aggregate with a `COUNT`
+- Provide an alias name for the aggregate output
+- Specify a column to sort on
+
+This cell defines a series of **transformations**. By definition, this logic will result in a DataFrame and will not trigger any jobs.
+
+`schemaDDL = "NAME STRING, STATION STRING, LATITUDE FLOAT, LONGITUDE FLOAT, ELEVATION FLOAT, DATE DATE, UNIT STRING, TAVG FLOAT"
+
+sourcePath = "/mnt/training/weather/StationData/stationData.parquet/"
+
+countsDF = (spark.read
+  .format("parquet")
+  .schema(schemaDDL)
+  .load(sourcePath)
+  .groupBy("NAME", "UNIT").count()
+  .withColumnRenamed("count", "counts")
+  .orderBy("NAME")
+) `
+
+Because display is an action, a job will be triggered, as logic is executed against the specified data to return a result. `display(countsDF)`
+
+### Why is Laziness So Important?
+
+Laziness is at the core of Scala and Spark.
+
+It has a number of benefits:
+* Not forced to load all data at step #1
+  * Technically impossible with **REALLY** large datasets.
+* Easier to parallelize operations
+  * N different transformations can be processed on a single data element, on a single thread, on a single machine.
+* Optimizations can be applied prior to code compilation
+
+Because the Databricks API is declarative, a large number of optimizations are available to us. Some of the examples include:
 
   * Optimizing data type for storage
   * Rewriting queries for performance
