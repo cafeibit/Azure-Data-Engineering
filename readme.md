@@ -148,26 +148,33 @@ The following code condenses the logic from the DataFrames modules in this learn
 
 This cell defines a series of **transformations**. By definition, this logic will result in a DataFrame and will not trigger any jobs.
 
-`schemaDDL = "NAME STRING, STATION STRING, LATITUDE FLOAT, LONGITUDE FLOAT, ELEVATION FLOAT, DATE DATE, UNIT STRING, TAVG FLOAT"
+`schemaDDL = "NAME STRING, STATION STRING, LATITUDE FLOAT, LONGITUDE FLOAT, ELEVATION FLOAT, DATE DATE, UNIT STRING, TAVG FLOAT"`
 
-sourcePath = "/mnt/training/weather/StationData/stationData.parquet/"
+ `sourcePath = "/mnt/training/weather/StationData/stationData.parquet/"`
 
-countsDF = (spark.read
-  .format("parquet")
-  .schema(schemaDDL)
-  .load(sourcePath)
-  .groupBy("NAME", "UNIT").count()
-  .withColumnRenamed("count", "counts")
-  .orderBy("NAME")
-) `
+ `countsDF = (spark.read`
+ 
+   `.format("parquet")`
+   
+   `.schema(schemaDDL)`
+   
+   `.load(sourcePath)`
+   
+   `.groupBy("NAME", "UNIT").count()`
+   
+   `.withColumnRenamed("count", "counts")`
+   
+   `.orderBy("NAME")`
+   
+ `) `
 
-Because display is an action, a job will be triggered, as logic is executed against the specified data to return a result. `display(countsDF)`
+Because display is an action, a job will be triggered, as logic is executed against the specified data to return a result. 
+
+ `display(countsDF)`
 
 ### Why is Laziness So Important?
 
-Laziness is at the core of Scala and Spark.
-
-It has a number of benefits:
+Laziness is at the core of Scala and Spark. It has a number of benefits:
 * Not forced to load all data at step #1
   * Technically impossible with **REALLY** large datasets.
 * Easier to parallelize operations
@@ -175,7 +182,6 @@ It has a number of benefits:
 * Optimizations can be applied prior to code compilation
 
 Because the Databricks API is declarative, a large number of optimizations are available to us. Some of the examples include:
-
   * Optimizing data type for storage
   * Rewriting queries for performance
   * Predicate push downs
@@ -186,53 +192,43 @@ When you execute code, Spark SQL uses Catalyst's general tree transformation fra
 <img src="catalyst-diagram.png" />
 
 * Catalyst is based on functional programming constructs in Scala and designed with these key two purposes:
-
   * Easily add new optimization techniques and features to Spark SQL
   * Enable external developers to extend the optimizer (e.g. adding data source specific rules, support for new data types, etc.)
 
 * Describe performance enhancements enabled by shuffle operations and Tungsten<br>
-  In the previous unit, you explored actions and transformations. As opposed to narrow transformations, wide transformations cause data to shuffle between executors. This is because a wide transformation requires sharing data across workers. Pipelining helps us optimize our operations based on the differences between the two types of transformations.
+  * As opposed to narrow transformations, wide transformations cause data to shuffle between executors. This is because a wide transformation requires sharing data across workers. Pipelining helps us optimize our operations based on the differences between the two types of transformations.
 
-Pipelining
-Pipelining is the idea of executing as many operations as possible on a single partition of data.
-Once a single partition of data is read into RAM, Spark will combine as many narrow operations as it can into a single Task
-Wide operations force a shuffle, conclude a stage, and end a pipeline.
-Shuffles
-A shuffle operation is triggered when data needs to move between executors.
+* Pipelining
+  * Pipelining is the idea of executing as many operations as possible on a single partition of data.
+  * Once a single partition of data is read into RAM, Spark will combine as many narrow operations as it can into a single Task
+  * Wide operations force a shuffle, conclude a stage, and end a pipeline.
 
-To carry out the shuffle operation Spark needs to:
+* Shuffles
+  * A shuffle operation is triggered when data needs to move between executors.
 
-Convert the data to the UnsafeRow, commonly referred to as Tungsten Binary Format.
-Write that data to disk on the local node - at this point the slot is free for the next task.
-Send that data across the wire to another executor
-Technically the Driver decides which executor gets which piece of data.
-Then the executor pulls the data it needs from the other executor's shuffle files.
-Copy the data back into RAM on the new executor
-The concept, if not the action, is just like the initial read "every" DataFrame starts with.
-The main difference being it's the 2nd+ stage.
-As we will see in a moment, this amounts to a free cache from what is effectively temp files.
+* To carry out the shuffle operation Spark needs to:
+  * Convert the data to the UnsafeRow, commonly referred to as Tungsten Binary Format.
+  * Write that data to disk on the local node - at this point the slot is free for the next task.
+  * Send that data across the wire to another executor
+  * Technically the Driver decides which executor gets which piece of data.
+  * Then the executor pulls the data it needs from the other executor's shuffle files.
+  * Copy the data back into RAM on the new executor
+  * The concept, if not the action, is just like the initial read "every" DataFrame starts with.
+  * The main difference being it's the 2nd+ stage.
+  * As we will see in a moment, this amounts to a free cache from what is effectively temp files.
 
-Some actions induce in a shuffle. Good examples would include the operations count() and reduce(..).
+Some actions induce in a shuffle. Good examples would include the operations count() and reduce(..). For more details on shuffling, refer to the RDD Programming Guide.
 
-For more details on shuffling, refer to the RDD Programming Guide.
+* UnsafeRow (also known as Tungsten Binary Format)
+  * Sharing data from one worker to another can be a costly operation.
+  * Spark has optimized this operation by using a format called Tungsten.
 
-UnsafeRow (also known as Tungsten Binary Format)
-Sharing data from one worker to another can be a costly operation.
+* Tungsten prevents the need for expensive serialization and de-serialization of objects in order to get data from one JVM to another. The data that is "shuffled" is in a format known as UnsafeRow, or more commonly, the Tungsten Binary Format. UnsafeRow is the in-memory storage format for Spark SQL, DataFrames & Datasets. Advantages include:
+  * Compactness:
+  * Column values are encoded using custom encoders, not as JVM objects (as with RDDs).
 
-Spark has optimized this operation by using a format called Tungsten.
+The benefit of using Spark 2.x's custom encoders is that you get almost the same compactness as Java serialization, but significantly faster encoding/decoding speeds. Also, for custom data types, it is possible to write custom encoders from scratch.
 
-Tungsten prevents the need for expensive serialization and de-serialization of objects in order to get data from one JVM to another.
-
-The data that is "shuffled" is in a format known as UnsafeRow, or more commonly, the Tungsten Binary Format.
-
-UnsafeRow is the in-memory storage format for Spark SQL, DataFrames & Datasets.
-
-Advantages include:
-
-Compactness:
-Column values are encoded using custom encoders, not as JVM objects (as with RDDs).
-The benefit of using Spark 2.x's custom encoders is that you get almost the same compactness as Java serialization, but significantly faster encoding/decoding speeds.
-Also, for custom data types, it is possible to write custom encoders from scratch.
 Efficiency: Spark can operate directly out of Tungsten, without first deserializing Tungsten data into JVM objects.
 
 ##  Work with DataFrames columns in Azure Databricks
