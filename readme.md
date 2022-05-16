@@ -202,20 +202,20 @@ When you execute code, Spark SQL uses Catalyst's general tree transformation fra
 
 * Pipelining
   * Pipelining is the idea of executing as many operations as possible on a single partition of data.
-  * Once a single partition of data is read into RAM, Spark will combine as many narrow operations as it can into a single Task
+  * Once a single partition of data is read into RAM, Spark will combine as many narrow operations as it can into a single **Task**
   * Wide operations force a shuffle, conclude a stage, and end a pipeline.
 
 * Shuffles
   * A shuffle operation is triggered when data needs to move between executors.
 
 * To carry out the shuffle operation Spark needs to:
-  * Convert the data to the UnsafeRow, commonly referred to as Tungsten Binary Format.
+  * Convert the data to the UnsafeRow, commonly referred to as **Tungsten Binary Format**.
   * Write that data to disk on the local node - at this point the slot is free for the next task.
   * Send that data across the wire to another executor
   * Technically the Driver decides which executor gets which piece of data.
   * Then the executor pulls the data it needs from the other executor's shuffle files.
   * Copy the data back into RAM on the new executor
-  * The concept, if not the action, is just like the initial read "every" DataFrame starts with.
+  * The concept, if not the action, is just like the initial read "every" `DataFrame` starts with.
   * The main difference being it's the 2nd+ stage.
   * As we will see in a moment, this amounts to a free cache from what is effectively temp files.
 
