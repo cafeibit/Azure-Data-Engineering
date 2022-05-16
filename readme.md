@@ -429,10 +429,28 @@ Tungsten prevents the need for expensive serialization and de-serialization of o
 
 ##  Work with DataFrames columns in Azure Databricks
 
-Use the DataFrame Column class in Azure Databricks to apply column-level transformations, such as sorts, filters and aggregations.
+* Use the DataFrame Column class in Azure Databricks to apply column-level transformations, such as sorts, filters and aggregations.
 
 `display(countsDF.groupBy("UNIT").sum("counts"))`
 
+  * The syntax for specifying column values for filtering and aggregations
+  * Understand the use of the Column Class
+  * Sort and filter a DataFrame based on Column Values
+  * Use collect() and take() to return records from a Dataframe to the driver of the cluster
+
+* <a href="./notebooks/Work with DataFrames columns.html">Describe the column class & Work with column expressions</a>
+
+  Continue exploring the DataFrame set of APIs. Continue to work with the Column class and introduce the Row class
+  Execute the transformations...
+  * orderBy(..)
+  * sort(..)
+  * filter(..)
+  * where(..)
+  Execute the actions...
+  * collect()
+  * take(n)
+  * first()
+  * head()
 
 ##  Work with DataFrames advanced methods in Azure Databricks
 
