@@ -181,64 +181,6 @@ Laziness is at the core of Scala and Spark. It has a number of benefits:
   * N different transformations can be processed on a single data element, on a single thread, on a single machine.
 * Optimizations can be applied prior to code compilation
 
-### Describe the fundamentals of how the Catalyst Optimizer works
-
-Because the Databricks API is declarative, a large number of optimizations are available to us. Some of the examples include:
-  * Optimizing data type for storage
-  * Rewriting queries for performance
-  * Predicate push downs
-  * Among the most powerful components of Spark are Spark SQL. At its core lies the Catalyst optimizer. This extensible query optimizer supports both rule-based and cost-based optimization.
-
-When you execute code, Spark SQL uses Catalyst's general tree transformation framework in four phases, as shown below: (1) analyzing a logical plan to resolve references, (2) logical plan optimization, (3) physical planning, and (4) code generation to compile parts of the query to Java bytecode. In the physical planning phase, Catalyst may generate multiple plans and compare them based on cost. All other phases are purely rule-based.
-
-<img src="catalyst-diagram.png" />
-
-* Catalyst is based on functional programming constructs in Scala and designed with these key two purposes:
-  * Easily add new optimization techniques and features to Spark SQL
-  * Enable external developers to extend the optimizer (e.g. adding data source specific rules, support for new data types, etc.)
-
-* Describe performance enhancements enabled by shuffle operations and Tungsten<br>
-  * As opposed to narrow transformations, wide transformations cause data to shuffle between executors. This is because a wide transformation requires sharing data across workers. Pipelining helps us optimize our operations based on the differences between the two types of transformations.
-
-* Pipelining
-  * Pipelining is the idea of executing as many operations as possible on a single partition of data.
-  * Once a single partition of data is read into RAM, Spark will combine as many narrow operations as it can into a single **Task**
-  * Wide operations force a shuffle, conclude a stage, and end a pipeline.
-
-* Shuffles
-  * A shuffle operation is triggered when data needs to move between executors.
-
-* To carry out the shuffle operation Spark needs to:
-  * Convert the data to the UnsafeRow, commonly referred to as **Tungsten Binary Format**.
-  * Write that data to disk on the local node - at this point the slot is free for the next task.
-  * Send that data across the wire to another executor
-  * Technically the Driver decides which executor gets which piece of data.
-  * Then the executor pulls the data it needs from the other executor's shuffle files.
-  * Copy the data back into RAM on the new executor
-  * The concept, if not the action, is just like the initial read "every" `DataFrame` starts with.
-  * The main difference being it's the 2nd+ stage.
-  * As we will see in a moment, this amounts to a free cache from what is effectively temp files.
-
-Some actions induce in a shuffle. Good examples would include the operations count() and reduce(..). For more details on shuffling, refer to the RDD Programming Guide.
-
-* UnsafeRow (also known as Tungsten Binary Format)
-
-Sharing data from one worker to another can be a costly operation.
-
-Spark has optimized this operation by using a format called Tungsten.
-
-Tungsten prevents the need for expensive serialization and de-serialization of objects in order to get data from one JVM to another. The data that is "shuffled" is in a format known as UnsafeRow, or more commonly, the Tungsten Binary Format. UnsafeRow is the in-memory storage format for Spark SQL, DataFrames & Datasets. Advantages include:
-
-* Compactness:
-  * Column values are encoded using custom encoders, not as JVM objects (as with RDDs).
-  * The benefit of using Spark 2.x's custom encoders is that you get almost the same compactness as Java serialization, but significantly faster encoding/decoding speeds. 
-  * Also, for custom data types, it is possible to write custom encoders from scratch.
-* Efficiency: Spark can operate directly out of Tungsten, without first deserializing Tungsten data into JVM objects.
-
-* Stages
-  * When we shuffle data, it creates what is known as a stage boundary.
-  * Stage boundaries represent a process bottleneck.
-
 ### Actions
 
 In production code, actions will generally **write data to persistent storage** using the DataFrameWriter discussed in other Azure Databricks learning path modules.
@@ -305,6 +247,64 @@ Examples include:
 * `repartition(n)`
 
 ![](https://databricks.com/wp-content/uploads/2018/05/Wide-Transformation.png)
+
+### Describe the fundamentals of how the Catalyst Optimizer works
+
+Because the Databricks API is declarative, a large number of optimizations are available to us. Some of the examples include:
+  * Optimizing data type for storage
+  * Rewriting queries for performance
+  * Predicate push downs
+  * Among the most powerful components of Spark are Spark SQL. At its core lies the Catalyst optimizer. This extensible query optimizer supports both rule-based and cost-based optimization.
+
+When you execute code, Spark SQL uses Catalyst's general tree transformation framework in four phases, as shown below: (1) analyzing a logical plan to resolve references, (2) logical plan optimization, (3) physical planning, and (4) code generation to compile parts of the query to Java bytecode. In the physical planning phase, Catalyst may generate multiple plans and compare them based on cost. All other phases are purely rule-based.
+
+<img src="catalyst-diagram.png" />
+
+* Catalyst is based on functional programming constructs in Scala and designed with these key two purposes:
+  * Easily add new optimization techniques and features to Spark SQL
+  * Enable external developers to extend the optimizer (e.g. adding data source specific rules, support for new data types, etc.)
+
+* Describe performance enhancements enabled by shuffle operations and Tungsten<br>
+  * As opposed to narrow transformations, wide transformations cause data to shuffle between executors. This is because a wide transformation requires sharing data across workers. Pipelining helps us optimize our operations based on the differences between the two types of transformations.
+
+* Pipelining
+  * Pipelining is the idea of executing as many operations as possible on a single partition of data.
+  * Once a single partition of data is read into RAM, Spark will combine as many narrow operations as it can into a single **Task**
+  * Wide operations force a shuffle, conclude a stage, and end a pipeline.
+
+* Shuffles
+  * A shuffle operation is triggered when data needs to move between executors.
+
+* To carry out the shuffle operation Spark needs to:
+  * Convert the data to the UnsafeRow, commonly referred to as **Tungsten Binary Format**.
+  * Write that data to disk on the local node - at this point the slot is free for the next task.
+  * Send that data across the wire to another executor
+  * Technically the Driver decides which executor gets which piece of data.
+  * Then the executor pulls the data it needs from the other executor's shuffle files.
+  * Copy the data back into RAM on the new executor
+  * The concept, if not the action, is just like the initial read "every" `DataFrame` starts with.
+  * The main difference being it's the 2nd+ stage.
+  * As we will see in a moment, this amounts to a free cache from what is effectively temp files.
+
+Some actions induce in a shuffle. Good examples would include the operations count() and reduce(..). For more details on shuffling, refer to the RDD Programming Guide.
+
+* UnsafeRow (also known as Tungsten Binary Format)
+
+Sharing data from one worker to another can be a costly operation.
+
+Spark has optimized this operation by using a format called Tungsten.
+
+Tungsten prevents the need for expensive serialization and de-serialization of objects in order to get data from one JVM to another. The data that is "shuffled" is in a format known as UnsafeRow, or more commonly, the Tungsten Binary Format. UnsafeRow is the in-memory storage format for Spark SQL, DataFrames & Datasets. Advantages include:
+
+* Compactness:
+  * Column values are encoded using custom encoders, not as JVM objects (as with RDDs).
+  * The benefit of using Spark 2.x's custom encoders is that you get almost the same compactness as Java serialization, but significantly faster encoding/decoding speeds. 
+  * Also, for custom data types, it is possible to write custom encoders from scratch.
+* Efficiency: Spark can operate directly out of Tungsten, without first deserializing Tungsten data into JVM objects.
+
+* Stages
+  * When we shuffle data, it creates what is known as a stage boundary.
+  * Stage boundaries represent a process bottleneck.
 
 
 ##  Work with DataFrames columns in Azure Databricks
