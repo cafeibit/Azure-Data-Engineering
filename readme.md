@@ -273,9 +273,8 @@ When you execute code, Spark SQL uses Catalyst's general tree transformation fra
   * Wide operations force a shuffle, conclude a stage, and end a pipeline.
 
 * Shuffles
-  * A shuffle operation is triggered when data needs to move between executors.
-
-* To carry out the shuffle operation Spark needs to:
+  A shuffle operation is triggered when data needs to move between executors.
+  To carry out the shuffle operation Spark needs to:
   * Convert the data to the UnsafeRow, commonly referred to as **Tungsten Binary Format**.
   * Write that data to disk on the local node - at this point the slot is free for the next task.
   * Send that data across the wire to another executor
