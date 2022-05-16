@@ -289,7 +289,7 @@ When you execute code, Spark SQL uses Catalyst's general tree transformation fra
     
   As we will see in a moment, this amounts to a free cache from what is effectively temp files.
   
-    -- Some actions induce in a shuffle. Good examples would include the operations `count()` and `reduce(..)`. For more details on shuffling, refer to the RDD Programming Guide.
+    -- Some actions induce in a shuffle. Good examples would include the operations `count()` and `reduce(..)`. For more details on shuffling, refer to the <a href="https://spark.apache.org/docs/latest/rdd-programming-guide.html#shuffle-operations">RDD Programming Guide</a>.
 
 * UnsafeRow (also known as Tungsten Binary Format)
 
