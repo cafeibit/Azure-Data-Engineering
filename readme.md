@@ -295,9 +295,9 @@ When you execute code, Spark SQL uses Catalyst's general tree transformation fra
 
 Sharing data from one worker to another can be a costly operation.
 
-Spark has optimized this operation by using a format called Tungsten.
+Spark has optimized this operation by using a format called **Tungsten**.
 
-Tungsten prevents the need for expensive serialization and de-serialization of objects in order to get data from one JVM to another. The data that is "shuffled" is in a format known as UnsafeRow, or more commonly, the Tungsten Binary Format. UnsafeRow is the in-memory storage format for Spark SQL, DataFrames & Datasets. Advantages include:
+Tungsten prevents the need for expensive serialization and de-serialization of objects in order to get data from one JVM to another. The data that is "shuffled" is in a format known as `UnsafeRow`, or more commonly, the Tungsten Binary Format. `UnsafeRow` is the in-memory storage format for Spark SQL, DataFrames & Datasets. Advantages include:
 
 * Compactness:
   * Column values are encoded using custom encoders, not as JVM objects (as with RDDs).
