@@ -452,7 +452,7 @@ Tungsten prevents the need for expensive serialization and de-serialization of o
   * first()
   * head()
 
-##  Work with DataFrames advanced methods in Azure Databricks
+##  Work with DataFrames advanced methods in Azure Databricks <a href="./notebook/Work with DataFrames advanced methods.ipynb">Examples</a>
 
 Use advanced DataFrame functions operations to manipulate data, apply aggregates, and perform date and time operations in Azure Databricks.
 
