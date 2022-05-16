@@ -281,14 +281,15 @@ When you execute code, Spark SQL uses Catalyst's general tree transformation fra
   * Convert the data to the UnsafeRow, commonly referred to as **Tungsten Binary Format**.
   * Write that data to disk on the local node - at this point the slot is free for the next task.
   * Send that data across the wire to another executor
-  * Technically the Driver decides which executor gets which piece of data.
-  * Then the executor pulls the data it needs from the other executor's shuffle files.
+    -- Technically the Driver decides which executor gets which piece of data.
+    -- Then the executor pulls the data it needs from the other executor's shuffle files.
   * Copy the data back into RAM on the new executor
-  * The concept, if not the action, is just like the initial read "every" `DataFrame` starts with.
-  * The main difference being it's the 2nd+ stage.
-  * As we will see in a moment, this amounts to a free cache from what is effectively temp files.
-
-Some actions induce in a shuffle. Good examples would include the operations count() and reduce(..). For more details on shuffling, refer to the RDD Programming Guide.
+    -- The concept, if not the action, is just like the initial read "every" `DataFrame` starts with.
+    -- The main difference being it's the 2nd+ stage.
+    
+  As we will see in a moment, this amounts to a free cache from what is effectively temp files.
+  
+    -- Some actions induce in a shuffle. Good examples would include the operations `count()` and `reduce(..)`. For more details on shuffling, refer to the RDD Programming Guide.
 
 * UnsafeRow (also known as Tungsten Binary Format)
 
