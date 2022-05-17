@@ -587,7 +587,7 @@ The "Databricks appliance" is deployed into Azure as a managed resource group wi
 
 Internally, Azure Kubernetes Service (AKS) is used to run the Azure Databricks control-plane and data-planes via containers running on the latest generation of Azure hardware (Dv3 VMs), with NvMe SSDs capable of blazing 100us latency on IO. These make Databricks I/O performance even better. In addition, accelerated networking provides the fastest virtualized network infrastructure in the cloud. Azure Databricks utilizes this to further improve Spark performance.
 
-<img src="" />
+<img src="./azure-databricks-platform-architecture.png" />
 
 ##  Build and query a Delta Lake
 
