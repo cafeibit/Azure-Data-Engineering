@@ -635,7 +635,7 @@ Delta Lake makes data ready for analytics.
 
 Delta Lake is an open-source storage layer that brings ACID transactions to Apache Spark™ and big data workloads.
 
-<img src="" />
+<img src="delta-lake-diagram.png" />
 
 You can read and write data that's stored in Delta Lake by using Apache Spark SQL batch and streaming APIs. These are the same familiar APIs that you use to work with Hive tables or DBFS directories. Delta Lake provides the following functionality:
 
