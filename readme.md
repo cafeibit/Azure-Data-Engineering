@@ -2,6 +2,37 @@
 
 To harness the power of Apache Spark and powerful clusters running on the Azure Databricks platform to run large data engineering workloads in the cloud. Databricks Data Science & Engineering provides an interactive workspace that enables collaboration between data engineers, data scientists, and machine learning engineers. For a big data pipeline, the data (raw or structured) is ingested into Azure through Azure Data Factory in batches, or streamed near real-time using Apache Kafka, Event Hub, or IoT Hub. This data lands in a data lake for long term persisted storage, in Azure Blob Storage or Azure Data Lake Storage. As part of your analytics workflow, use Azure Databricks to read data from multiple data sources and turn it into breakthrough insights using Spark.
 
+ * <a href="#section1">Describe Azure Databricks</a>
+
+ * <a href="#section2">Spark architecture fundamental</a>
+
+ * <a href="#section3">Read and write data in Azure Databricks</a>
+
+ * <a href="#section4">Work with DataFrames in Azure Databricks</a>
+
+ * <a href="#section5">Describe lazy evaluation and other performance features in Azure Databricks</a>
+
+ * <a href="#section6">Work with DataFrames columns in Azure Databricks</a>
+
+ * <a href="#section7">Work with DataFrames advanced methods in Azure Databricks</a>
+
+ * <a href="#section8">Describe platform architecture, security, and data protection in Azure Databricks</a>
+
+ * <a href="#section9">Build and query a Delta Lake</a>
+
+ * <a href="#section10">Process streaming data with Azure Databricks structured streaming</a>
+
+ * <a href="#section11">Describe Azure Databricks Delta Lake architecture</a>
+
+ * <a href="#section12">Create production workloads on Azure Databricks with Azure Data Factory</a>
+
+ * <a href="#section13">Create production workloads on Azure Databricks with Azure Data Factory</a>
+
+ * <a href="#section14">Integrate Azure Databricks with Azure Synapse</a>
+
+ * <a href="#section15">Describe Azure Databricks best practices</a>
+
+
 <img src="./azure-databricks.png" />
 
 <a href="https://docs.microsoft.com/en-us/azure/databricks/scenarios/databricks-extract-load-sql-data-warehouse">Tutorial: Extract, transform, and load data by using Azure Databricks</a>
@@ -14,8 +45,6 @@ To harness the power of Apache Spark and powerful clusters running on the Azure 
   * Extract data from the Azure Data Lake Storage Gen2 account.
   * Transform data in Azure Databricks.
   * Load data into Azure Synapse.
-
-<a href="#section1">Describe Azure Databricks</a>
 
 ##  <h2 id="section1">Describe Azure Databricks</h2>
 
@@ -32,7 +61,7 @@ When talking about the Azure Databricks workspace, we refer to two different thi
    *  Process live streams of data
    *  Perform analysis on large graph data sets and social networks
 
-##  Spark architecture fundamentals
+##  <h2 id="section2">Spark architecture fundamentals</h2>
 
 Understand the architecture of an Azure Databricks Spark Cluster and Spark Jobs.
 
@@ -70,7 +99,7 @@ From a developer's and learner's perspective my primary focus is on...
   * And lastly the Stages those jobs are divided into.
 
 
-##  Read and write data in Azure Databricks
+##  <h2 id="section3">Read and write data in Azure Databricks</h2>
 
 Work with large amounts of data from multiple sources in different raw formats. Azure Databricks supports day-to-day data-handling functions, such as reads, writes, and queries.
 
@@ -116,7 +145,7 @@ Work with large amounts of data from multiple sources in different raw formats. 
   *  Read data from tables/views, Write data to a Parquet file, Read the Parquet file back and display the results
   *  <a href="./notebook/Read Write Query with DataFrame.ipynb">Examples</a>
 
-##  Work with DataFrames in Azure Databricks
+##  <h2 id="section4">Work with DataFrames in Azure Databricks</h4>
 
 Your data processing in Azure Databricks is accomplished by defining DataFrames to read and process the Data. Learn how to perform data transformations in DataFrames and execute actions to display the transformed data.
 
@@ -132,7 +161,7 @@ Spark uses 3 different APIs: RDDs, DataFrames, and DataSets. The architectural f
  * <a href="./notebook/Working with DataFrames.ipynb">Examples</a>
 
 
-##  Describe lazy evaluation and other performance features in Azure Databricks
+##  <h2 id="section5">Describe lazy evaluation and other performance features in Azure Databricks</h2>
 
 Understand the difference between a transform and an action, lazy and eager evaluations, Wide and Narrow transformations, and other optimizations in Azure Databricks.
 
@@ -428,7 +457,7 @@ Tungsten prevents the need for expensive serialization and de-serialization of o
   * 6	Filter	-
   * 7	Write	-
 
-##  Work with DataFrames columns in Azure Databricks
+##  <h2 id="section6">Work with DataFrames columns in Azure Databricks</h2>
 
 * Use the DataFrame Column class in Azure Databricks to apply column-level transformations, such as sorts, filters and aggregations.
 
@@ -453,7 +482,9 @@ Tungsten prevents the need for expensive serialization and de-serialization of o
   * first()
   * head()
 
-##  Work with DataFrames advanced methods in Azure Databricks <a href="./notebook/Work with DataFrames advanced methods.ipynb">Examples</a>
+##  <h2 id="section7">Work with DataFrames advanced methods in Azure Databricks</h2>
+
+<a href="./notebook/Work with DataFrames advanced methods.ipynb">Examples</a>
 
 Use advanced DataFrame functions operations to manipulate data, apply aggregates, and perform date and time operations in Azure Databricks.
 
@@ -561,7 +592,7 @@ The Apache Spark DataFrame API provides a rich set of functions (select columns,
    More information: for more information about the Spark API, see the <a href="https://spark.apache.org/docs/2.4.0/api/python/pyspark.sql.html#pyspark.sql.DataFrame?azure-portal=true">DataFrame API</a> and the <a href="https://spark.apache.org/docs/2.4.0/api/python/pyspark.sql.html#pyspark.sql.Column?azure-portal=true">Column API</a> in the Spark documentation.
    
    
-##  Describe platform architecture, security, and data protection in Azure Databricks
+##  <h2 id="section8">Describe platform architecture, security, and data protection in Azure Databricks</h2>
 
 Understand the Azure Databricks platform components and best practices for securing your workspace through Databricks native features and by integrating with Azure services.
 
@@ -590,24 +621,24 @@ Internally, Azure Kubernetes Service (AKS) is used to run the Azure Databricks c
 
 <img src="./azure-databricks-platform-architecture.png" />
 
-##  Build and query a Delta Lake
+##  <h2 id="section9">Build and query a Delta Lake</h2>
 
 Learn how to use Delta Lake to create, append, and upsert data to Apache Spark tables, taking advantage of built-in reliability and optimizations.
 
 
-##  Process streaming data with Azure Databricks structured streaming
+##  <h2 id="section10">Process streaming data with Azure Databricks structured streaming</h2>
 
 Learn how Structured Streaming helps you process streaming data in real time, and how you can aggregate data over windows of time.
 
 
 
-##  Describe Azure Databricks Delta Lake architecture
+##  <h2 id="section11">Describe Azure Databricks Delta Lake architecture</h2>
 
 Use Delta Lakes as an optimization layer on top of blob storage to ensure reliability and low latency within unified Streaming + Batch data pipelines.
 
 
 
-##  Create production workloads on Azure Databricks with Azure Data Factory
+##  <h2 id="section12">Create production workloads on Azure Databricks with Azure Data Factory</h2>
 
 Azure Data Factory helps you create workflows that orchestrate data movement and transformation at scale. Integrate Azure Databricks into your production pipelines by calling notebooks and libraries.
 
@@ -625,27 +656,30 @@ Azure Data Factory helps you create workflows that orchestrate data movement and
   *   %md: Allows you to include various types of documentation, including text, images, and mathematical formulas and equations.
 
 
-##  Implement CI/CD with Azure DevOps
+ ##  <h2 id="section13">Implement CI/CD with Azure DevOps</h2>
 
 CI/CID isn't just for developers. Learn how to put Azure Databricks notebooks under version control in an Azure DevOps repo and build deployment pipelines to manage your release process.
 
 
 
-##  Integrate Azure Databricks with Azure Synapse
+ ##  <h2 id="section14">Integrate Azure Databricks with Azure Synapse</h2>
 
 Azure Databricks is just one of many powerful data services in Azure. Learn how to integrate with Azure Synapse Analytics as part of your data architecture.
 
 
 
-##  Describe Azure Databricks best practices
+ ##  <h2 id="section15">Describe Azure Databricks best practices</h2>
 
 Learn best practices for workspace administration, security, tools, integration, databricks runtime, HA/DR, and clusters in Azure Databricks.
 
 
+ 
+ 
 # Build and operate machine learning solutions with Azure Databricks
 
 Azure Databricks is a cloud-scale platform for data analytics and machine learning. In this learning path, you'll learn how to use Azure Databricks to explore, prepare, and model data; and integrate with Azure Machine Learning.
 
+ 
 # Perform data science with Azure Databricks
 
 Learn how to harness the power of Apache Spark and powerful clusters running on the Azure Databricks platform to run data science workloads in the cloud.
