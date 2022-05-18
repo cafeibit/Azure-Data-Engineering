@@ -690,7 +690,21 @@ Learn how Structured Streaming helps you process streaming data in real time, an
 
 Use Delta Lakes as an optimization layer on top of blob storage to ensure reliability and low latency within unified Streaming + Batch data pipelines.
 
+The Delta Lake Architecture is a vast improvement upon the traditional Lambda architecture. At each stage, we enrich our data through a unified pipeline that allows us to combine batch and streaming workflows through a shared filestore with ACID-compliant transactions.
 
+**Bronze** tables contain raw data ingested from various sources (JSON files, RDBMS data, IoT data, etc.).
+
+**Silver** tables will provide a more refined view of our data. We can join fields from various bronze tables to enrich streaming records, or update account statuses based on recent activity.
+
+**Gold** tables provide business level aggregates often used for reporting and dashboarding. This would include aggregations such as daily active website users, weekly sales per store, or gross revenue per quarter by department.
+
+The end outputs are actionable insights, dashboards, and reports of business metrics.
+
+By considering our business logic at all steps of the extract-transform-load (ETL) pipeline, we can ensure that storage and compute costs are optimized by reducing unnecessary duplication of data and limiting ad hoc querying against full historic data.
+
+Each stage can be configured as a batch or streaming job, and ACID transactions ensure that we succeed or fail completely.
+
+<img src="./bronze-silver-gold.png" />
 
 ##  <h2 id="section12">Create production workloads on Azure Databricks with Azure Data Factory</h2>
 
