@@ -706,6 +706,125 @@ Each stage can be configured as a batch or streaming job, and ACID transactions 
 
 <img src="./bronze-silver-gold.png" />
 
+<img src="https://files.training.databricks.com/images/DeltaLake-logo.png" width="80px"/>
+
+#### Unifying Structured Streaming with Batch Jobs with Delta Lake
+
+In this notebook, we will explore combining streaming and batch processing with a single pipeline. We will begin by defining the following logic:
+
+- ingest streaming JSON data from disk and write it to a Delta Lake Table `/activity/Bronze`
+- perform a Stream-Static Join on the streamed data to add additional geographic data
+- transform and load the data, saving it out to our Delta Lake Table `/activity/Silver`
+- summarize the data through aggregation into the Delta Lake Table `/activity/Gold/groupedCounts`
+- materialize views of our gold table through streaming plots and static queries
+
+We will then demonstrate that by writing batches of data back to our bronze table, we can trigger the same logic on newly loaded data and propagate our changes automatically.
+
+#### WRITE Stream using Delta Lake
+
+##### General Notation
+Use this format to write a streaming job to a Delta Lake table.
+
+<pre>
+(myDF
+  .writeStream
+  .format("delta")
+  .option("checkpointLocation", checkpointPath)
+  .outputMode("append")
+  .start(path)
+)
+</pre>
+
+<img alt="Caution" title="Caution" style="vertical-align: text-bottom; position: relative; height:1.3em; top:0.0em" src="https://files.training.databricks.com/static/images/icon-warning.svg"/> While we _can_ write directly to tables using the `.table()` notation, this will create fully managed tables by writing output to a default location on DBFS. This is not best practice for production jobs.
+
+##### Output Modes
+Notice, besides the "obvious" parameters, specify `outputMode`, which can take on these values
+* `append`: add only new records to output sink
+* `complete`: rewrite full output - applicable to aggregations operations
+
+<img alt="Caution" title="Caution" style="vertical-align: text-bottom; position: relative; height:1.3em; top:0.0em" src="https://files.training.databricks.com/static/images/icon-warning.svg"/> At present, `update` mode is **not** supported for streaming Delta jobs.
+
+##### Checkpointing
+
+When defining a Delta Lake streaming query, one of the options that you need to specify is the location of a checkpoint directory.
+
+`.writeStream.format("delta").option("checkpointLocation", <path-to-checkpoint-directory>) ...`
+
+This is actually a structured streaming feature. It stores the current state of your streaming job.
+
+Should your streaming job stop for some reason and you restart it, it will continue from where it left off.
+
+<img alt="Caution" title="Caution" style="vertical-align: text-bottom; position: relative; height:1.3em; top:0.0em" src="https://files.training.databricks.com/static/images/icon-warning.svg"/> If you do not have a checkpoint directory, when the streaming job stops, you lose all state around your streaming job and upon restart, you start from scratch.
+
+<img alt="Caution" title="Caution" style="vertical-align: text-bottom; position: relative; height:1.3em; top:0.0em" src="https://files.training.databricks.com/static/images/icon-warning.svg"/> Also note that every streaming job should have its own checkpoint directory: no sharing.
+
+#### Create QUERY tables (aka "silver tables")
+
+Our current bronze table contains nested fields, as well as time data that has been encoded in non-standard unix time (`Arrival_Time` is encoded as milliseconds from epoch, while `Creation_Time` records nanoseconds between record creation and receipt). 
+
+We also wish to enrich our data with 3 letter country codes for mapping purposes, which we'll obtain from a join with our `geoForLookupDF`.
+
+In order to parse the data in human-readable form, we create query/silver tables out of the raw data.
+
+We will stream from our previous file write, define transformations, and rewrite our data to disk.
+
+<img alt="Side Note" title="Side Note" style="vertical-align: text-bottom; position: relative; height:1.75em; top:0.05em; transform:rotate(15deg)" src="https://files.training.databricks.com/static/images/icon-note.webp"/> Notice how we do not need to specify a schema when loading Delta files: it is inferred from the metadata!
+
+The fields of a complex object can be referenced with a "dot" notation as in:
+
+`col("geolocation.country")`
+
+
+A large number of these fields/columns can become unwieldy.
+
+For that reason, it is common to extract the sub-fields and represent them as first-level columns as seen below:
+
+#### Important Considerations for `complete` Output with Delta
+
+When using `complete` output mode, we rewrite the entire state of our table each time our logic runs. While this is ideal for calculating aggregates, we **cannot** read a stream from this directory, as Structured Streaming assumes data is only being appended in the upstream logic.
+
+<img alt="Side Note" title="Side Note" style="vertical-align: text-bottom; position: relative; height:1.75em; top:0.05em; transform:rotate(15deg)" src="https://files.training.databricks.com/static/images/icon-note.webp"/> Certain options can be set to change this behavior, but have other limitations attached. For more details, refer to [Delta Streaming: Ignoring Updates and Deletes](https://docs.databricks.com/delta/delta-streaming.html#ignoring-updates-and-deletes).
+
+The gold Delta table we have just registered will perform a static read of the current state of the data each time we run the following query.
+
+#### Materialized View: Windowed Count of Hourly `gt` Events
+
+Plot the occurrence of all events grouped by `gt`.
+
+<img alt="Caution" title="Caution" style="vertical-align: text-bottom; position: relative; height:1.3em; top:0.0em" src="https://files.training.databricks.com/static/images/icon-warning.svg"/> Because we're using `complete` output mode for our gold table write, we cannot define a streaming plot on these files.
+
+Instead, we'll define a temp table based on the files written to our silver table as shown in the cell cmd cmd 31. We will them use this table to execute our streaming queries.
+
+In order to create a LIVE bar chart of the data, you'll need to fill out the <b>Plot Options</b> as shown in cell cmd32 by clicking on the chart icon:
+
+<div><img src="https://files.training.databricks.com/images/eLearning/Delta/ch5-plot-options.png"/></div><br/>
+
+#### Note on Gold Tables & Materialized Views
+
+When we call `display` on a streaming DataFrame or execute a SQL query on a streaming view, we are using memory as our sink. 
+
+In this case, we are executing a SQL query on a streaming view. We have already calculated all the values necessary to materialize our streaming view above in the gold table we've written to disk. 
+
+**However**, we re-execute this logic on our silver table to generate streaming views, as structured streaming will not support reads from upstream files that have beem overwritten.
+
+#### Summary
+
+Delta Lake is ideally suited for use in streaming data lake contexts.
+
+Use the Delta Lake architecture to craft raw, query, and summary tables to produce beautiful visualizations of key business metrics.
+
+#### Additional Topics & Resources
+
+* <a href="https://docs.databricks.com/delta/delta-streaming.html#as-a-sink" target="_blank">Delta Streaming Write Notation</a>
+* <a href="https://spark.apache.org/docs/latest/structured-streaming-programming-guide.html#" target="_blank">Structured Streaming Programming Guide</a>
+* <a href="https://www.youtube.com/watch?v=rl8dIzTpxrI" target="_blank">A Deep Dive into Structured Streaming</a> by Tagatha Das. This is an excellent video describing how Structured Streaming works.
+* <a href="http://lambda-architecture.net/#" target="_blank">Lambda Architecture</a>
+* <a href="https://bennyaustin.wordpress.com/2010/05/02/kimball-and-inmon-dw-models/#" target="_blank">Data Warehouse Models</a>
+* <a href="https://people.apache.org//~pwendell/spark-nightly/spark-branch-2.1-docs/latest/structured-streaming-kafka-integration.html#" target="_blank">Reading structured streams from Kafka</a>
+* <a href="http://spark.apache.org/docs/latest/structured-streaming-kafka-integration.html#creating-a-kafka-source-stream#" target="_blank">Create a Kafka Source Stream</a>
+* <a href="https://docs.databricks.com/delta/delta-intro.html#case-study-multi-hop-pipelines#" target="_blank">Multi Hop Pipelines</a>
+
+
 ##  <h2 id="section12">Create production workloads on Azure Databricks with Azure Data Factory</h2>
 
 Azure Data Factory helps you create workflows that orchestrate data movement and transformation at scale. Integrate Azure Databricks into your production pipelines by calling notebooks and libraries.
