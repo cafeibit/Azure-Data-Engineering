@@ -954,7 +954,13 @@ Azure Data Factory helps you create workflows that orchestrate data movement and
   *   %fs: Allows you to use dbutils filesystem commands
   *   %md: Allows you to include various types of documentation, including text, images, and mathematical formulas and equations.
 
-
+* To build a new data pipeline that involves copying data from multiple sources into a data lake for processing.
+  * To use Azure Databricks to transform the data and to ensure your processing occurs as soon as the data is ready. 
+  * Processing the data from a notebook is just one step of the data pipeline. 
+  * Conducted research on orchestration platforms and to use Azure Data Factory, to connect to several services both on-premises and in the cloud, and to easily build data pipelines.
+  * To investigate the ability to execute Azure Databricks jobs from Azure Data Factory, passing in parameters used for data processing, and returning parameters used to continue the pipeline processing
+ 
+ 
  ##  <h2 id="section13">Implement CI/CD with Azure DevOps</h2>
 
 CI/CID isn't just for developers. Learn how to put Azure Databricks notebooks under version control in an Azure DevOps repo and build deployment pipelines to manage your release process.
