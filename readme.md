@@ -733,9 +733,24 @@ Setting the checkpointLocation is required for many sinks used in Structured Str
 
   With a stream, we have to assume we don't have enough data because we are starting with zero records.And unlike reading from a table or parquet file, there is nowhere from which to "read" the stream's schema.For this reason, we must specify the schema manually.
 
- To control how much data is pulled into Spark at once, we can specify the option `maxFilesPerTrigger`. In our example below, we will be reading in only one file for every trigger interval:
+ To control how much data is pulled into Spark at once, we can specify the option `maxFilesPerTrigger`. In our example below, we will be reading in only one file for every trigger interval: `.option("maxFilesPerTrigger", 1)`
+ 
+#### Writing a Stream
 
-.option("maxFilesPerTrigger", 1)
+The method `DataFrame.writeStream` returns a DataStreamWriter used to configure the output of the stream.
+
+There are a number of parameters to the DataStreamWriter configuration:
+  * Query's name (optional) - This name must be unique among all the currently active queries in the associated SQLContext.
+  * Trigger (optional) - Default value is ProcessingTime(0) and it will run the query as fast as possible.
+  * Checkpointing directory (optional for pup/sub sinks)
+  * Output mode
+  * Output sink
+  * Configuration specific to the output sink, such as:
+  * The host, port and topic of the receiving Kafka server
+  * The file format and final destination of files
+  
+  A <a href="https://spark.apache.org/docs/latest/api/python/pyspark.sql.html?highlight=foreach#pyspark.sql.streaming.DataStreamWriter.foreach"target="_blank">custom sink via `writeStream.foreach(...)`
+Once the configuration is completed, we can trigger the job with a call to `.start()`
  
 ##  <h2 id="section11">Describe Azure Databricks Delta Lake architecture</h2>
 
