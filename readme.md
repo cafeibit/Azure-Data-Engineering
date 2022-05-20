@@ -8,9 +8,9 @@
 
  <a href="#section4">Use Azure Synapse serverless SQL pools for transforming the data in the lake</a>
 
- <a href="#section5">Serve the data from Azure Synapse serverless SQL pool</a>
+ <a href="#section6">Serve the data from Azure Synapse serverless SQL pool</a>
 
- <a href="#section6">Integrate SQL and Apache Spark pools in Azure Synapse Analytics</a>
+ <a href="#section5">Integrate SQL and Apache Spark pools in Azure Synapse Analytics</a>
 
 # Perform data engineering with Azure Synapse Apache Spark Pools
 
@@ -717,7 +717,7 @@ To serve and make use of the data that is queried or transformed by Azure Synaps
 * <a href="./sqlscript/queriesbycs.cs">Example</a>
 
 
-## <h2 id="secion7">Work with Data Warehouses using Azure Synapse Analytics by developer features</h2>
+## <h2 id="section7">Work with Data Warehouses using Azure Synapse Analytics by developer features</h2>
 
 ### Work With Windowning functions
 *  Window Functions
@@ -907,10 +907,10 @@ That is to say, data sources that contain invalid data formats, corrupted record
 `SELECT *`<br>
 `FROM [wwi_external].[DailySalesCounts]`<br>
  
- ###  <a href="analyze-optimize-performamce.md">Analyze and optimize data warehouse storage in Azure Synapse Analytics</a>
+ **<a href="analyze-optimize-performamce.md">Analyze and optimize data warehouse storage in Azure Synapse Analytics</a>**
 
  
- ## Manage and monitor data warehouse activities in Azure Synapse Analytics 
+ ## <h2 id="section9">Manage and monitor data warehouse activities in Azure Synapse Analytics</h2>
  
  ### Scale compute resources in Azure Synapse Analytics
  
