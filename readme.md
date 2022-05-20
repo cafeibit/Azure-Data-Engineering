@@ -1,16 +1,16 @@
 # Work with Data Warehouses using Azure Synapse Analytics
 
- <a href="section1">Reading and Writing to Synapse</a>
+ <a href="#section1">Reading and Writing to Synapse</a>
 
- <a href="section2">Query data in the lake using Azure Synapse serverless SQL pools</a>
+ <a href="#section2">Query data in the lake using Azure Synapse serverless SQL pools</a>
 
- <a href="section3">Create metadata objects in Azure Synapse serverless SQL pools</a>
+ <a href="#section3">Create metadata objects in Azure Synapse serverless SQL pools</a>
 
- <a href="section4">Use Azure Synapse serverless SQL pools for transforming the data in the lake</a>
+ <a href="#section4">Use Azure Synapse serverless SQL pools for transforming the data in the lake</a>
 
- <a href="section5">Serve the data from Azure Synapse serverless SQL pool</a>
+ <a href="#section5">Serve the data from Azure Synapse serverless SQL pool</a>
 
- <a href="section6">Integrate SQL and Apache Spark pools in Azure Synapse Analytics</a>
+ <a href="#section6">Integrate SQL and Apache Spark pools in Azure Synapse Analytics</a>
 
 # Perform data engineering with Azure Synapse Apache Spark Pools
 
@@ -19,9 +19,6 @@
  <a href="section8">Use data loading best practices in Azure Synapse Analytics</a>
 
  <a href="section9">Manage and monitor data warehouse activities in Azure Synapse Analytics</a。
- 
- 
- 
  
 ## <h2 id="section1">Reading and Writing to Synapse</h2>
  
@@ -197,7 +194,7 @@ Azure Synapse serverless SQL pool is tailored for querying the data in the lake.
   
   <a href="./sqlscript/querydatausingserverlesspool.sql">Examples</a>
   
-## Create metadata objects in Azure Synapse serverless SQL pools
+## <h2 id="section3">Create metadata objects in Azure Synapse serverless SQL pools</h2>
 
 To query data or optimize your existing data transformation pipeline through Azure Synapse serverless SQL pools.
 
@@ -393,7 +390,7 @@ WHERE
 ORDER BY 
     [population] DESC;`
     
-## Use Azure Synapse serverless SQL pools for transforming the data in the lake
+## <h2 id="section4">Use Azure Synapse serverless SQL pools for transforming the data in the lake</h2>
 
 To use CREATE EXTERNAL TABLE AS SELECT statements to transform data and encapsulate the transformation logic in stored procedures.
 
