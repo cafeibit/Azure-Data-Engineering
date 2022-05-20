@@ -759,7 +759,6 @@ Stream processing using Structured Streaming, forEach sinks, memory sinks, etc.
    `.orderBy(col("start"), col("action"))       # Sort by the start time`
    
    `)`
-display(watermarkedDF)                        # Start the stream and display it
 
 * Process data from Event Hubs with structured streaming
 
