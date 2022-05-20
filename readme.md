@@ -1,21 +1,29 @@
 # Work with Data Warehouses using Azure Synapse Analytics
 
-## Reading and Writing to Synapse
-##  Query data in the lake using Azure Synapse serverless SQL pools 
-## Create metadata objects in Azure Synapse serverless SQL pools
-## Use Azure Synapse serverless SQL pools for transforming the data in the lake
-## Serve the data from Azure Synapse serverless SQL pool
-## Integrate SQL and Apache Spark pools in Azure Synapse Analytics
+ <a href="section1">Reading and Writing to Synapse</a>
+
+ <a href="section2">Query data in the lake using Azure Synapse serverless SQL pools</a>
+
+ <a href="section3">Create metadata objects in Azure Synapse serverless SQL pools</a>
+
+ <a href="section4">Use Azure Synapse serverless SQL pools for transforming the data in the lake</a>
+
+ <a href="section5">Serve the data from Azure Synapse serverless SQL pool</a>
+
+ <a href="section6">Integrate SQL and Apache Spark pools in Azure Synapse Analytics</a>
 
 # Perform data engineering with Azure Synapse Apache Spark Pools
 
-## Work with Data Warehouses using Azure Synapse Analytics by developer features
-## Use data loading best practices in Azure Synapse Analytics 
-## Manage and monitor data warehouse activities in Azure Synapse Analytics 
+ <a href="section7">Work with Data Warehouses using Azure Synapse Analytics by developer features</a>
+
+ <a href="section8">Use data loading best practices in Azure Synapse Analytics</a>
+
+ <a href="section9">Manage and monitor data warehouse activities in Azure Synapse Analytics</a。
  
  
  
-## Reading and Writing to Synapse
+ 
+## <h2 id="section1">Reading and Writing to Synapse</h2>
  
  ## Objectives
 
@@ -167,7 +175,7 @@ spark.conf.set(f"fs.azure.account.key.{storageAccount}.blob.core.windows.net", a
  <code>select CustomerKey, CustomerAlternateKey from customer_temp_data limit 10;</code><br>`
 
 
-##  Query data in the lake using Azure Synapse serverless SQL pools 
+##  <h2 id="section2">Query data in the lake using Azure Synapse serverless SQL pools</h2>
 
 Azure Synapse serverless SQL pool is tailored for querying the data in the lake. It supports querying CSV, JSON, and Parquet file formats directly.
 
