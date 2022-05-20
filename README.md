@@ -1,7 +1,7 @@
 # Azure Data Engineering
 
 ##### To choose Azure Cloud Plaftorm as data engineering solution for big data processing for batch/stream data processing on Lambad/Kappa architecture.
- * There are many components to work on data engineering: <a href="./SynapseAnalytics">Azure Synapse Analytics (Serverless pools, Spark pools)</a>, Azure Databricks (Spark/Delta Lake), Azure HDInsight, Synapse Pipelines/ Azure Data Factory, Azure Streaming Service (Event Hubs/IoT Hub/ADSL Gen2/Apache Kafka), Azure Blog Storage, Azure Cosmos DB, Azure Synapse Link for Azure Cosmos DB, Azure Analysis Service, Azure Data Explorer, Power BI
+ * There are many components to work on data engineering: <a href="../SynapseAnalytics/readme.md">Azure Synapse Analytics (Serverless pools, Spark pools)</a>, <a href="../Databricks/readme.md">Azure Databricks (Spark/Delta Lake)</a>, Azure HDInsight, Synapse Pipelines/ Azure Data Factory, Azure Streaming Service (Event Hubs/IoT Hub/ADSL Gen2/Apache Kafka), Azure Blog Storage,<a href="../SynapseAnalytics/CosmosDB/README.md">Azure Cosmos DB</a>, Azure Synapse Link for Azure Cosmos DB, Azure Analysis Service, Azure Data Explorer, Power BI
  
 ##### To make data-drven decisions and build data-powered products becoming morden business intelligence - AI/ML.
 * To provision and set up data platform technologies that are on-premises and in the cloud manage and secure the flow of structured and unstructured data from multiple sources. The data platforms they use can include relational databases, nonrelational databases, data streams, and file stores. 
@@ -134,7 +134,7 @@ Azure Synapse Analytics is an integrated analytics platform, which combines <b>d
 * <a href="../SynapseAnalytics/readme.md">Data Engineering with Azure Synapse Analytics</a>
 * <a href="https://docs.microsoft.com/en-us/azure/synapse-analytics/sql/overview-architecture">Azure Synapse SQL architecture</a>
 
-## Data Engineering with Azure Databricks with best practices
+## Data Engineering with Azure Databricks and Spark/Delta Lake
 
 To process and analyze data using multi-task jobs and Delta Live Tables, the Azure Databricks data processing pipeline framework. To run a Delta Live Tables pipeline as part of a data processing workflow with Databricks jobs, Apache Airflow, or Azure Data Factory. 
 
