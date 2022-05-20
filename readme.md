@@ -725,11 +725,18 @@ Stream processing using Structured Streaming, forEach sinks, memory sinks, etc.
   
   * Define a schema for the JSON payload and parse the data do display it within a table
 
---**Note**--
-` outputMode("append") `
-The outputMode "append" option informs the write stream to add only new records to the output sink. The "complete" option is to rewrite the full output - applicable to aggregations operations. Finally, the "update" option is for updating changed records in place.
+--**Note**-- ` outputMode("append") ` and maxFilesPerTrigger / a schema must be specified for a streaming DataFrame
+
+  The outputMode "append" option informs the write stream to add only new records to the output sink. The "complete" option is to rewrite the full output - applicable to aggregations operations. Finally, the "update" option is for updating changed records in place.
 Use the spark.readStream method to start reading data from a streaming query into a DataFrame.
 Setting the checkpointLocation is required for many sinks used in Structured Streaming. For those sinks where this setting is optional, keep in mind that when you do not set this value, you risk losing your place in the stream.
+
+  With a stream, we have to assume we don't have enough data because we are starting with zero records.And unlike reading from a table or parquet file, there is nowhere from which to "read" the stream's schema.For this reason, we must specify the schema manually.
+
+ To control how much data is pulled into Spark at once, we can specify the option `maxFilesPerTrigger`. In our example below, we will be reading in only one file for every trigger interval:
+
+.option("maxFilesPerTrigger", 1)
+ 
 ##  <h2 id="section11">Describe Azure Databricks Delta Lake architecture</h2>
 
 Use Delta Lakes as an optimization layer on top of blob storage to ensure reliability and low latency within unified Streaming + Batch data pipelines.
