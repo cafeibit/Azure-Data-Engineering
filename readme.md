@@ -26,7 +26,7 @@ To harness the power of Apache Spark and powerful clusters running on the Azure 
 
  * <a href="#section12">Create production workloads on Azure Databricks with Azure Data Factory</a>
 
- * <a href="#section13"Implement CI/CD with Azure DevOps</a>
+ * <a href="#section13">Implement CI/CD with Azure DevOps</a>
 
  * <a href="#section14">Integrate Azure Databricks with Azure Synapse</a>
 
