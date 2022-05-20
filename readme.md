@@ -14,11 +14,11 @@
 
 # Perform data engineering with Azure Synapse Apache Spark Pools
 
- <a href="section7">Work with Data Warehouses using Azure Synapse Analytics by developer features</a>
+ <a href="#section7">Work with Data Warehouses using Azure Synapse Analytics by developer features</a>
 
- <a href="section8">Use data loading best practices in Azure Synapse Analytics</a>
+ <a href="#section8">Use data loading best practices in Azure Synapse Analytics</a>
 
- <a href="section9">Manage and monitor data warehouse activities in Azure Synapse Analytics</a。
+ <a href="#section9">Manage and monitor data warehouse activities in Azure Synapse Analytics</a。
  
  
 ## <h2 id="section1">Reading and Writing to Synapse</h2>
