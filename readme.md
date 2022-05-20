@@ -736,8 +736,30 @@ Stream processing using Structured Streaming, forEach sinks, memory sinks, etc.
   **--Note--**
   `groupBy()` causes a shuffle, and, by default, Spark SQL shuffles to 200 partitions. In addition, we're doing a stateful aggregation: one that requires Structured Streaming to maintain and aggregate data over time.When doing a stateful aggregation, Structured Streaming must maintain an in-memory state map for each window within each partition. For fault tolerance reasons, the state map has to be saved after a partition is processed, and it needs to be saved somewhere fault-tolerant. To meet those requirements, the Streaming API saves the maps to a distributed store. On some clusters, that will be HDFS. Databricks uses the DBFS.That means that every time it finishes processing a window, the Streaming API writes its internal map to disk. The write has some overhead, typically between 1 and 2 seconds.
 
- `spark.conf.set("spark.sql.shuffle.partitions", sc.defaultParallelism)`
- 
+   `spark.conf.set("spark.sql.shuffle.partitions", sc.defaultParallelism)`
+  
+  Example: 
+  
+  `watermarkedDF = (inputDF`
+    
+   `.withWatermark("time", "2 hours")           # Specify a 2-hour watermark`
+  
+   `.groupBy(col("action"),                     # Aggregate by action...`
+   
+           `window(col("time"), "1 hour"))     # ...then by a 1 hour window`
+           
+   `.count()                                    # For each aggregate, produce a count`
+   
+   `.select(col("window.start").alias("start"), # Elevate field to column`
+   
+          `col("action"),                      # Include count`
+          
+          `col("count"))                       # Include action`
+          
+   `.orderBy(col("start"), col("action"))       # Sort by the start time`
+   
+   `)`
+display(watermarkedDF)                        # Start the stream and display it
 
 * Process data from Event Hubs with structured streaming
 
