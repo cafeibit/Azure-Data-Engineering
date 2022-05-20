@@ -939,7 +939,12 @@ Use the Delta Lake architecture to craft raw, query, and summary tables to produ
 
 ##  <h2 id="section12">Create production workloads on Azure Databricks with Azure Data Factory</h2>
 
-Azure Data Factory helps you create workflows that orchestrate data movement and transformation at scale. Integrate Azure Databricks into your production pipelines by calling notebooks and libraries.
+Azure Data Factory helps you create workflows that orchestrate data movement and transformation at scale. Integrate Azure Databricks into your production pipelines by calling notebooks and libraries. For example: 
+
+  * Create an Azure Data Factory pipeline with a Databricks activity.
+  * Execute a Databricks notebook with a parameter.
+  * Retrieve and log a parameter passed back from the notebook.
+  * Monitor your Data Factory pipeline.
 
 * We can override the default language by specifying the language magic command %<language> at the beginning of a cell. The supported magic commands are:
 
