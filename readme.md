@@ -690,7 +690,7 @@ Learn how Structured Streaming helps you process streaming data in real time, an
 
 Apache Spark Structured Streaming is a fast, scalable, and fault-tolerant stream processing API. You can use it to perform analytics on your streaming data in near real time. With Structured Streaming, you can use SQL queries to process streaming data in the same way that you would process static data. The API continuously increments and updates the final data.
 
-* Event Hubs and Spark Structured Streaming
+* Event Hubs and Spark Structured Streaming by <a href="./notebook/3.Streaming-With-Event-Hubs.ipynb">Example</a>
 
  Azure Event Hubs is a scalable real-time data ingestion service that processes millions of data in a matter of seconds. It can receive large amounts of data from multiple sources and stream the prepared data to Azure Data Lake or Azure Blob storage.
 
