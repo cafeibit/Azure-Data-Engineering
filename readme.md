@@ -20,6 +20,7 @@
 
  <a href="section9">Manage and monitor data warehouse activities in Azure Synapse Analytics</a。
  
+ 
 ## <h2 id="section1">Reading and Writing to Synapse</h2>
  
  ## Objectives
@@ -714,7 +715,7 @@ To serve and make use of the data that is queried or transformed by Azure Synaps
 
 ### Issue queries programmatically on Azure Synapse serverless SQL pool
 
-* <a href="./sqlscript/queriesbycs.cs">Example</a>
+  <a href="./sqlscript/queriesbycs.cs">Please See Examples!</a>
 
 
 ## <h2 id="section7">Work with Data Warehouses using Azure Synapse Analytics by developer features</h2>
