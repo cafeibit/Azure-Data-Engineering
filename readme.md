@@ -819,7 +819,7 @@ In order to parse the data in human-readable form, we create query/silver tables
 
 We will stream from our previous file write, define transformations, and rewrite our data to disk.
 
-<img alt="Side Note" title="Side Note" style="vertical-align: text-bottom; position: relative; height:1.75em; top:0.05em; transform:rotate(15deg)" src="https://files.training.databricks.com/static/images/icon-note.webp"/> Notice how we do not need to specify a schema when loading Delta files: it is inferred from the metadata!
+Notice how we do not need to specify a schema when loading Delta files: it is inferred from the metadata!
 
 The fields of a complex object can be referenced with a "dot" notation as in:
 
@@ -834,7 +834,7 @@ For that reason, it is common to extract the sub-fields and represent them as fi
 
 When using `complete` output mode, we rewrite the entire state of our table each time our logic runs. While this is ideal for calculating aggregates, we **cannot** read a stream from this directory, as Structured Streaming assumes data is only being appended in the upstream logic.
 
-<img alt="Side Note" title="Side Note" style="vertical-align: text-bottom; position: relative; height:1.75em; top:0.05em; transform:rotate(15deg)" src="https://files.training.databricks.com/static/images/icon-note.webp"/> Certain options can be set to change this behavior, but have other limitations attached. For more details, refer to [Delta Streaming: Ignoring Updates and Deletes](https://docs.databricks.com/delta/delta-streaming.html#ignoring-updates-and-deletes).
+Certain options can be set to change this behavior, but have other limitations attached. For more details, refer to [Delta Streaming: Ignoring Updates and Deletes](https://docs.databricks.com/delta/delta-streaming.html#ignoring-updates-and-deletes).
 
 The gold Delta table we have just registered will perform a static read of the current state of the data each time we run the following query.
 
