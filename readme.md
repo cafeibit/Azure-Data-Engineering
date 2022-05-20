@@ -737,11 +737,11 @@ Setting the checkpointLocation is required for many sinks used in Structured Str
  
 #### Writing a Stream
 
-The method `DataFrame.writeStream` returns a DataStreamWriter used to configure the output of the stream.
+The method `DataFrame.writeStream` returns a `DataStreamWriter` used to configure the output of the stream.
 
-There are a number of parameters to the DataStreamWriter configuration:
+There are a number of parameters to the `DataStreamWriter` configuration:
   * Query's name (optional) - This name must be unique among all the currently active queries in the associated SQLContext.
-  * Trigger (optional) - Default value is ProcessingTime(0) and it will run the query as fast as possible.
+  * Trigger (optional) - Default value is `ProcessingTime(0)` and it will run the query as fast as possible.
   * Checkpointing directory (optional for pup/sub sinks)
   * Output mode
   * Output sink
@@ -749,7 +749,7 @@ There are a number of parameters to the DataStreamWriter configuration:
     --The host, port and topic of the receiving Kafka server
     --The file format and final destination of files
     --A <a href="https://spark.apache.org/docs/latest/api/python/">custom sink via `writeStream.foreach(...)`</a>
-    --Once the configuration is completed, we can trigger the job with a call to `.start()`
+Once the configuration is completed, we can trigger the job with a call to `.start()`
  
 ##  <h2 id="section11">Describe Azure Databricks Delta Lake architecture</h2>
 
