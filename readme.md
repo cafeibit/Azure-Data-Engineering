@@ -682,11 +682,13 @@ Other time travel use cases are:
 
 ##  <h2 id="section10">Process streaming data with Azure Databricks structured streaming</h2>
 
-Learn how Structured Streaming helps you process streaming data in real time, and how you can aggregate data over windows of time.
+Learn how Structured Streaming helps you process streaming data in real time, and how you can aggregate data over windows of time. 
+  * Reading/Writing a Stream
+  * Use sliding windows to aggregate over chunks of data rather than all data. 
+  * Apply watermarking to throw away stale old data that you do not have space to keep.
+  * Plot live graphs using display
 
-Apache Spark Structured Streaming is a fast, scalable, and fault-tolerant stream processing API. You can use it to perform analytics on your streaming data in near real time.
-
-With Structured Streaming, you can use SQL queries to process streaming data in the same way that you would process static data. The API continuously increments and updates the final data.
+Apache Spark Structured Streaming is a fast, scalable, and fault-tolerant stream processing API. You can use it to perform analytics on your streaming data in near real time. With Structured Streaming, you can use SQL queries to process streaming data in the same way that you would process static data. The API continuously increments and updates the final data.
 
 * Event Hubs and Spark Structured Streaming
 
@@ -711,11 +713,25 @@ Stream processing using Structured Streaming, forEach sinks, memory sinks, etc.
 
   * Work with Time Windows
 
-     --Use sliding windows to aggregate over chunks of data rather than all data
-     
-     --Apply watermarking to throw away stale old data that you do not have space to keep
+  Continuous applications often require near real-time decisions on real-time, aggregated statistics.
+  
+  Some examples include
 
-     --Plot live graphs using display  
+    * Aggregating errors in data from IoT devices by type
+    * Detecting anomalous behavior in a server's log file by aggregating by country.
+    * Doing behavior analysis on instant messages via hash tags.
+
+   However, in the case of streams, you generally don't want to run aggregations over the entire dataset.If we were using a static DataFrame to produce an aggregate count, we could use `groupBy()` and `count()`. Instead we accumulate counts within a sliding window, answering questions like "How many records are we getting every second?"
+
+  --Sliding windows: The windows overlap and a single event may be aggregated into multiple windows.
+
+  --Tumbling Windows: The windows do not overlap and a single event will be aggregated into only one window.
+  
+  --Use sliding windows to aggregate over chunks of data rather than all data
+     
+  --Apply watermarking to throw away stale old data that you do not have space to keep
+
+  --Plot live graphs using display  
 
 * Process data from Event Hubs with structured streaming
 
