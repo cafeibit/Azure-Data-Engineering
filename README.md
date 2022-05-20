@@ -160,3 +160,4 @@ Azure Cosmos DB is a globally distributed database system that allows you to rea
 * To implement partitions are organized in Azure Cosmos DB and how to choose an appropriate partition key for your solution.
 * To develop client and server-side programming solutions on Azure Cosmos DB.
 * <a href="../SynapseAnalytics/CosmosDB/README.md">Data Engineering with Azure Cosmos DB using Synapse Analytics</a>
+* <a href=""../Databricks/readme.md">Process streaming data with Azure Databricks structured streaming</a>
