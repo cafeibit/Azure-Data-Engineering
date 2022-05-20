@@ -749,7 +749,7 @@ There are a number of parameters to the DataStreamWriter configuration:
   * The host, port and topic of the receiving Kafka server
   * The file format and final destination of files
   
-  A <a href="https://spark.apache.org/docs/latest/api/python/pyspark.sql.html">custom sink via `writeStream.foreach(...)`</a>
+  A <a href="https://spark.apache.org/docs/latest/api/python/">custom sink via `writeStream.foreach(...)`</a>
 Once the configuration is completed, we can trigger the job with a call to `.start()`
  
 ##  <h2 id="section11">Describe Azure Databricks Delta Lake architecture</h2>
