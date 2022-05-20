@@ -946,13 +946,36 @@ Azure Data Factory helps you create workflows that orchestrate data movement and
   * Retrieve and log a parameter passed back from the notebook.
   * Monitor your Data Factory pipeline.
 
-* To build a new data pipeline that involves copying data from multiple sources into a data lake for processing.
+To build a new data pipeline that involves copying data from multiple sources into a data lake for processing.
   * To use Azure Databricks to transform the data and to ensure your processing occurs as soon as the data is ready. 
   * Processing the data from a notebook is just one step of the data pipeline. 
   * Conducted research on orchestration platforms and to use Azure Data Factory, to connect to several services both on-premises and in the cloud, and to easily build data pipelines.
   * To investigate the ability to execute Azure Databricks jobs from Azure Data Factory, passing in parameters used for data processing, and returning parameters used to continue the pipeline processing
  
- 
+#### What is Azure Data Factory?
+
+Azure Data Factory is a data ingestion and transformation service that allows you to load raw data from over 70 different on-premises or cloud sources. The ingested data can be cleaned, transformed, restructured, and loaded back into a data warehouse. After the data is in the data warehouse, it's ready to use for several analytical purposes. Data Factory supports data workflow pipelines. These pipelines are a logical group of tasks and activities that allows end-to-end data-processing scenarios 
+
+* Create the required resources
+
+  * Create an Azure Data Factory instance
+  * Deploy an Azure Databricks workspace
+  * Create a cluster
+  * Schedule Databricks jobs in a data factory pipeline
+  
+    --Step 1: Retrieve Access Token from the Azure Databricks workspace
+    --Step 2: Go to Azure Databricks Linked Service
+    --Step 3: Configure Linked Service
+    --Step 4: Create an ADF Pipeline & Add a Databricks Notebook Activity
+
+  * Pass parameters into and out of Databricks jobs in data factory
+  
+    --Step 1: Clone the Databricks archive
+    --Step 2: Configure Databricks Notebook Activity
+    --Step 3: Publish and trigger the pipeline
+    --Step 4: Monitor the run
+
+
  ##  <h2 id="section13">Implement CI/CD with Azure DevOps</h2>
 
 CI/CID isn't just for developers. Learn how to put Azure Databricks notebooks under version control in an Azure DevOps repo and build deployment pipelines to manage your release process.
