@@ -473,7 +473,9 @@ Once you prepare your data transformation query, you can encapsulate the transfo
 
  * Drag green connector from the Delete activity to Stored procedure activity. Click OK
 
-## Integrate SQL and Apache Spark pools in Azure Synapse Analytics <a href="./Apache-Spack/dataengineeringbyspark.scala">Example</a>
+## <h2 id="section5">Integrate SQL and Apache Spark pools in Azure Synapse Analytics</h2>
+
+<a href="./Apache-Spack/dataengineeringbyspark.scala">Example</a>
 
 The Azure Synapse Analytics environment enables you to use both technologies within one integrated platform. The integrated platform experience allows you to switch between Apache Spark and SQL based data engineering tasks applicable to the expertise you have in-house. As a result, an Apache Spark-orientated data engineer can easily communicate and work with a SQL-based data engineer on the same platform.
 
@@ -676,7 +678,7 @@ Let's say that you have created or loaded a DataFrame called "pyspark_df", and t
 **Should you wish to read data using the PySpark connector, keep in mind that you read the data using scala first, then write it into a temporary table. Finally you use the Spark SQL in PySpark to query the temporary table into a DataFrame.**
 
 
-## Serve the data from Azure Synapse serverless SQL pool
+## <h2 id="section6">Serve the data from Azure Synapse serverless SQL pool</h2>
 
 To serve and make use of the data that is queried or transformed by Azure Synapse serverless SQL pool.
 
@@ -715,7 +717,7 @@ To serve and make use of the data that is queried or transformed by Azure Synaps
 * <a href="./sqlscript/queriesbycs.cs">Example</a>
 
 
-## Work with Data Warehouses using Azure Synapse Analytics by developer features
+## <h2 id="secion7">Work with Data Warehouses using Azure Synapse Analytics by developer features</h2>
 
 ### Work With Windowning functions
 *  Window Functions
@@ -789,7 +791,7 @@ Exploratory data analysis can involve querying metadata about the data that is s
    *  Eases maintenance
    *  Improved performance
 
-## Use data loading best practices in Azure Synapse Analytics 
+## <h2 id="section8">Use data loading best practices in Azure Synapse Analytics</h2> 
 
 ### Load methods into Azure Synapse Analytics
 1. **Data loads directly from Azure storage with transact-sql and the copy statement**
