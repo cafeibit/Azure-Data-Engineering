@@ -1145,7 +1145,7 @@ It is possible to put an Azure Databricks Notebook under Version Control in an A
  * GitHub Version Control
  * Creating Continuous Integration Pipelines on Azure Using Azure Databricks and Azure DevOps
 
-* Create a CI/CD process with Azure DevOps
+##### Create a CI/CD process with Azure DevOps
 
  * Requirements: 
    The following services are needed: 
