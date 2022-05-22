@@ -1027,7 +1027,7 @@ You can use Azure Data Factory to ingest data collected from different sources a
 
   * Pass parameters to notebooks using widgets
 
-   The `widgets` submodule includes a number of methods to allow interactive variables to be set while working with notebooks in the workspace with an interactive cluster. To learn more about this functionality, refer to the Databricks documentation.
+   The `widgets` submodule includes a number of methods to allow interactive variables to be set while working with notebooks in the workspace with an interactive cluster. To learn more about this functionality, refer to the <a href="https://docs.databricks.com/notebooks/widgets.html#widgets">Databricks documentation</a>.
 
   This notebook will focus on only two of these methods, emphasizing their utility when running a notebook as a job:
 
