@@ -1023,16 +1023,16 @@ You can use Azure Data Factory to ingest data collected from different sources a
 
   * Parameterizing Notebooks
 
-  The Databricks Utilities module includes a number of methods to make notebooks more extensible and easier to take to production. This notebook is designed to be scheduled as a job, but can also be run interactively.
+  The <a href="https://docs.databricks.com/dev-tools/databricks-utils.html">Databricks Utilities module</a> includes a number of methods to make notebooks more extensible and easier to take to production. This notebook is designed to be scheduled as a job, but can also be run interactively.
 
   * Pass parameters to notebooks using widgets
 
-   The widgets submodule includes a number of methods to allow interactive variables to be set while working with notebooks in the workspace with an interactive cluster. To learn more about this functionality, refer to the Databricks documentation.
+   The `widgets` submodule includes a number of methods to allow interactive variables to be set while working with notebooks in the workspace with an interactive cluster. To learn more about this functionality, refer to the Databricks documentation.
 
   This notebook will focus on only two of these methods, emphasizing their utility when running a notebook as a job:
 
-  > dbutils.widgets.text accepts a parameter name and a default value. This is the method through which external values can be passed into scheduled notebooks.
-  > dbutils.widgets.get accepts a parameter name and retrieves the associated value from the widget with that parameter name.
+  > `dbutils.widgets.text` accepts a parameter name and a default value. This is the method through which external values can be passed into scheduled notebooks.
+  > `dbutils.widgets.get` accepts a parameter name and retrieves the associated value from the widget with that parameter name.
 
   In the cell below, a text widget is created with the default value "notebook". This widget expects values to be passed as strings. If you run this cell in an interactive notebook, you will see the widget populated with the default value at the top of the notebook. This can be manually manipulated.
  
@@ -1077,7 +1077,7 @@ You can use Azure Data Factory to ingest data collected from different sources a
   
    * Exit Value (Return values from notebooks using exit value)
 
-   The notebook submodule contains only two methods. Documentation here.
+   The notebook submodule contains only two methods. <a href="https://docs.databricks.com/notebooks/notebook-workflows.html#notebook-workflows"Documentation here</a>.
 
    > dbutils.notebook.run allows you to call another notebook using a relative path.
    > dbutils.notebook.exit allows you to return an exit value that can be captured and referenced by integrated scheduling services and APIs. While running in interactive mode, this is essentially a no-op as this value does not go anywhere.
