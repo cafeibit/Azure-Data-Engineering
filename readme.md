@@ -970,22 +970,126 @@ You can use Azure Data Factory to ingest data collected from different sources a
   * Schedule Databricks jobs in a data factory pipeline
   
     --Step 1: Retrieve Access Token from the Azure Databricks workspace
+    > Go to your Azure Databricks workspace.
+    > Select the user icon on the top-right of the workspace, and then select User Settings.
+    > Under the Access Tokens tab, select Generate New Token. In the Generate New Token dialog box, add Data Factory for the Comment, and then select Generate.
+    > Copy the new token, and save it to a text editor for later reference. This only appears once.
     
     --Step 2: Go to Azure Databricks Linked Service
+    > Open the Azure Data Factory service in Azure. Select Author & Monitor to open Data Factory in a new browser tab.
+    > On the Let's get started page, select the pencil icon in the left pane to switch to the Author tab.
+    > Select Connections at the lower left corner of the Factory Resources pane.
+    > Select New in the Connections tab under Linked Services.
+    > In the New Linked Service pane, select the Compute tab, and then select the Azure Databricks tile. Finally, select Continue.
     
     --Step 3: Configure Linked Service
+    > Select your current subscription from the dropdown list for Azure subscription.
+    > Select the Databricks workspace for this module.
+    > For Select cluster, select Existing interactive cluster. Normally, New job cluster is preferred for triggered pipelines as they use a lower cost engineering tier cluster.
+    > For Access token, paste the access token you created in Step 1.
+    > Select the name of your cluster from the dropdown list, under Choose from existing clusters.
+    > Select Create.
     
     --Step 4: Create an ADF Pipeline & Add a Databricks Notebook Activity
-
+    > Hover over the number to the right of Pipelines, and select the ellipses that appears.
+    > Select New pipeline.
+    > In the Activities pane to the right of the Factory Resources pane, select Databricks to expand this section.
+    > Drag the Notebook option into the tableau to the right.
   * Pass parameters into and out of Databricks jobs in data factory
   
     --Step 1: Clone the Databricks archive
     
     --Step 2: Configure Databricks Notebook Activity
+    > Go back to the Azure Data Factory pipeline.
+    > With the notebook activity still selected, select the Azure Databricks tab near the bottom of the pane.
+    > Select the Databricks linked service you created in the previous unit from the dropdown list.
+    > Under the Settings tab, select Browse to enter an interactive file explorer for the directory of your linked Databricks workspace.
+    > Go to the 12-Production-Workloads-with-Azure-Data-Factory directory, select the notebook Record-Run, and select OK.
+    > Select Base parameters to expand a dropdown list, and then select New.
+    > Under Name, enter ranBy. For Value, enter ADF.
     
     --Step 3: Publish and trigger the pipeline
-    
+    > At the top left, you should see a Publish all button highlighted in blue with a yellow 1 on it. Select Publish to save your configurations (this is required to trigger the pipeline).
+    > Select Add trigger, and then select Trigger now from the dropdown list. Select Finish at the bottom of the pane that appears.
+ 
     --Step 4: Monitor the run
+   > On the left menu pane, select the Monitor icon below the pencil icon. This will pull up a list of all recent pipeline runs.
+   > In the Actions column, select the name of the action to View activity runs. This will allow you to see the current progress of your pipeline.
+   > Your scheduled notebook will appear in the list at the bottom of the window. Select the glasses icon to view the Details.
+   > In the window the appears, select Run page url. The page that loads will be a live view of the notebook as it runs in Azure Databricks. Within the notebook, you should see the ranBy value is "ADF", which is the parameter the pipeline's notebook activity passed to the notebook on execution.
+   > After the notebook has finished running, you'll be able to view the Output of the notebook by selecting the middle icon in the Actions column. Note that the "runOutput" here is the value that was passed to dbutils.notebook.exit() in the scheduled notebook.
+
+**Note**
+
+* Parameterizing Notebooks
+
+  The Databricks Utilities module includes a number of methods to make notebooks more extensible and easier to take to production. This notebook is designed to be scheduled as a job, but can also be run interactively.
+
+ * Pass parameters to notebooks using widgets
+
+   The widgets submodule includes a number of methods to allow interactive variables to be set while working with notebooks in the workspace with an interactive cluster. To learn more about this functionality, refer to the Databricks documentation.
+
+  This notebook will focus on only two of these methods, emphasizing their utility when running a notebook as a job:
+
+  > dbutils.widgets.text accepts a parameter name and a default value. This is the method through which external values can be passed into scheduled notebooks.
+  > dbutils.widgets.get accepts a parameter name and retrieves the associated value from the widget with that parameter name.
+
+ In the cell below, a text widget is created with the default value "notebook". This widget expects values to be passed as strings. If you run this cell in an interactive notebook, you will see the widget populated with the default value at the top of the notebook. This can be manually manipulated.
+ 
+ `%scala`
+ 
+ `dbutils.widgets.text("ranBy", "notebook")`
+
+ The cell below retrieves the value currently associated with the widget and assigns it to a variable. Remember that this value will be passed as a string--be sure to cast it to the correct type if you wish to pass numeric values or use JSON to pass multiple fields. If no parameter is passed to the notebook when scheduling, the default value will be used.
+
+ ```%scala
+val ranBy = dbutils.widgets.get("ranBy")
+ranBy: String = notebook```
+
+Taken together, dbutils.widgets.text allows the passing of external values and `dbutils.widgets.get` allows those values to be referenced.
+
+**Parameterized Logic**
+
+The following code block writes a simple file that records the time the notebook was run and the value associated with the "ranBy" parameter/widget. The final line displays the full content of this file from all previous executions by the present user.
+
+```
+%scala
+import org.apache.spark.sql.functions.{lit, unix_timestamp}
+import org.apache.spark.sql.types.TimestampType
+ 
+val tags = com.databricks.logging.AttributionContext.current.tags
+val username = tags.getOrElse(com.databricks.logging.BaseTagDefinitions.TAG_USER, java.util.UUID.randomUUID.toString.replace("-", ""))
+val path = username+"/runLog"
+ 
+spark
+  .range(1)
+  .select(unix_timestamp.alias("runtime").cast(TimestampType), lit(ranBy).alias("ranBy"))
+  .write
+  .mode("APPEND")
+  .parquet(path)
+ 
+display(spark.read.parquet(path))
+command-2010026639661002:10: error: not found: value ranBy
+  .select(unix_timestamp.alias("runtime").cast(TimestampType), lit(ranBy).alias("ranBy"))
+  ```
+  
+* Exit Value (Return values from notebooks using exit value)
+
+  The notebook submodule contains only two methods. Documentation here.
+
+  > dbutils.notebook.run allows you to call another notebook using a relative path.
+  > dbutils.notebook.exit allows you to return an exit value that can be captured and referenced by integrated scheduling services and APIs. While running in interactive mode, this is essentially a no-op as this value does not go anywhere.
+
+  In the cell below, the value associated with the variable path is returned as the exit value.
+  
+```
+%scala
+dbutils.notebook.exit(path)
+ 
+command-2010026639661005:1: error: not found: value path
+dbutils.notebook.exit(path)
+                      ^
+```
 
 
  ##  <h2 id="section13">Implement CI/CD with Azure DevOps</h2>
