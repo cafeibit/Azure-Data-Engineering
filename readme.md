@@ -956,6 +956,8 @@ To build a new data pipeline that involves copying data from multiple sources in
 
 Azure Data Factory is a data ingestion and transformation service that allows you to load raw data from over 70 different on-premises or cloud sources. The ingested data can be cleaned, transformed, restructured, and loaded back into a data warehouse. After the data is in the data warehouse, it's ready to use for several analytical purposes. Data Factory supports data workflow pipelines. These pipelines are a logical group of tasks and activities that allows end-to-end data-processing scenarios 
 
+You can use Azure Data Factory to ingest data collected from different sources and coordinate processing jobs in Azure Databricks as part of your data pipeline.
+
 * Create the required resources
 
   * Create an Azure Data Factory instance
@@ -964,15 +966,21 @@ Azure Data Factory is a data ingestion and transformation service that allows yo
   * Schedule Databricks jobs in a data factory pipeline
   
     --Step 1: Retrieve Access Token from the Azure Databricks workspace
+    
     --Step 2: Go to Azure Databricks Linked Service
+    
     --Step 3: Configure Linked Service
+    
     --Step 4: Create an ADF Pipeline & Add a Databricks Notebook Activity
 
   * Pass parameters into and out of Databricks jobs in data factory
   
     --Step 1: Clone the Databricks archive
+    
     --Step 2: Configure Databricks Notebook Activity
+    
     --Step 3: Publish and trigger the pipeline
+    
     --Step 4: Monitor the run
 
 
