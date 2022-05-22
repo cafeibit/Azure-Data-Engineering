@@ -1048,7 +1048,7 @@ You can use Azure Data Factory to ingest data collected from different sources a
    ranBy: String = notebook
    ```
 
-   Taken together, dbutils.widgets.text allows the passing of external values and `dbutils.widgets.get` allows those values to be referenced.
+   Taken together, `dbutils.widgets.text` allows the passing of external values and `dbutils.widgets.get` allows those values to be referenced.
 
    **Parameterized Logic**
 
@@ -1071,7 +1071,8 @@ You can use Azure Data Factory to ingest data collected from different sources a
      .parquet(path)
  
    display(spark.read.parquet(path))
-   command-2010026639661002:10: error: not found: value ranBy
+   
+      command-2010026639661002:10: error: not found: value ranBy
      .select(unix_timestamp.alias("runtime").cast(TimestampType), lit(ranBy).alias("ranBy"))
    ```
   
@@ -1079,8 +1080,9 @@ You can use Azure Data Factory to ingest data collected from different sources a
 
    The notebook submodule contains only two methods. <a href="https://docs.databricks.com/notebooks/notebook-workflows.html#notebook-workflows">Documentation here</a>.
 
-   > dbutils.notebook.run allows you to call another notebook using a relative path.
-   > dbutils.notebook.exit allows you to return an exit value that can be captured and referenced by integrated scheduling services and APIs. While running in interactive mode, this is essentially a no-op as this value does not go anywhere.
+   > `dbutils.notebook.run` allows you to call another notebook using a relative path.
+   > 
+   > `dbutils.notebook.exit` allows you to return an exit value that can be captured and referenced by integrated scheduling services and APIs. While running in interactive mode, this is essentially a no-op as this value does not go anywhere.
 
   In the cell below, the value associated with the variable path is returned as the exit value.
   
