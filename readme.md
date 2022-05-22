@@ -1130,7 +1130,7 @@ It is possible to put an Azure Databricks Notebook under Version Control in an A
 
   **Who benefits?**
 
-  Everyone. Once properly configured, automated testing and deployment can free up your engineering team and enable your data team to push their changes into production. For example:
+  *Everyone*. Once properly configured, automated testing and deployment can free up your engineering team and enable your data team to push their changes into production. For example:
 
   * Data engineers can easily deploy changes to generate new tables for BI analysts.
   * Data scientists can update models being used in production.
@@ -1140,10 +1140,10 @@ It is possible to put an Azure Databricks Notebook under Version Control in an A
 
   **Additional Resources**
 
- * Continuous Integration & Continuous Delivery with Databricks
- * Azure DevOps Services Version Control
- * GitHub Version Control
- * Creating Continuous Integration Pipelines on Azure Using Azure Databricks and Azure DevOps
+ * <a href="https://databricks.com/blog/2017/10/30/continuous-integration-continuous-delivery-databricks.html">Continuous Integration & Continuous Delivery with Databricks</a>
+ * <a href="https://docs.microsoft.com/en-us/azure/databricks/notebooks/azure-devops-services-version-control">Azure DevOps Services Version Control</a>
+ * <a href="https://docs.microsoft.com/en-us/azure/databricks/notebooks/github-version-control">GitHub Version Control</a>
+ * <a href="https://databricks.com/session/devops-for-applications-in-azure-databricks-creating-continuous-integration-pipelines-on-azure-using-azure-databricks-and-azure-devops">Creating Continuous Integration Pipelines on Azure Using Azure Databricks and Azure DevOps</a>
 
 ##### Create a CI/CD process with Azure DevOps
 
