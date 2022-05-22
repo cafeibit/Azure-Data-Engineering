@@ -1096,31 +1096,73 @@ You can use Azure Data Factory to ingest data collected from different sources a
   ```
 
 
- ##  <h2 id="section13">Implement CI/CD with Azure DevOps</h2>
+##  <h2 id="section13">Implement CI/CD with Azure DevOps</h2>
 
 CI/CID isn't just for developers. Learn how to put Azure Databricks notebooks under version control in an Azure DevOps repo and build deployment pipelines to manage your release process.
 
 * We can override the default language by specifying the language magic command %<language> at the beginning of a cell. The supported magic commands are:
-
   *   %python
   *   %r
   *   %scala
   *   %sql
 
   Notebooks also support a few auxiliary magic commands:
-
   *   %sh: Allows you to run shell code in your notebook
   *   %fs: Allows you to use dbutils filesystem commands
   *   %md: Allows you to include various types of documentation, including text, images, and mathematical formulas and equations.
 
+* CI/CD Lab: Distinct Articles
+ 
+  In the cell provided below, we count the number of distinct articles in our data set.
 
+  * Read in Wikipedia parquet files.
+  * Apply the necessary transformations.
+  * Define a schema that matches the data we are working with.
+  * Assign the count to the variable totalArticles
+
+  **Retrieve Wikipedia Articles**
+  ```
+  (source, sasEntity, sasToken) = getAzureDataSource()
+   spark.conf.set(sasEntity, sasToken)
+ 
+   path = source + "/wikipedia/pagecounts/staging_parquet_en_only_clean/"
+ 
+   # Define a schema and load the Parquet files
+ 
+   from pyspark.sql.types import *
+ 
+   parquetDir = "/mnt/training/wikipedia/pagecounts/staging_parquet_en_only_clean/"
+ 
+   schema = StructType([
+     StructField("project", StringType(), False),
+     StructField("article", StringType(), False),
+     StructField("requests", IntegerType(), False),
+     StructField("bytes_served", LongType(), False)
+   ])
+ 
+   df = (spark.read
+    .schema(schema)
+    .parquet(parquetDir)
+    .select("*")
+    .distinct()
+   )
+ 
+   totalArticles = df.count()
+ 
+   print("Distinct Articles: {0:,}".format( totalArticles ))
+ 
+   display(df)
+
+   # display(df.select("article"))
+  ```
+ 
  ##  <h2 id="section14">Integrate Azure Databricks with Azure Synapse</h2>
 
 Azure Databricks is just one of many powerful data services in Azure. Learn how to integrate with Azure Synapse Analytics as part of your data architecture.
 
 
 
- ##  <h2 id="section15">Describe Azure Databricks best practices</h2>
+##  <h2 id="section15">Describe Azure Databricks best practices</h2>
 
 Learn best practices for workspace administration, security, tools, integration, databricks runtime, HA/DR, and clusters in Azure Databricks.
 
