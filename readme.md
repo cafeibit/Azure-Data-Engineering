@@ -1019,13 +1019,13 @@ You can use Azure Data Factory to ingest data collected from different sources a
    > In the window the appears, select Run page url. The page that loads will be a live view of the notebook as it runs in Azure Databricks. Within the notebook, you should see the ranBy value is "ADF", which is the parameter the pipeline's notebook activity passed to the notebook on execution.
    > After the notebook has finished running, you'll be able to view the Output of the notebook by selecting the middle icon in the Actions column. Note that the "runOutput" here is the value that was passed to dbutils.notebook.exit() in the scheduled notebook.
 
-**Note**
+  **Note**
 
-* Parameterizing Notebooks
+  * Parameterizing Notebooks
 
   The Databricks Utilities module includes a number of methods to make notebooks more extensible and easier to take to production. This notebook is designed to be scheduled as a job, but can also be run interactively.
 
- * Pass parameters to notebooks using widgets
+  * Pass parameters to notebooks using widgets
 
    The widgets submodule includes a number of methods to allow interactive variables to be set while working with notebooks in the workspace with an interactive cluster. To learn more about this functionality, refer to the Databricks documentation.
 
@@ -1034,62 +1034,64 @@ You can use Azure Data Factory to ingest data collected from different sources a
   > dbutils.widgets.text accepts a parameter name and a default value. This is the method through which external values can be passed into scheduled notebooks.
   > dbutils.widgets.get accepts a parameter name and retrieves the associated value from the widget with that parameter name.
 
- In the cell below, a text widget is created with the default value "notebook". This widget expects values to be passed as strings. If you run this cell in an interactive notebook, you will see the widget populated with the default value at the top of the notebook. This can be manually manipulated.
+  In the cell below, a text widget is created with the default value "notebook". This widget expects values to be passed as strings. If you run this cell in an interactive notebook, you will see the widget populated with the default value at the top of the notebook. This can be manually manipulated.
  
- `%scala`
+  `%scala`
  
- `dbutils.widgets.text("ranBy", "notebook")`
+  `dbutils.widgets.text("ranBy", "notebook")`
 
- The cell below retrieves the value currently associated with the widget and assigns it to a variable. Remember that this value will be passed as a string--be sure to cast it to the correct type if you wish to pass numeric values or use JSON to pass multiple fields. If no parameter is passed to the notebook when scheduling, the default value will be used.
+   The cell below retrieves the value currently associated with the widget and assigns it to a variable. Remember that this value will be passed as a string--be sure to cast it to the correct type if you wish to pass numeric values or use JSON to pass multiple fields. If no parameter is passed to the notebook when scheduling, the default value will be used.
 
- ```%scala
-val ranBy = dbutils.widgets.get("ranBy")
-ranBy: String = notebook```
+   ```
+   %scala
+   val ranBy = dbutils.widgets.get("ranBy")
+   ranBy: String = notebook
+   ```
 
-Taken together, dbutils.widgets.text allows the passing of external values and `dbutils.widgets.get` allows those values to be referenced.
+   Taken together, dbutils.widgets.text allows the passing of external values and `dbutils.widgets.get` allows those values to be referenced.
 
-**Parameterized Logic**
+   **Parameterized Logic**
 
-The following code block writes a simple file that records the time the notebook was run and the value associated with the "ranBy" parameter/widget. The final line displays the full content of this file from all previous executions by the present user.
+   The following code block writes a simple file that records the time the notebook was run and the value associated with the "ranBy" parameter/widget. The final line displays the full content of this file from all previous executions by the present user.
 
-```
-%scala
-import org.apache.spark.sql.functions.{lit, unix_timestamp}
-import org.apache.spark.sql.types.TimestampType
+   ```
+   %scala
+   import org.apache.spark.sql.functions.{lit, unix_timestamp}
+   import org.apache.spark.sql.types.TimestampType
  
-val tags = com.databricks.logging.AttributionContext.current.tags
-val username = tags.getOrElse(com.databricks.logging.BaseTagDefinitions.TAG_USER, java.util.UUID.randomUUID.toString.replace("-", ""))
-val path = username+"/runLog"
+   val tags = com.databricks.logging.AttributionContext.current.tags
+   val username = tags.getOrElse(com.databricks.logging.BaseTagDefinitions.TAG_USER, java.util.UUID.randomUUID.toString.replace("-", ""))
+   val path = username+"/runLog"
  
-spark
-  .range(1)
-  .select(unix_timestamp.alias("runtime").cast(TimestampType), lit(ranBy).alias("ranBy"))
-  .write
-  .mode("APPEND")
-  .parquet(path)
+   spark
+     .range(1)
+     .select(unix_timestamp.alias("runtime").cast(TimestampType), lit(ranBy).alias("ranBy"))
+     .write
+     .mode("APPEND")
+     .parquet(path)
  
-display(spark.read.parquet(path))
-command-2010026639661002:10: error: not found: value ranBy
-  .select(unix_timestamp.alias("runtime").cast(TimestampType), lit(ranBy).alias("ranBy"))
-  ```
+   display(spark.read.parquet(path))
+   command-2010026639661002:10: error: not found: value ranBy
+     .select(unix_timestamp.alias("runtime").cast(TimestampType), lit(ranBy).alias("ranBy"))
+   ```
   
-* Exit Value (Return values from notebooks using exit value)
+   * Exit Value (Return values from notebooks using exit value)
 
-  The notebook submodule contains only two methods. Documentation here.
+   The notebook submodule contains only two methods. Documentation here.
 
-  > dbutils.notebook.run allows you to call another notebook using a relative path.
-  > dbutils.notebook.exit allows you to return an exit value that can be captured and referenced by integrated scheduling services and APIs. While running in interactive mode, this is essentially a no-op as this value does not go anywhere.
+   > dbutils.notebook.run allows you to call another notebook using a relative path.
+   > dbutils.notebook.exit allows you to return an exit value that can be captured and referenced by integrated scheduling services and APIs. While running in interactive mode, this is essentially a no-op as this value does not go anywhere.
 
   In the cell below, the value associated with the variable path is returned as the exit value.
   
-```
-%scala
-dbutils.notebook.exit(path)
+  ```
+  %scala
+  dbutils.notebook.exit(path)
  
-command-2010026639661005:1: error: not found: value path
-dbutils.notebook.exit(path)
-                      ^
-```
+  command-2010026639661005:1: error: not found: value path
+  dbutils.notebook.exit(path)
+                      
+  ```
 
 
  ##  <h2 id="section13">Implement CI/CD with Azure DevOps</h2>
