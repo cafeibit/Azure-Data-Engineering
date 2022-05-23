@@ -1177,17 +1177,6 @@ It is possible to put an Azure Databricks Notebook under Version Control in an A
  3. Azure DevOps - Create a build pipeline (CI)
  4. Azure DevOps - Create a release pipeline (CD)
 
-* We can override the default language by specifying the language magic command %<language> at the beginning of a cell. The supported magic commands are:
-  *   %python
-  *   %r
-  *   %scala
-  *   %sql
-
-  Notebooks also support a few auxiliary magic commands:
-  *   %sh: Allows you to run shell code in your notebook
-  *   %fs: Allows you to use dbutils filesystem commands
-  *   %md: Allows you to include various types of documentation, including text, images, and mathematical formulas and equations.
-
 * CI/CD Lab: Distinct Articles
  
   In the cell provided below, we count the number of distinct articles in our data set.
@@ -1242,6 +1231,17 @@ Azure Databricks is just one of many powerful data services in Azure. Learn how 
 ##  <h2 id="section15">Describe Azure Databricks best practices</h2>
 
 Learn best practices for workspace administration, security, tools, integration, databricks runtime, HA/DR, and clusters in Azure Databricks.
+
+We can override the default language by specifying the language magic command %<language> at the beginning of a cell. The supported magic commands are:
+  *   %python
+  *   %r
+  *   %scala
+  *   %sql
+
+  Notebooks also support a few auxiliary magic commands:
+  *   %sh: Allows you to run shell code in your notebook
+  *   %fs: Allows you to use dbutils filesystem commands
+  *   %md: Allows you to include various types of documentation, including text, images, and mathematical formulas and equations.
 
 
 ##  <h2 id="section16">Design a data integration and analytic solution with Azure Databricks</h2>
