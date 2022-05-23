@@ -1238,6 +1238,7 @@ Learn best practices for workspace administration, security, tools, integration,
  Azure Databricks is a fully managed, cloud-based Big Data and Machine Learning platform, which empowers developers to accelerate AI and innovation. Azure Databricks provides data science and engineering teams with a single platform for Big Data processing and Machine Learning. Azure Databricks’ managed Apache Spark platform makes it simple to run large-scale Spark workloads.
 
  Azure Databricks offers three environments for developing data intensive applications: Databricks SQL, Databricks Data Science & Engineering, and Databricks Machine Learning.
+ ```
  ---------------------------------------------------------------------------------------------------------------------------------------------------------------
  | Environment                           | Description                                                                                                         |
  |                                       |                                                                                                                     | 
@@ -1253,7 +1254,7 @@ Learn best practices for workspace administration, security, tools, integration,
  | Databricks Machine Learning	          | An integrated end-to-end machine learning environment incorporating managed services for experiment tracking, model |
  |                                       | training, feature development and management, and feature and model serving.                                        |
  --------------------------------------------------------------------------------------------------------------------------------------------------------------
- 
+ ```
  Let us analyze a situation for Tailwind Traders, a heavy machinery manufacturing organization and arrive at the best Azure Databricks environment that is applicable for them. Tailwind Traders is leveraging Azure cloud services for their big data needs – the data is both batch and streaming data. They have data engineers, data scientists and data analysts who collaborate to produce quick insightful reporting for many stakeholders.
 
  In the above scenario, you would choose Databricks Data Science and Engineering environment because:
