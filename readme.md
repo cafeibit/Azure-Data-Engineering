@@ -1228,7 +1228,198 @@ It is possible to put an Azure Databricks Notebook under Version Control in an A
 
 Azure Databricks is just one of many powerful data services in Azure. Learn how to integrate with Azure Synapse Analytics as part of your data architecture.
 
+Suppose you work in the analytics department of a large retail warehouse. Your organization's IT infrastructure is cloud-based, and all data, including customer orders and product information, is stored in Azure Synapse Analytics. Your department analyzes customer shopping trends and proposes promotions based on your findings. You've heard about the robust machine learning and deep learning functions of Azure Databricks, but you don't know if it's compatible with Azure Synapse Analytics. Your manager asks you explore Azure Synapse Analytics and Azure Databricks connectivity options.
 
+Another new requirement you and your team must contend with is to store and read product ratings from customers around the world. Leadership wants customers to be able to access the ratings system closest to their geographic location for both reads and writes. Your team has decided to use Azure Cosmos DB for its ability to easily replicate data around the world and for its flexible NoSQL storage and API options. Your manager asks you to validate that you are able to read from and write to Azure Cosmos DB from Azure Databricks as part of your analysis workflow.
+
+Azure Databricks is an Apache Spark–based analytics platform that supports SQL analytics and can be integrated with SQL Data Warehouse to run high-performance analytics. It allows faster interactive processing of batch and streaming data and has built-in functions for machine learning and big data processing.
+
+* Access Azure Synapse Analytics from Azure Databricks by using the SQL Data Warehouse connector.
+
+* Read from and write to Azure Cosmos DB from Azure Databricks.
+
+### Setup the environment
+
+You understand that using Azure Databricks to connect to your Azure Synapse Analytics instance is the best way forward. Also, you have decided to use Azure Cosmos DB for storing product ratings. Now you want to try to establish connections to sample databases so you completely understand all the required steps. In this module, you'll work through the procedures for end-to-end connectivity.
+
+Let's start by setting up the environment. Setup includes provisioning a sample Azure Synapse Analytics instance, creating an Azure Cosmos DB account with a new container, and setting up resources.
+
+##### Set up Azure Synapse Analytics
+
+1. In the Azure portal, select Create a resource, enter Synapse Analytics in the Search the Marketplace box, select Azure Synapse Analytics in the results, and then select Create.
+
+2. On the Create Azure Synapse Analytics pane, enter this information in the Basics tab:
+
+ * Subscription: Select the subscription you're using for this module. The subscription you use will incur charges, this is not a free exercise. Pricing is shown on New Server pane.
+
+ * Resource group: Select the resource group you're using for this module.
+
+ * SQL pool name: Enter a unique name such as Customers. (Make sure you see a green check mark.)
+
+3. Select Create New in the Server field to open the New Server pane and enter the following:
+
+ * Server name: Enter a unique name. (Make sure you see a green check mark.)
+
+ * Server admin login: Enter dwlab.
+
+ * Password: Enter a valid password, and then confirm the password.
+
+ * Location: Select the location you're using for resources in this module.
+
+ * Allow Azure services to access server: Select the check box.
+
+ * Select OK.
+
+ **Note**
+
+ Remember the user name and password for SQL Server. You'll need them.
+
+4. Select Select Performance level to open the Configure performance pane and select Gen2 DW100c.
+
+5. In the Additional settings tab, select Sample under data source.
+
+6. Select Review +Create, then select Create.
+
+#### Configure JDBC Connection to Azure Synapse Analytics
+
+Interfacing with Azure Synapse Analytics requires a connection string. This can be retrieved from the Azure portal.
+
+1. After the Azure Synapse Analytics instance is provisioned, open it by selecting Go to resource under notifications in Azure.
+
+2. At the top of the Overview pane, select the Show database connection strings link.
+
+3. On the page for connection strings (1) select the JDBC tab, then (2) copy this string to be used below. JDBC connection string.
+
+4. Paste the JDBC connection string to a text editor for later. Replace {your-password_here} with your SQL Server password.
+
+#### Create a Master Key and table in Azure Synapse Analytics
+
+In this step, we create a Master Key and a new table. However, before we use the query editor, we must first add the client IP address to the server firewall.
+
+1. In Azure Synapse Analytics, select Firewalls and virtual networks on the left-hand menu. Within the Firewalls and virtual networks blade, select + Add client IP and then Save.
+
+2. In Azure Synapse Analytics, select Query editor on the left-hand menu. Log in with the SQL credentials.
+
+3. Execute the following query to create a Master Key in Azure Synapse Analytics. This facilitates the connection from Azure Databricks:
+
+`CREATE MASTER KEY ENCRYPTION BY PASSWORD = 'CORRECT-horse-battery-staple';`
+
+4. Execute the following query to create a staging table for the Customer table. This query creates an empty table with the same schema as the Customer table:
+
+```
+CREATE TABLE dbo.DimCustomerStaging
+WITH
+( DISTRIBUTION = ROUND_ROBIN, CLUSTERED COLUMNSTORE INDEX )
+AS
+SELECT *
+FROM dbo.DimCustomer
+WHERE 1 = 2
+;
+```
+
+### Create Azure Blob Storage account
+
+1. In the Azure portal, select Create a resource, enter storage account in the Search the Marketplace box, select Storage account - blob, file, table, queue in the results, and then select Create.
+
+2. On the Create storage account pane, enter this information in the Basics tab:
+
+ * Subscription: Select the subscription you're using for this module.
+
+ * Resource group: Select the resource group you're using for this module.
+
+ * Storage account name: Enter a unique name. (Make sure you see a green check mark.)
+
+ * Location: Select the same location as the other resources in this module.
+
+ * Performance: Select StandardV2 (general purpose v2).
+
+ * Replication: Select Locally-redundant storage (LRS).
+
+ * Access tier (default): Select Hot.
+
+3. Select Review + create, then select Create.
+
+4. After the storage account is provisioned, open it by selecting Go to resource under notifications in Azure.
+
+5. Within the new storage account, select Containers in the left-hand menu. In the Containers blade, select + Container to add a new container. In the New Container form, enter data for the name and set the public access level to Private. Select Create.
+
+6. Select Access keys in the left-hand menu. In the Access keys blade, copy the Storage account name and Key under key1. Save these values in a text editor for later.
+
+### Integrate with Azure Synapse Analytics
+
+In this unit, you need to complete the exercises within a Databricks Notebook. To begin, you need to have access to an Azure Databricks workspace. If you do not have a workspace available, follow the instructions below. Otherwise, you can skip to the bottom of the page to Clone the Databricks archive.
+
+#### Create the required resources
+
+To complete this lab, you will need to deploy an Azure Databricks workspace in your Azure subscription.
+
+##### Deploy an Azure Databricks workspace
+
+1. Click the following button to open the Azure Resource Manager template in the Azure portal. Deploy Databricks from the Azure Resource Manager Template
+2. Provide the required values to create your Azure Databricks workspace:
+ * Subscription: Choose the Azure Subscription in which to deploy the workspace.
+ * Resource Group: Leave at Create new and provide a name for the new resource group.
+ * Location: Select a location near you for deployment. For the list of regions supported by Azure Databricks, see Azure services available by region.
+ * Workspace Name: Provide a name for your workspace.
+ * Pricing Tier: Ensure premium is selected.
+3. Accept the terms and conditions.
+4. Select Purchase.
+5. The workspace creation takes a few minutes. During workspace creation, the portal displays the Submitting deployment for Azure Databricks tile on the right side. You may need to scroll right on your dashboard to see the tile. There is also a progress bar displayed near the top of the screen. You can watch either area for progress.
+
+##### Create a cluster
+
+When your Azure Databricks workspace creation is complete, select the link to go to the resource.
+
+Select Launch Workspace to open your Databricks workspace in a new tab.
+
+In the left-hand menu of your Databricks workspace, select Clusters.
+
+Select Create Cluster to add a new cluster.
+
+The create cluster page.
+
+Enter a name for your cluster. Use your name or initials to easily differentiate your cluster from your coworkers.
+
+Select the Cluster Mode: Single Node.
+
+Select the Databricks RuntimeVersion: Runtime: 7.3 LTS (Scala 2.12, Spark 3.0.1).
+
+Under Autopilot Options, leave the box checked and in the text box enter 45.
+
+Select the Node Type: Standard_DS3_v2.
+
+Select Create Cluster.
+
+Clone the Databricks archive
+If you do not currently have your Azure Databricks workspace open: in the Azure portal, navigate to your deployed Azure Databricks workspace and select Launch Workspace.
+
+In the left pane, select Workspace > Users, and select your username (the entry with the house icon).
+
+In the pane that appears, select the arrow next to your name, and select Import.
+
+The menu option to import the archive.
+
+In the Import Notebooks dialog box, select the URL and paste in the following URL:
+
+Copy
+
+
+Copy
+https://github.com/MicrosoftDocs/mslearn_databricks/blob/main/synapse/1.1.0/Labs.dbc?raw=true
+
+Select Import.
+
+Click on the folder synapse that appears.
+
+Complete the following notebook
+Open the 1.Azure-Synapse-Analytics notebook. Make sure you attach your cluster to the notebook before following the instructions and running the cells within.
+
+Within the notebook, you will:
+
+Read from the Customer table in Azure Synapse Analytics.
+Create and write to a new staging table.
+Read from the staging table.
+After you've completed the notebook, return to this screen, and continue to the next step.
 
 ##  <h2 id="section15">Describe Azure Databricks best practices</h2>
 
