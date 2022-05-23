@@ -1168,6 +1168,15 @@ It is possible to put an Azure Databricks Notebook under Version Control in an A
    > Ideally, a user wants to create a feature branch first and work there. Once it's reviewed by peers using 'pull request', this feature branch can be committed to master branch. Then, it'll be automatically deployed into higher environment like Staging for production testing or PROD directly.
    > 
 
+ **High Level Steps**
+ 
+ At a high level, setting up CI/CD on Azure Databricks with Azure DevOps consists of 4 steps:
+
+ 1. Setting up Azure DevOps Repo
+ 2. Have your Azure Workspace and notebook configured to use Azure DevOps
+ 3. Azure DevOps - Create a build pipeline (CI)
+ 4. Azure DevOps - Create a release pipeline (CD)
+
 * We can override the default language by specifying the language magic command %<language> at the beginning of a cell. The supported magic commands are:
   *   %python
   *   %r
