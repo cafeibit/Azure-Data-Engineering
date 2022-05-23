@@ -1186,6 +1186,8 @@ It is possible to put an Azure Databricks Notebook under Version Control in an A
   * Define a schema that matches the data we are working with.
   * Assign the count to the variable totalArticles
 
+  CI/CD setup is now completed. If you commit your code from the DEV workspace to the repo (master branch), the same notebook should be available in PROD. Experiment with making changes to your notebook in DEV, then committing those changes. You will be able to see your build and release pipelines execute and the notebook in the PROD workspace automatically update to reflect those changes.
+
   **Retrieve Wikipedia Articles**
   ```
   (source, sasEntity, sasToken) = getAzureDataSource()
