@@ -32,7 +32,9 @@ To harness the power of Apache Spark and powerful clusters running on the Azure 
 
  * <a href="#section15">Describe Azure Databricks best practices</a>
 
-
+ * <a href="#section16">Design a data integration and analytic solution with Azure Databricks</a>
+ 
+ 
 <img src="./azure-databricks.png" />
 
 <a href="https://docs.microsoft.com/en-us/azure/databricks/scenarios/databricks-extract-load-sql-data-warehouse">Tutorial: Extract, transform, and load data by using Azure Databricks</a>
