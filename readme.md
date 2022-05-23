@@ -1368,57 +1368,54 @@ To complete this lab, you will need to deploy an Azure Databricks workspace in y
 
 ##### Create a cluster
 
-When your Azure Databricks workspace creation is complete, select the link to go to the resource.
+1. When your Azure Databricks workspace creation is complete, select the link to go to the resource.
 
-Select Launch Workspace to open your Databricks workspace in a new tab.
+2. Select Launch Workspace to open your Databricks workspace in a new tab.
 
-In the left-hand menu of your Databricks workspace, select Clusters.
+3. In the left-hand menu of your Databricks workspace, select Clusters.
 
-Select Create Cluster to add a new cluster.
+4. Select Create Cluster to add a new cluster.
 
-The create cluster page.
+5. Enter a name for your cluster. Use your name or initials to easily differentiate your cluster from your coworkers.
 
-Enter a name for your cluster. Use your name or initials to easily differentiate your cluster from your coworkers.
+6. Select the Cluster Mode: Single Node.
 
-Select the Cluster Mode: Single Node.
+7. Select the Databricks RuntimeVersion: Runtime: 7.3 LTS (Scala 2.12, Spark 3.0.1).
 
-Select the Databricks RuntimeVersion: Runtime: 7.3 LTS (Scala 2.12, Spark 3.0.1).
+8. Under Autopilot Options, leave the box checked and in the text box enter 45.
 
-Under Autopilot Options, leave the box checked and in the text box enter 45.
+9. Select the Node Type: Standard_DS3_v2.
 
-Select the Node Type: Standard_DS3_v2.
+10. Select Create Cluster.
 
-Select Create Cluster.
+##### Clone the Databricks archive
 
-Clone the Databricks archive
-If you do not currently have your Azure Databricks workspace open: in the Azure portal, navigate to your deployed Azure Databricks workspace and select Launch Workspace.
+1. If you do not currently have your Azure Databricks workspace open: in the Azure portal, navigate to your deployed Azure Databricks workspace and select Launch Workspace.
 
-In the left pane, select Workspace > Users, and select your username (the entry with the house icon).
+2. In the left pane, select Workspace > Users, and select your username (the entry with the house icon).
 
-In the pane that appears, select the arrow next to your name, and select Import.
+3. In the pane that appears, select the arrow next to your name, and select Import.
 
-The menu option to import the archive.
+4. The menu option to import the archive.
 
 In the Import Notebooks dialog box, select the URL and paste in the following URL:
 
-Copy
-
-
-Copy
 https://github.com/MicrosoftDocs/mslearn_databricks/blob/main/synapse/1.1.0/Labs.dbc?raw=true
 
-Select Import.
+5. Select Import.
 
-Click on the folder synapse that appears.
+6. Click on the folder synapse that appears.
 
-Complete the following notebook
+##### Complete the following notebook
+
 Open the 1.Azure-Synapse-Analytics notebook. Make sure you attach your cluster to the notebook before following the instructions and running the cells within.
 
 Within the notebook, you will:
 
-Read from the Customer table in Azure Synapse Analytics.
-Create and write to a new staging table.
-Read from the staging table.
+ * Read from the Customer table in Azure Synapse Analytics.
+ * Create and write to a new staging table.
+ * Read from the staging table.
+
 After you've completed the notebook, return to this screen, and continue to the next step.
 
 ##  <h2 id="section15">Describe Azure Databricks best practices</h2>
