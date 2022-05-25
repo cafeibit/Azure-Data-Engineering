@@ -429,6 +429,42 @@ LEFT JOIN Sales.SalesOrder AS ord
   * There is no matching of rows performed, and so no ON clause is used. (It is an error to use an ON clause with CROSS JOIN.)
   * To use ANSI SQL-92 syntax, separate the input table names with the CROSS JOIN operator.
  
+ **Use self joins**
+
+ So far, the joins we've used have involved different tables. There may be scenarios in which you need to retrieve and compare rows from a table with other rows from the same table. For example, in a human resources application, an Employee table might include information about the manager of each employee, and store the manager's ID in the employee's own row. Each manager is also listed as an employee. To retrieve the employee information and match it to the related manager, you can use the table twice in your query, joining it to itself for the purposes of the query.
+ ```
+ SELECT emp.FirstName AS Employee, 
+       mgr.FirstName AS Manager
+FROM HR.Employee AS emp
+LEFT OUTER JOIN HR.Employee AS mgr
+  ON emp.ManagerID = mgr.EmployeeID;
+ ```
+ The results of this query include a row for each employee with the name of their manager. The CEO of the company has no manager. To include the CEO in the results, an outer join is used, and the manager name is returned as NULL for rows where the ManagerID field has no matching EmployeeID field.
+ 
+ There are other scenarios in which you'll want to compare rows in a table with different rows in the same table. As you've seen, it's fairly easy to compare columns in the same row using T-SQL, but the method to compare values from different rows (such as a row that stores a starting time, and another row in the same table that stores a corresponding stop time) is less obvious. Self-joins are a useful technique for these types of queries. To accomplish tasks like this, you should consider the following guidelines:
+
+    * Define two instances of the same table in the FROM clause, and join them as needed, using inner or outer joins.
+    * Use table aliases to differentiate the two instances of the same table.
+    * Use the ON clause to provide a filter comparing columns of one instance of the table with columns from the other instance of the table.
+ 
+ #### Write Subqueries in T-SQL
+ 
+ Sometimes, when using Transact-SQL to retrieve data from a database, it can be easier to simplify complex queries by breaking them down into multiple simpler queries that can be combined to achieve the desired results. Transact-SQL supports the creation of subqueries, in which an inner query returns its result to an outer query.
+ 
+ A subquery is a SELECT statement nested within another query. Being able to nest one query within another will enhance your ability to create effective queries in T-SQL. In general, subqueries are evaluated once, and provide their results to the outer query.
+ 
+ * Working with subqueries
+ 
+ A subquery is a SELECT statement nested, or embedded, within another query. The nested query, which is the subquery, is referred to as the inner query. The query containing the nested query is the outer query. The purpose of a subquery is to return results to the outer query. The form of the results will determine whether the subquery is a scalar or multi-valued subquery:
+
+    * Scalar subqueries return a single value. Outer queries must process a single result.
+    * Multi-valued subqueries return a result much like a single-column table. Outer queries must be able to process multiple values.
+    
+ In addition to the choice between scalar and multi-valued subqueries, subqueries can either be self-contained subqueries or they can be correlated with the outer query:
+
+    * Self-contained subqueries can be written as stand-alone queries, with no dependencies on the outer query. A self-contained subquery is processed once, when the outer query runs and passes its results to that outer query.
+    * Correlated subqueries reference one or more columns from the outer query and therefore depend on it. Correlated subqueries cannot be run separately from the outer query.
+ 
  
  
  
