@@ -165,13 +165,53 @@ Now that you've seen what each clause does, let's look at the order in which SQL
    
   * Using PERCENT
 
-  To return a percentage of the eligible rows, use the PERCENT option with TOP instead of a fixed number. The PERCENT may also be used with the WITH TIES option. For the purposes of row count, TOP (N) PERCENT will round up to the nearest integer. The TOP option is used by many SQL Server professionals as a method for retrieving only a certain range of rows. However, consider the following facts when using TOP:
+  To return a percentage of the eligible rows, use the PERCENT option with TOP instead of a fixed number. The PERCENT may also be used with the WITH TIES option. For the purposes of row count, TOP (N) PERCENT will round up to the nearest integer. 
+  
+  The TOP option is used by many SQL Server professionals as a method for retrieving only a certain range of rows. However, consider the following facts when using TOP:
 
     * TOP is proprietary to T-SQL.
     * TOP on its own doesn't support skipping rows.
     * Because TOP depends on an ORDER BY clause, you cannot use one sort order to establish the rows filtered by TOP and another to determine the output order.
    
-   
+ * Page results
+
+ An extension to the ORDER BY clause called OFFSET-FETCH enables you to return only a range of the rows selected by your query. It adds the ability to supply a starting point (an offset) and a value to specify how many rows you would like to return (a fetch value). This extension provides a convenient technique for paging through results.
+ 
+ If you want to return rows a "page" at a time (using whatever number you choose for a page), you'll need to consider that each query with an OFFSET-FETCH clause runs independently of any other queries. There's no server-side state maintained, and you'll need to track your position through a result set via client-side code.
+
+ **OFFSET-FETCH syntax**
+ 
+ The syntax for the OFFSET-FETCH clause, which is technically part of the ORDER BY clause, is as follows:
+ ```
+ OFFSET { integer_constant | offset_row_count_expression } { ROW | ROWS }
+ [FETCH { FIRST | NEXT } {integer_constant | fetch_row_count_expression } { ROW | ROWS } ONLY]
+ ```
+ 
+ **Using OFFSET-FETCH**
+ 
+ To use OFFSET-FETCH, you'll supply a starting OFFSET value, which may be zero, and an optional number of rows to return, as in the following example:
+
+ This example will return the first 10 rows, and then return the next 10 rows of product data based on the ListPrice:
+ ```
+ SELECT ProductID, ProductName, ListPrice
+ FROM Production.Product
+ ORDER BY ListPrice DESC 
+ OFFSET 0 ROWS --Skip zero rows
+ FETCH NEXT 10 ROWS ONLY; --Get the next 10
+ ```
+ To retrieve the next page of product data, use the OFFSET clause to specify the number of rows to skip:
+ ```
+ SELECT ProductID, ProductName, ListPrice
+ FROM Production.Product
+ ORDER BY ListPrice DESC 
+ OFFSET 10 ROWS --Skip 10 rows
+ FETCH NEXT 10 ROWS ONLY; --Get the next 10
+ ```
+ In the syntax definition you can see the OFFSET clause is required, but the FETCH clause is not. If the FETCH clause is omitted, all rows following OFFSET will be returned. You'll also find that the keywords ROW and ROWS are interchangeable, as are FIRST and NEXT, which enables a more natural syntax.
+
+ To ensure the accuracy of the results, especially as you move from page to page of data, it's important to construct an ORDER BY clause that will provide unique ordering and yield a deterministic result. Because of the way SQL Server’s query optimizer works, it's technically possible for a row to appear on more than one page, unless the range of rows is deterministic.
+
+
 
 ### <h3 id="section1-2">Querying with Transact-SQL</h3>
   
