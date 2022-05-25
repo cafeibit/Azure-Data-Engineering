@@ -77,7 +77,7 @@ Now that you've seen what each clause does, let's look at the order in which SQL
    * If the SELECT list contains more than a few columns, expressions, or aliases, consider listing each column on its own line.
    * Indent lines containing subclauses or columns to make it clear which code belongs to each major clause.
 
-* **Handle NULLs**
+#### Handle NULLs
 
   A NULL value means no value or unknown. It does not mean zero or blank, or even an empty string. Those values are not unknown. A NULL value can be used for values that haven’t been supplied yet, for example, when a customer has not yet supplied an email address. As you've seen previously, a NULL value can also be returned by some conversion functions if a value is not compatible with the target data type.
 
@@ -122,25 +122,25 @@ Now that you've seen what each clause does, let's look at the order in which SQL
    FROM Sales.SalesOrderDetail;
    ```
 
-* Sort and filter results in T-SQL
+#### Sort and filter results in T-SQL
   
   In the logical order of query processing, ORDER BY is the last phase of a SELECT statement to be executed. ORDER BY enables you to control the sorting of rows as they are returned from SQL Server to the client application. SQL Server doesn't guarantee the physical order of rows in a table, and the only way to control the order the rows will be returned to the client is with an ORDER BY clause. This behavior is consistent with relational theory.
   
   ORDER BY can take several types of elements in its list:
 
-    * Columns by name. You can specify the names of the column(s) by which the results should be sorted. The results are returned in order of the first column, and then subsorted by each additional column in order.
-    * Column aliases. Because the ORDER BY is processed after the SELECT clause, it has access to aliases defined in the SELECT list.
-    * Columns by ordinal position in the SELECT list. Using the position isn't recommended in your applications, because of diminished readability and the extra care required to keep the ORDER BY list up to date. However, for complex expressions in the SELECT list, using the position number can be useful during troubleshooting.
-    * Columns not included in the SELECT list, but available from tables listed in the FROM clause. If the query uses a DISTINCT option, any columns in the ORDER BY list must be included in the SELECT list.
-    * In addition to specifying which columns should be used to determine the sort order, you may also control the direction of the sort. You can use ASC for ascending (A-Z, 0-9) or DESC for descending (Z-A, 9-0). Ascending sorts are the default. Each column can have its own direction specified.
+  * Columns by name. You can specify the names of the column(s) by which the results should be sorted. The results are returned in order of the first column, and then subsorted by each additional column in order.
+  * Column aliases. Because the ORDER BY is processed after the SELECT clause, it has access to aliases defined in the SELECT list.
+  * Columns by ordinal position in the SELECT list. Using the position isn't recommended in your applications, because of diminished readability and the extra care required to keep the ORDER BY list up to date. However, for complex expressions in the SELECT list, using the position number can be useful during troubleshooting.
+  * Columns not included in the SELECT list, but available from tables listed in the FROM clause. If the query uses a DISTINCT option, any columns in the ORDER BY list must be included in the SELECT list.
+  * In addition to specifying which columns should be used to determine the sort order, you may also control the direction of the sort. You can use ASC for ascending (A-Z, 0-9) or DESC for descending (Z-A, 9-0). Ascending sorts are the default. Each column can have its own direction specified.
 
  **Limit the sorted results**:
  
  The TOP clause is a Microsoft-proprietary extension of the SELECT clause. TOP will let you specify how many rows to return, either as a positive integer or as a percentage of all qualifying rows. The number of rows can be specified as a constant or as an expression. TOP is most frequently used with an ORDER BY, but can be used with unordered data.
  
-    * Using the TOP clause
+* Using the TOP clause
  
-   The TOP operator depends on an ORDER BY clause to provide meaningful precedence to the rows selected. TOP can be used without ORDER BY, but in that case, there is no way to predict which rows will be returned. In this example, any 10 orders might be returned if there wasn’t an ORDER BY clause.
+  The TOP operator depends on an ORDER BY clause to provide meaningful precedence to the rows selected. TOP can be used without ORDER BY, but in that case, there is no way to predict which rows will be returned. In this example, any 10 orders might be returned if there wasn’t an ORDER BY clause.
    
      ```
      SELECT TOP (N) <column_list>
@@ -149,22 +149,23 @@ Now that you've seen what each clause does, let's look at the order in which SQL
      ORDER BY <order list> [ASC|DESC];
      ```
      
-   * Using WITH TIES
+  * Using WITH TIES
 
-   In addition to specifying a fixed number of rows to be returned, the TOP keyword also accepts the WITH TIES option, which will retrieve any rows with values that might be found in the selected top N rows.
+  In addition to specifying a fixed number of rows to be returned, the TOP keyword also accepts the WITH TIES option, which will retrieve any rows with values that might be found in the selected top N rows.
    
-   In the previous example, the query returned the first 10 products in descending order of price. However, by adding the WITH TIES option to the TOP clause, you will see that more rows qualify for inclusion in the top 10 most expensive products:
-   ```
+  In the previous example, the query returned the first 10 products in descending order of price. However, by adding the WITH TIES option to the TOP clause, you will see that more rows qualify for inclusion in the top 10 most expensive products:
+  
+  ```
    SELECT TOP 10 WITH TIES Name, ListPrice
    FROM Production.Product
    ORDER BY ListPrice DESC;
    ```
    
-   The decision to include WITH TIES will depend on your knowledge of the source data, its potential for unique values, and the requirements of the query you are writing.
+  The decision to include WITH TIES will depend on your knowledge of the source data, its potential for unique values, and the requirements of the query you are writing.
    
-   * Using PERCENT
+  * Using PERCENT
 
-   To return a percentage of the eligible rows, use the PERCENT option with TOP instead of a fixed number. The PERCENT may also be used with the WITH TIES option. For the purposes of row count, TOP (N) PERCENT will round up to the nearest integer. The TOP option is used by many SQL Server professionals as a method for retrieving only a certain range of rows. However, consider the following facts when using TOP:
+  To return a percentage of the eligible rows, use the PERCENT option with TOP instead of a fixed number. The PERCENT may also be used with the WITH TIES option. For the purposes of row count, TOP (N) PERCENT will round up to the nearest integer. The TOP option is used by many SQL Server professionals as a method for retrieving only a certain range of rows. However, consider the following facts when using TOP:
 
     * TOP is proprietary to T-SQL.
     * TOP on its own doesn't support skipping rows.
