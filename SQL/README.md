@@ -605,7 +605,114 @@ In this example, if you were to execute only the inner query, a column of Custom
     * The keyword EXISTS directly follows WHERE. No column name (or other expression) precedes it, unless NOT is also used.
     * Within the subquery, use SELECT *. No rows are returned by the subquery, so no columns need to be specified.
 
+#### Use built-in functions and GROUP BY in Transact-SQL
 
+When retrieving data from tables in a database, it's often useful to be able to manipulate data values by using functions; to format, convert, aggregate, or otherwise affect the output from the query. Additionally, when aggregating data, you'll often want to group the results and show aggregations for each group - for example, to see total values by category.
+
+Transact-SQL includes many built-in functions, ranging from functions that perform data type conversion, to functions that aggregate and analyze groups of rows.
+
+Functions in T-SQL can be categorized as follows:
+
+Function Category   Description
+
+Scalar              Operate on a single row, return a single value.
+
+Logical             Compare multiple values to determine a single output.
+
+Ranking             Operate on a partition (set) of rows.
+
+Rowset              Return a virtual table that can be used in a FROM clause in a T-SQL statement.
+
+Aggregate           Take one or more input values, return a single summarizing value.
+
+**Use scalar functions**
+
+Scalar functions return a single value and usually work on a single row of data. The number of input values they take can be zero (for example, GETDATE), one (for example, UPPER), or multiple (for example, ROUND). Because scalar functions always return a single value, they can be used anywhere a single value (the result) is needed. They are most commonly used in SELECT clauses and WHERE clause predicates. They can also be used in the SET clause of an UPDATE statement.
+
+Built-in scalar functions can be organized into many categories, such as string, conversion, logical, mathematical, and others. This module will look at a few common scalar functions.
+
+Some considerations when using scalar functions include:
+
+ * Determinism: If the function returns the same value for the same input and database state each time it is called, we say it is deterministic. For example, ROUND(1.1, 0) always returns the value 1.0. Many built-in functions are nondeterministic. For example, GETDATE() returns the current date and time. Results from nondeterministic functions cannot be indexed, which affects the query processor's ability to come up with a good plan for executing the query.
+ * Collation: When using functions that manipulate character data, which collation will be used? Some functions use the collation (sort order) of the input value; others use the collation of the database if no input collation is supplied.
+
+Scalar function examples
+
+At the time of writing, the SQL Server Technical Documentation listed more than 200 scalar functions that span multiple categories, including:
+
+ * Configuration functions
+ * Conversion functions
+ * Cursor functions
+ * Date and Time functions
+ * Mathematical functions
+ * Metadata functions
+ * Security functions
+ * String functions
+ * System functions
+ * System Statistical functions
+ * Text and Image functions
+
+There isn't enough time in this course to describe each function, but the examples below show some commonly used functions. The following hypothetical example uses several date and time functions:
+```
+SELECT  SalesOrderID,
+    OrderDate,
+        YEAR(OrderDate) AS OrderYear,
+        DATENAME(mm, OrderDate) AS OrderMonth,
+        DAY(OrderDate) AS OrderDay,
+        DATENAME(dw, OrderDate) AS OrderWeekDay,
+        DATEDIFF(yy,OrderDate, GETDATE()) AS YearsSinceOrder
+FROM Sales.SalesOrderHeader;
+```
+
+The next example includes some mathematical functions:
+```
+SELECT TaxAmt,
+       ROUND(TaxAmt, 0) AS Rounded,
+       FLOOR(TaxAmt) AS Floor,
+       CEILING(TaxAmt) AS Ceiling,
+       SQUARE(TaxAmt) AS Squared,
+       SQRT(TaxAmt) AS Root,
+       LOG(TaxAmt) AS Log,
+       TaxAmt * RAND() AS Randomized
+FROM Sales.SalesOrderHeader;
+```
+
+The following example uses some string functions:
+```
+SELECT  CompanyName,
+        UPPER(CompanyName) AS UpperCase,
+        LOWER(CompanyName) AS LowerCase,
+        LEN(CompanyName) AS Length,
+        REVERSE(CompanyName) AS Reversed,
+        CHARINDEX(' ', CompanyName) AS FirstSpace,
+        LEFT(CompanyName, CHARINDEX(' ', CompanyName)) AS FirstWord,
+        SUBSTRING(CompanyName, CHARINDEX(' ', CompanyName) + 1, LEN(CompanyName)) AS RestOfName
+FROM Sales.Customer;
+```
+
+Logical functions
+
+Another category of functions allows to to determine which of several values is to be returned. Logical functions evaluate an input expression, and return an appropriate value based on the result.
+
+**IIF**
+
+The IIF function evaluates a Boolean input expression, and returns a specified value if the expression evaluates to True, and an alternative value if the expression evaluates to False.
+
+For example, consider the following query, which evaluates the address type of a customer. If the value is "Main Office", the expression returns "Billing". For all other address type values, the expression returns "Mailing".
+```
+SELECT AddressType,
+      IIF(AddressType = 'Main Office', 'Billing', 'Mailing') AS UseAddressFor
+FROM Sales.CustomerAddress;
+```
+
+**CHOOSE**
+
+The CHOOSE function evaluates an integer expression, and returns the corresponding value from a list based on its (1-based) ordinal position.
+```
+SELECT SalesOrderID, Status,
+CHOOSE(Status, 'Ordered', 'Shipped', 'Delivered') AS OrderStatus
+FROM Sales.SalesOrderHeader;
+```
 
 
 ### <h3 id="section1-2">Querying with Transact-SQL</h3>
