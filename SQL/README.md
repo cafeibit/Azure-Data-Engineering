@@ -211,8 +211,112 @@ Now that you've seen what each clause does, let's look at the order in which SQL
 
  To ensure the accuracy of the results, especially as you move from page to page of data, it's important to construct an ORDER BY clause that will provide unique ordering and yield a deterministic result. Because of the way SQL Server’s query optimizer works, it's technically possible for a row to appear on more than one page, unless the range of rows is deterministic.
 
+ * Remove duplicates
+
+ Although the rows in a table should always be unique, when you select only a subset of the columns, the result rows may not be unique even if the original rows are. By default, the SELECT clause includes an implicit ALL keyword that results in this behavior. T-SQL also supports an alternative the `DISTINCT` keyword, which removes any duplicate result rows.
+ ```
+ SELECT DISTINCT City, CountryRegion
+ FROM Production.Supplier
+ ORDER BY CountryRegion, City;
+ ```
+ 
+ * Filter data with predicates
+
+ The simplest SELECT statements with only SELECT and FROM clauses will evaluate every row in a table. By using a WHERE clause, you define conditions that determine which rows will be processed and potentially reduce result set. 
+ 
+ **The structure of the WHERE clause**
+ 
+ The WHERE clause is made up of one or more search conditions, each of which must evaluate to TRUE, FALSE, or 'unknown' for each row of the table. Rows will only be returned when the WHERE clause evaluates as TRUE. *The individual conditions act as filters on the data, and are referred to as 'predicates'*. Each predicate includes a condition that is being tested, usually using the basic comparison operators:
+
+  * = (equals)
+  * <> (not equals)
+  * > (greater than)
+  * >= (greater than or equal to)
+  * < (less than)
+  * <= (less than or equal to)
+
+  **IS NULL / IS NOT NULL**
+  
+  You can also easily filter to allow or exclude the 'unknown' or NULL values using IS NULL or IS NOT NULL.
+  
+  ```
+  SELECT ProductCategoryID AS Category, ProductName
+  FROM Production.Product
+  WHERE ProductName IS NOT NULL;
+  ```
+  
+  **Multiple conditions**
+  
+  Multiple predicates can be combined with the AND and OR operators and with parentheses. However SQL Server will only process two conditions at a time. All conditions must be TRUE when connecting multiple conditions with AND operator. When using OR operator to connect two conditions, one or both may be TRUE for the result set. AND operators are processed before OR operators, unless parentheses are used. For best practice, use parentheses when using more than two predicates. The following query returns products in category 2 OR 3 AND cost less than 10.00:
+  ```
+  SELECT ProductCategoryID AS Category, ProductName
+  FROM Production.Product
+  WHERE (ProductCategoryID = 2 OR ProductCategoryID = 3)
+    AND (ListPrice < 10.00);
+ ```
+ 
+ **Comparison operators**
+ 
+ Transact-SQL includes comparison operators that can help simplify the WHERE clause.
+
+   * IN
+   The IN operator is a shortcut for multiple equality conditions for the same column connected with OR. There's nothing wrong with using multiple OR conditions in a query, as in the following example:
+   ```
+   SELECT ProductCategoryID AS Category, ProductName
+   FROM Production.Product
+   WHERE ProductCategoryID IN (2, 3, 4);
+   ```
+   
+   * BETWEEN
+   BETWEEN is another shortcut that can be used when filtering for an upper and lower bound for the value instead of using two conditions with the AND operator. The following two queries are equivalent:
+   ```
+   SELECT ProductCategoryID AS Category, ProductName
+   FROM Production.Product
+   WHERE ListPrice BETWEEN 1.00 AND 10.00;
+   ```
+   
+   The BETWEEN operator uses inclusive boundary values. Products with a price of either 1.00 or 10.00 would be included in the results. BETWEEN is also helpful when querying date fields. For example, the following query will include all product names modified between January 1, 2012 and December 31, 2012:
+   ```
+   SELECT ProductName, ListPrice, ModifiedDate
+   FROM Production.Product
+   WHERE ModifiedDate BETWEEN '2012-01-01 00:00:00.000' AND '2012-12-31 23:59:59.999';
+   ```
+   Basic comparison operators such as Greater Than (>) and Equals (=) are also accurate when only filtering by date:
+   ```
+   SELECT ProductName, ListPrice, ModifiedDate
+   FROM Production.Product
+   WHERE ModifiedDate >= '2012-01-01' 
+    AND ModifiedDate < '2013-01-01';
+   ```
+   
+   * LIKE
+   The final comparison operator can only be used for character data and allows us to use wildcard characters and regular expression patterns. Wildcards allow us to specify partial strings. For example, you could use the following query to return all products with names that contain the word "mountain":
+   ```
+   SELECT Name, ListPrice
+   FROM SalesLT.Product
+   WHERE Name LIKE '%mountain%';
+   ```
+   The `%` wildcard represents any string of 0 or more characters, so the results include products with the word "mountain" anywhere in their name. You can use the `_ (underscore)` wildcard to represent a single character. You can also define complex patterns for strings that you want to find. For example, the following query searched for products with a name that starts with "Mountain-", then followed by:
+
+     * three characters between 0 and 9
+     * a space
+     * any string
+     * a comma
+     * a space
+     * two characters between 0 and 9
+   
+   ```
+   SELECT ProductName, ListPrice
+   FROM SalesLT.Product
+   WHERE ProductName LIKE 'Mountain-[0-9][0-9][0-9] %, [0-9][0-9]';
+   ```
+   
+#### Combine multiple tables with JOINs in T-SQL
+
+Relational databases usually contain multiple tables that are linked by common key fields. This normalized design minimizes duplication of data, but means that you'll often need to write queries to retrieve related data from two or more tables.
 
 
+   
 ### <h3 id="section1-2">Querying with Transact-SQL</h3>
   
 ## <h2 id="section2">Optimize query performance in Azure SQL</h2>
