@@ -66,16 +66,15 @@ Now that you've seen what each clause does, let's look at the order in which SQL
 5. The SELECT clause finally executes, determining which columns will appear in the query results. Because the SELECT clause is evaluated after the other steps, any column aliases (in our example, Orders) created there cannot be used in the GROUP BY or HAVING clause.
 6. The ORDER BY clause is the last to execute, sorting the rows as determined by its column list.
 
+
 * Formatting queries
 
-You may note from the examples in this section that you can be flexible about how you format your query code. For example, you can write each clause (or the entire query) on a single line, or break it over multiple lines. In most database systems, the code is case-insensitive, and some elements of the T-SQL language are optional (including the AS keyword as mentioned previously, and even the semi-colon at the end of a statement).
+  You may note from the examples in this section that you can be flexible about how you format your query code. For example, you can write each clause (or the entire query) on a single line, or break it over multiple lines. In most database systems, the code is case-insensitive, and some elements of the T-SQL language are optional (including the AS keyword as mentioned previously, and even the semi-colon at the end of a statement). Consider the following guidelines to make your T-SQL code easily readable (and therefore easier to understand and debug!):
 
-Consider the following guidelines to make your T-SQL code easily readable (and therefore easier to understand and debug!):
-
-  * Capitalize T-SQL keywords, like SELECT, FROM, AS, and so on. Capitalizing keywords is a commonly used convention that makes it easier to find each clause of a complex statement.
-  * Start a new line for each major clause of a statement.
-  * If the SELECT list contains more than a few columns, expressions, or aliases, consider listing each column on its own line.
-  * Indent lines containing subclauses or columns to make it clear which code belongs to each major clause.
+   * Capitalize T-SQL keywords, like SELECT, FROM, AS, and so on. Capitalizing keywords is a commonly used convention that makes it easier to find each clause of a complex statement.
+   * Start a new line for each major clause of a statement.
+   * If the SELECT list contains more than a few columns, expressions, or aliases, consider listing each column on its own line.
+   * Indent lines containing subclauses or columns to make it clear which code belongs to each major clause.
 
 
 
