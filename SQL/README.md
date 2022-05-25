@@ -48,9 +48,13 @@ ORDER BY OrderDate DESC;
 ```
 
 > The query consists of a SELECT statement, which is composed of multiple clauses, each of which defines a specific operation that must be applied to the data being retrieved. 
+> 
 > The SELECT clause returns the columns/values; the FROM clause identifies which table is the source of the rows for the query; the WHERE clause filters rows out of the results, keeping only those rows that satisfy the specified condition; 
+> 
 > the GROUP BY clause takes the rows that met the filter condition and groups them by OrderDate, so that all the rows with the same OrderDate are considered as a single group and one row will be returned for each group; 
+> 
 > After the groups are formed, the HAVING clause filters the groups based on its own predicate. Only dates with more than one order will be included in the results;
+> 
 > For the purposes of previewing this query, the final clause is the ORDER BY, which sorts the output into descending order of OrderDate
 
 Now that you've seen what each clause does, let's look at the order in which SQL Server actually evaluates them:
