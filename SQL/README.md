@@ -77,7 +77,7 @@ Now that you've seen what each clause does, let's look at the order in which SQL
    * If the SELECT list contains more than a few columns, expressions, or aliases, consider listing each column on its own line.
    * Indent lines containing subclauses or columns to make it clear which code belongs to each major clause.
 
-* Handle NULLs
+* **Handle NULLs**
 
   A NULL value means no value or unknown. It does not mean zero or blank, or even an empty string. Those values are not unknown. A NULL value can be used for values that haven’t been supplied yet, for example, when a customer has not yet supplied an email address. As you've seen previously, a NULL value can also be returned by some conversion functions if a value is not compatible with the target data type.
 
@@ -87,6 +87,13 @@ Now that you've seen what each clause does, let's look at the order in which SQL
 
   The ISNULL function takes two arguments. The first is an expression we are testing. If the value of that first argument is NULL, the function returns the second argument. If the first expression is not null, it is returned unchanged.
   
+  ```
+  SELECT FirstName,
+      ISNULL(MiddleName, 'None') AS MiddleIfAny,
+      LastName
+  FROM Sales.Customer;
+  ```
+  
   **Note**
   
   The value substituted for NULL must be the same datatype as the expression being evaluated. In the above example, MiddleName is a varchar, so the replacement value could not be numeric. In addition, you'll need to choose a value that will not appear in the data as a regular value. It can sometimes be difficult to find a value that will never appear in your data.
@@ -95,9 +102,27 @@ Now that you've seen what each clause does, let's look at the order in which SQL
 
   The ISNULL function is not ANSI standard, so you may wish to use the COALESCE function instead. COALESCE is a little more flexible is that it can take a variable number of arguments, each of which is an expression. It will return the first expression in the list that is not NULL. If there are only two arguments, COALESCE behaves like ISNULL. However, with more than two arguments, COALESCE can be used as an alternative to a multipart CASE expression using ISNULL. If all arguments are NULL, COALESCE returns NULL. All the expressions must return the same or compatible data types. The syntax is as follows: `SELECT COALESCE(&lt;expression_1&gt;[, ...&lt;expression_n&gt;];`
   
+  ```
+  SELECT EmployeeID,
+      COALESCE(HourlyRate * 40,
+                WeeklySalary,
+                Commission * SalesQty) AS WeeklyEarnings
+   FROM HR.Wages;
+   ```
+   
   * NULLIF
 
   The NULLIF function allows you to return NULL under certain conditions. This function has useful applications in areas such as data cleansing, when you wish to replace blank or placeholder characters with NULL. NULLIF takes two arguments and returns NULL if they're equivalent. If they aren't equal, NULLIF returns the first argument.
+
+   ```
+   SELECT SalesOrderID,
+      ProductID,
+      UnitPrice,
+      NULLIF(UnitPriceDiscount, 0) AS Discount
+   FROM Sales.SalesOrderDetail;
+   ```
+
+
 
 ### <h3 id="section1-2">Querying with Transact-SQL</h3>
   
