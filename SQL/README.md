@@ -228,12 +228,12 @@ Now that you've seen what each clause does, let's look at the order in which SQL
  
  The WHERE clause is made up of one or more search conditions, each of which must evaluate to TRUE, FALSE, or 'unknown' for each row of the table. Rows will only be returned when the WHERE clause evaluates as TRUE. *The individual conditions act as filters on the data, and are referred to as 'predicates'*. Each predicate includes a condition that is being tested, usually using the basic comparison operators:
 
-  * = (equals)
-  * <> (not equals)
-  * > (greater than)
-  * >= (greater than or equal to)
-  * < (less than)
-  * <= (less than or equal to)
+  * `=` (equals)
+  * `<>` (not equals)
+  * `>` (greater than)
+  * `>=` (greater than or equal to)
+  * `<` (less than)
+  * `<=` (less than or equal to)
 
   **IS NULL / IS NOT NULL**
   
@@ -315,8 +315,104 @@ Now that you've seen what each clause does, let's look at the order in which SQL
 
 Relational databases usually contain multiple tables that are linked by common key fields. This normalized design minimizes duplication of data, but means that you'll often need to write queries to retrieve related data from two or more tables.
 
+The most fundamental and common method of combining data from multiple tables is to use a JOIN operation. Some people think of JOIN as a separate clause in a SELECT statement, but others think of it as part of the FROM clause. This module will mainly consider it to be part of the FROM clause. In this module, we'll discover how the FROM clause in a T-SQL SELECT statement creates intermediate virtual tables that will be consumed by later phases of the query.
 
-   
+**The FROM Clause and Virtual Tables**
+
+If you’ve learned about the logical order of operations that are performed when SQL Server processes a query, you’ve seen that the FROM clause of a SELECT statement is the first clause to be processed. This clause determines which table or tables will be the source of rows for the query. The FROM can reference a single table or bring together multiple tables as the source of data for your query. You can think of the FROM clause as creating and populating a virtual table. This virtual table will hold the output of the FROM clause and be used by clauses of the SELECT statement that are applied later, such as the WHERE clause. As you add extra functionality, such as join operators, to a FROM clause, it will be helpful to think of the purpose of the FROM clause elements as either to add rows to, or remove rows from, the virtual table.
+
+The virtual table created by a FROM clause is a logical entity only. In SQL Server, no physical table is created, whether persistent or temporary, to hold the results of the FROM clause, as it is passed to the WHERE clause or other parts of the query. The virtual table created by the FROM clause contains data from all of the joined tables. It can be useful to think of the results as sets, and conceptualize the join results as a Venn diagram.
+
+In the ANSI SQL-89 standard, joins were specified by including multiple tables in the FROM clause in a comma-separated list. Any filtering to determine which rows to include were performed in the WHERE clause, like this:
+
+```
+SELECT p.ProductID, m.Name AS Model, p.Name AS Product
+FROM SalesLT.Product AS p, SalesLT.ProductModel AS m
+WHERE p.ProductModelID = m.ProductModelID;
+```
+
+This syntax is still supported by SQL Server, but because of the complexity of representing the filters for complex joins, it is not recommended. Additionally, if a WHERE clause is accidentally omitted, ANSI SQL-89-style joins can easily become Cartesian products and return an excessive number of result rows, causing performance problems, and possibly incorrect results.
+
+When learning about writing multi-table queries in T-SQL, it's important to understand the concept of Cartesian products. In mathematics, a Cartesian product is the product of two sets. In databases, a Cartesian product is the result of combining every row in one table to every row of another table. 
+
+The underlying result of a JOIN operation is a Cartesian product but for most T-SQL queries, a Cartesian product isn't the desired result. In T-SQL, a Cartesian product occurs when two input tables are joined without considering any relationships between them. With no information about relationships, the SQL Server query processor will return all possible combinations of rows. While this result can have some practical applications, such as generating test data, it's not typically useful and can have severe performance implications.
+
+With the advent of the ANSI SQL-92 standard, support for the keywords JOIN and ON clauses was added. T-SQL also supports this syntax. Joins are represented in the FROM clause by using the appropriate JOIN operator. The logical relationship between the tables, which becomes a filter predicate, is specified in the ON clause.
+
+The following example restates the previous query with the newer syntax:
+```
+SELECT p.ProductID, m.Name AS Model, p.Name AS Product
+FROM SalesLT.Product AS p
+JOIN SalesLT.ProductModel AS m
+    ON p.ProductModelID = m.ProductModelID;
+```    
+**Note**
+The ANSI SQL-92 syntax makes it more difficult to create accidental Cartesian products. Once the keyword JOIN has been added, a syntax error will be raised if an ON clause is missing, unless the JOIN is specified as a CROSS JOIN.
+
+* Use inner joins
+
+ The most frequent type of JOIN in T-SQL queries is INNER JOIN. Inner joins are used to solve many common business problems, especially in highly normalized database environments. To retrieve data that has been stored across multiple tables, you will often need to combine it via INNER JOIN queries. An INNER JOIN begins its logical processing phase as a Cartesian product, which is then filtered to remove any rows that don't match the predicate.
+
+**Processing an INNER JOIN**
+
+Let’s examine the steps by which SQL Server will logically process a JOIN query. Line numbers in the following hypothetical example are added for clarity:
+```
+1) SELECT emp.FirstName, ord.Amount
+2) FROM HR.Employee AS emp 
+3) JOIN Sales.SalesOrder AS ord
+4) ON emp.EmployeeID = ord.EmployeeID;
+```
+As you should be aware, the FROM clause will be processed before the SELECT clause. Let’s track the processing, beginning with line 2:
+
+  * The FROM clause specifies the **HR.Employee** table as one of the input tables, giving it the alias **emp**.
+  * The JOIN operator in line 3 reflects the use of an INNER JOIN (the default type in T-SQL) and specifies **Sales.SalesOrder** as the other input table, which has an alias of **ord**.
+  * SQL Server will perform a logical Cartesian join on these tables and pass the results as a virtual table to the next step. (The physical processing of the query may not actually perform the Cartesian product operation, depending on the optimizer's decisions. But it can be helpful to imagine the Cartesian product being created.)
+  * Using the ON clause, SQL Server will filter the virtual table, keeping only those rows where an **EmployeeID** value from the **emp** table matches a **EmployeeID** in the **ord** table.
+  * The remaining rows are left in the virtual table and handed off to the next step in the SELECT statement. In this example, the virtual table is next processed by the SELECT clause, and the two specified columns are returned to the client application.
+
+ The result of the completed query is a list of employees and their order amounts. Employees that do not have any associated orders have been filtered out by the ON clause, as have any orders that happen to have a EmployeeID that doesn't correspond to an entry in the **HR.Employee table**.
+
+ An INNER JOIN is the default type of JOIN, and the optional INNER keyword is implicit in the JOIN clause. When mixing and matching join types, it can be useful to specify the join type explicitly. When writing queries using inner joins, consider the following guidelines:
+ * Table aliases are preferred, not only for the SELECT list, but also for writing the ON clause.
+ * Inner joins may be performed on a single matching column, such as an OrderID, or on multiple matching attributes, such as the combination of OrderID and ProductID. Joins that specify multiple matching columns are called composite joins.
+ * The order in which tables are listed in the FROM clause for an INNER JOIN doesn't matter to the SQL Server optimizer. Conceptually, joins will be evaluated from left to right. 
+ * Use the JOIN keyword once for each pair of joined tables in the FROM list. For a two-table query, specify one join. For a three-table query, you'll use JOIN twice; once between the first two tables, and once again between the output of the JOIN between the first two tables and the third table.
+ 
+ This next example shows how an inner join may be extended to include more than two tables. The Sales.SalesOrderDetail table is joined to the output of the JOIN between Production.Product and Production.ProductModel. Each instance of JOIN/ON does its own population and filtering of the virtual output table. The SQL Server query optimizer determines the order in which the joins and filtering will be performed.
+ 
+ ```
+ SELECT od.SalesOrderID, m.Name AS Model, p.Name AS ProductName, od.OrderQty
+FROM Production.Product AS p
+INNER JOIN Production.ProductModel AS m
+    ON p.ProductModelID = m.ProductModelID
+INNER JOIN Sales.SalesOrderDetail AS od
+    ON p.ProductID = od.ProductID
+ORDER BY od.SalesOrderID;
+```
+
+**Use outer joins**
+
+However, like the INNER keyword, it is often helpful to write code that is explicit about the kind of join being used.  When writing queries using OUTER JOIN, consider the following guidelines:
+
+  * As you have seen, table aliases are preferred not only for the SELECT list, but also for the ON clause.
+  * As with an INNER JOIN, an OUTER JOIN may be performed on a single matching column or on multiple matching attributes.
+  * Unlike an INNER JOIN, the order in which tables are listed and joined in the FROM clause does matter with OUTER JOIN, as it will determine whether you choose LEFT or RIGHT for your join.
+  * Multi-table joins are more complex when an OUTER JOIN is present. The presence of NULLs in the results of an OUTER JOIN may cause issues if the intermediate results are then joined to a third table. Rows with NULLs may be filtered out by the second join's predicate.
+  * To display only rows where no match exists, add a test for NULL in a WHERE clause following an OUTER JOIN predicate.
+  * A FULL OUTER JOIN is used rarely. It returns all the matching rows between the two tables, plus all the rows from the first table with no match in the second, plus all the rows in the second without a match in the first.
+  * There is no way to predict the order the rows will come back without an ORDER BY clause. There’s no way to know if the matched or unmatched rows will be returned first.
+ ```
+ SELECT emp.FirstName, ord.Amount
+FROM HR.Employee AS emp
+LEFT JOIN Sales.SalesOrder AS ord
+    ON emp.EmployeeID = ord.EmployeeID;
+ ```
+ 
+ 
+ 
+ 
+ 
+ 
 ### <h3 id="section1-2">Querying with Transact-SQL</h3>
   
 ## <h2 id="section2">Optimize query performance in Azure SQL</h2>
