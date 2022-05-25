@@ -613,17 +613,17 @@ Transact-SQL includes many built-in functions, ranging from functions that perfo
 
 Functions in T-SQL can be categorized as follows:
 
-Function Category   Description
+Function Category  | Description
 
-Scalar              Operate on a single row, return a single value.
+Scalar             | Operate on a single row, return a single value.
 
-Logical             Compare multiple values to determine a single output.
+Logical            | Compare multiple values to determine a single output.
 
-Ranking             Operate on a partition (set) of rows.
+Ranking            | Operate on a partition (set) of rows.
 
-Rowset              Return a virtual table that can be used in a FROM clause in a T-SQL statement.
+Rowset             | Return a virtual table that can be used in a FROM clause in a T-SQL statement.
 
-Aggregate           Take one or more input values, return a single summarizing value.
+Aggregate          | Take one or more input values, return a single summarizing value.
 
 **Use scalar functions**
 
