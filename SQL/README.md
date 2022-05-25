@@ -612,19 +612,14 @@ When retrieving data from tables in a database, it's often useful to be able to 
 Transact-SQL includes many built-in functions, ranging from functions that perform data type conversion, to functions that aggregate and analyze groups of rows.
 
 Functions in T-SQL can be categorized as follows:
-
-Function Category  | Description
-
-Scalar             | Operate on a single row, return a single value.
-
-Logical            | Compare multiple values to determine a single output.
-
-Ranking            | Operate on a partition (set) of rows.
-
-Rowset             | Return a virtual table that can be used in a FROM clause in a T-SQL statement.
-
-Aggregate          | Take one or more input values, return a single summarizing value.
-
+```
+|Function Category  | Description
+|Scalar             | Operate on a single row, return a single value.
+|Logical            | Compare multiple values to determine a single output.
+|Ranking            | Operate on a partition (set) of rows.
+|Rowset             | Return a virtual table that can be used in a FROM clause in a T-SQL statement.
+|Aggregate          | Take one or more input values, return a single summarizing value.
+```
 **Use scalar functions**
 
 Scalar functions return a single value and usually work on a single row of data. The number of input values they take can be zero (for example, GETDATE), one (for example, UPPER), or multiple (for example, ROUND). Because scalar functions always return a single value, they can be used anywhere a single value (the result) is needed. They are most commonly used in SELECT clauses and WHERE clause predicates. They can also be used in the SET clause of an UPDATE statement.
