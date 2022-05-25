@@ -112,7 +112,7 @@ Now that you've seen what each clause does, let's look at the order in which SQL
    
   * NULLIF
 
-  The NULLIF function allows you to return NULL under certain conditions. This function has useful applications in areas such as data cleansing, when you wish to replace blank or placeholder characters with NULL. NULLIF takes two arguments and returns NULL if they're equivalent. If they aren't equal, NULLIF returns the first argument. In this example, NULLIF replaces a discount of 0 with a NULL. It returns the discount value if it is not 0:
+  The NULLIF function allows you to return NULL under certain conditions. This function has useful applications in areas such as **data cleansing**, when you wish to replace blank or placeholder characters with NULL. NULLIF takes two arguments and returns NULL if they're equivalent. If they aren't equal, NULLIF returns the first argument. In this example, NULLIF replaces a discount of 0 with a NULL. It returns the discount value if it is not 0:
 
    ```
    SELECT SalesOrderID,
