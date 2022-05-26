@@ -813,12 +813,11 @@ SELECT ProductCategoryID, AVG(ListPrice) AS AveragePrice,
 MIN(ListPrice) AS MinimumPrice,
 MAX(ListPrice) AS MaximumPrice
 FROM Production.Product;
-```
+
 Running this query results in the following error
->
-> Msg 8120, Level 16, State 1, Line 1
->
->Column 'Production.ProductCategoryID' is invalid in the select list because it isn't contained in either an aggregate function or the GROUP BY clause.
+Msg 8120, Level 16, State 1, Line 1
+Column 'Production.ProductCategoryID' is invalid in the select list because it isn't contained in either an aggregate function or the GROUP BY clause.
+```
 
 The query treats all rows as a single aggregated group. Therefore, all columns must be used as inputs to aggregate functions.
 
@@ -900,9 +899,10 @@ ORDER BY Customer;
  
 **Troubleshooting GROUP BY errors**
 A common obstacle to becoming comfortable with using GROUP BY in SELECT statements is understanding why the following type of error message occurs:
->
-> Msg 8120, Level 16, State 1, Line 2 Column <column_name> is invalid in the select list because it is not contained in either an aggregate function or the GROUP BY > clause.
-
+```
+ Msg 8120, Level 16, State 1, Line 2 Column <column_name> is invalid in the select list because it is not contained in either an aggregate function or the GROUP BY clause.
+```
+ 
 For example, the following query is permitted because each column in the SELECT list is either a column in the GROUP BY clause or an aggregate function operating on each group:
 
 ```
