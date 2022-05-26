@@ -871,12 +871,12 @@ For each CustomerID value, the query aggregates and counts the rows, so we resul
  
 **The clauses in a SELECT statement are applied in the following order:**
 
-FROM
-WHERE
-GROUP BY
-HAVING
-SELECT
-ORDER BY
+1. FROM
+2. WHERE
+3. GROUP BY
+4. HAVING
+5. SELECT
+6. ORDER BY
  
 Column aliases are assigned in the SELECT clause, which occurs after the GROUP BY clause but before the ORDER BY clause. You can reference a column alias in the ORDER BY clause, but not in the GROUP BY clause. The following query will result in an invalid column name error:
  
