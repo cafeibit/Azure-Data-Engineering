@@ -1370,6 +1370,30 @@ The tooltip highlights the cost and estimates for the estimated plan, and for an
  
 The Properties pane includes some additional information and shows the output list which provides details of the columns being passed to the next operator. Examining these columns, in conjunction with a clustered index scan operator can indicate that an additional nonclustered index might be needed to improve the performance of the query. **Since a clustered index scan operation is reading the entire table, in this scenario a non-clustered index on the StockItemID column in each table could be more efficient**. 
  
+**Lightweight query profiling**
+ 
+As mentioned above, capturing actual execution plans, whether using SSMS or the Extended Events monitoring infrastructure can have a large amount of overhead, and is typically only done in live site troubleshooting efforts. Observer overhead, as it is known, is the cost of monitoring a running application. In some scenarios this cost can be just a few percentage points of CPU utilization, but in other cases like capturing actual execution plans, it can slow down individual query performance significantly. The legacy profiling infrastructure in SQL Server’s engine could produce up to 75% overhead for capturing query information, whereas the lightweight profiling infrastructure has a maximum overhead of around 2%.
+
+Starting with SQL Server 2014 SP2 and SQL Server 2016, Microsoft introduced lightweight profiling and enhanced it with SQL Server 2016 SP1 and all later versions. In the first version of this feature, lightweight profiling collected row count and I/O utilization information (the number of logical and physical reads and writes performed by the database engine to satisfy a given query). In addition, a new extended event called query_thread_profile was introduced to allow data from each operator in a query plan to be inspected. In the initial version of lightweight profiling, using the feature requires trace flag 7412 to be enabled globally.
+
+In newer releases (SQL Server 2016 SP2 CU3, SQL Server 2017 CU11, and SQL Server 2019), if lightweight profiling is not enabled globally, you can use the USE HINT query hint with QUERY_PLAN_PROFILE to enable lightweight profiling at the query level. When a query that has this hint completes execution, a query_plan_profile extended event is generated, which provides an actual execution plan. You can see an example of a query with this hint:
+
+```
+SELECT [stockItemName]
+
+ ,[UnitPrice] * [QuantityPerOuter] AS CostPerOuterBox
+
+ ,[ QuantityonHand]
+
+FROM [Warehouse].[StockItems] s
+
+JOIN [Warehouse].[StockItems] sh ON s.StockItemID = sh.StockItemID
+
+ORDER BY CostPerOuterBox 
+
+OPTION(USE HINT ('QUERY_PLAN_PROFILE')); 
+```
+ 
 **Last query plans stats**
  
 SQL Server 2019 and Azure SQL Database support two further enhancements to the query profiling infrastructure. First, lightweight profiling is enabled by default in both SQL Server 2019 and Azure SQL Database and managed instance. Lightweight profiling is also available as a database scoped configuration option, called LIGHTWEIGHT_QUERY_PROFILING. With the database scoped option, you can disable the feature for any of your user databases independent of each other.
