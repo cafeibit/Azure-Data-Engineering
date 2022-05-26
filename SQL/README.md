@@ -899,8 +899,9 @@ ORDER BY Customer;
  
 **Troubleshooting GROUP BY errors**
 A common obstacle to becoming comfortable with using GROUP BY in SELECT statements is understanding why the following type of error message occurs:
+
 ```
- Msg 8120, Level 16, State 1, Line 2 Column <column_name> is invalid in the select list because it is not contained in either an aggregate function or the GROUP BY clause.
+Msg 8120, Level 16, State 1, Line 2 Column <column_name> is invalid in the select list because it is not contained in either an aggregate function or the GROUP BY clause.
 ```
  
 For example, the following query is permitted because each column in the SELECT list is either a column in the GROUP BY clause or an aggregate function operating on each group:
@@ -917,11 +918,15 @@ The following query will return an error because PurchaseOrderNumber isn't part 
 SELECT CustomerID, PurchaseOrderNumber, COUNT(*) AS OrderCount
 FROM Sales.SalesOrderHeader
 GROUP BY CustomerID;
+```
+ 
 This query returns the error:
+
 ```
 Msg 8120, Level 16, State 1, Line 1
 Column 'Sales.SalesOrderHeader.PurchaseOrderNumber' is invalid in the select list because it is not contained in either an aggregate function or the GROUP BY clause.
 ```
+
 Here’s another way to think about it. This query returns one row for each CustomerID value. But rows for the same CustomerID can have different PurchaseOrderNumber values, so which of the values is the one that should be returned?
 
 If you want to see orders per customer ID and per purchase order, you can add the PurchaseOrderNumber column to the GROUP BY clause, as follows:
@@ -932,7 +937,7 @@ FROM Sales.SalesOrderHeader
 GROUP BY CustomerID, PurchaseOrderNumber;
 ```
 
- This query will return one row for each customer and each purchase order combination, along with the count of orders for that combination.
+This query will return one row for each customer and each purchase order combination, along with the count of orders for that combination.
 
  
  
