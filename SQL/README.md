@@ -709,6 +709,233 @@ CHOOSE(Status, 'Ordered', 'Shipped', 'Delivered') AS OrderStatus
 FROM Sales.SalesOrderHeader;
 ```
 
+#### Use ranking and rowset functions
+
+Ranking and rowset functions aren't scalar functions because they don't return a single value. These functions work accept a set of rows as input and return a set of rows as output.
+
+**Ranking functions**
+Ranking functions allow you to perform calculations against a user-defined set of rows. These functions include ranking, offset, aggregate, and distribution functions.
+
+This example uses the RANK function to calculate a ranking based on the ListPrice, with the highest price ranked at 1:
+```
+SELECT TOP 100 ProductID, Name, ListPrice,
+RANK() OVER(ORDER BY ListPrice DESC) AS RankByPrice
+FROM Production.Product AS p
+ORDER BY RankByPrice;
+```
+
+**OVER**
+You can use the OVER clause to define partitions, or groupings within the data. For example, the following query extends the previous example to calculate price-based rankings for products within each category.
+```
+SELECT c.Name AS Category, p.Name AS Product, ListPrice,
+  RANK() OVER(PARTITION BY c.Name ORDER BY ListPrice DESC) AS RankByPrice
+FROM Production.Product AS p
+JOIN Production.ProductCategory AS c
+ON p.ProductCategoryID = c.ProductcategoryID
+ORDER BY Category, RankByPrice;
+```
+
+**Note**
+Notice that several rows have the same rank value and some values are skipped. This is because we are using RANK only. Depending on the requirement, you may want to avoid ties at the same rank value. You can control the rank value with other functions, DENSE_RANK, NTILE, and ROW_NUMBER, as needed. For details on these functions, see the <a href="https://docs.microsoft.com/en-us/sql/t-sql/functions/ranking-functions-transact-sql?view=sql-server-ver16">Transact-SQL reference documentation</a>.
+
+**Rowset functions**
+Rowset functions return a virtual table that can be used in the FROM clause as a data source. These functions take parameters specific to the rowset function itself. They include OPENDATASOURCE, OPENQUERY, OPENROWSET, OPENXML, and OPENJSON.
+
+The OPENDATASOURCE, OPENQUERY, and OPENROWSET functions enable you to pass a query to a remote database server. The remote server will then return a set of result rows. For example, the following query uses OPENROWSET to get the results of a query from a SQL Server instance named SalesDB.
+```
+SELECT a.*
+FROM OPENROWSET('SQLNCLI', 'Server=SalesDB;Trusted_Connection=yes;',
+    'SELECT Name, ListPrice
+    FROM AdventureWorks.Production.Product') AS a;
+```
+To use remote servers, you must enable some advanced options in the SQL Server instance where you're running the query. The OPENXML and OPENJSON functions enable you to query structured data in XML or JSON format and extract values into a tabular rowset. A detailed exploration of rowset functions is beyond the scope of this module. For more information, see the <a href="https://docs.microsoft.com/en-us/sql/t-sql/functions/functions?view=sql-server-ver16">Transact-SQL reference documentation</a>.
+```
+USE AdventureWorks2012;  
+GO  
+SELECT p.FirstName, p.LastName  
+    ,ROW_NUMBER() OVER (ORDER BY a.PostalCode) AS "Row Number"  
+    ,RANK() OVER (ORDER BY a.PostalCode) AS Rank  
+    ,DENSE_RANK() OVER (ORDER BY a.PostalCode) AS "Dense Rank"  
+    ,NTILE(4) OVER (ORDER BY a.PostalCode) AS Quartile  
+    ,s.SalesYTD  
+    ,a.PostalCode  
+FROM Sales.SalesPerson AS s   
+    INNER JOIN Person.Person AS p   
+        ON s.BusinessEntityID = p.BusinessEntityID  
+    INNER JOIN Person.Address AS a   
+        ON a.AddressID = p.BusinessEntityID  
+WHERE TerritoryID IS NOT NULL AND SalesYTD <> 0;
+```
+
+**Use aggregate functions**
+
+T-SQL provides aggregate functions such as SUM, MAX, and AVG to perform calculations that take multiple values and return a single result.
+
+*Working with aggregate functions*
+
+Most of the queries we have looked at operate on a row at a time, using a WHERE clause to filter rows. Each row returned corresponds to one row in the original data set. Many aggregate functions are provided in SQL Server. In this section, we’ll look at the most common functions such as SUM, MIN, MAX, AVG, and COUNT.
+
+When working with aggregate functions, you need to consider the following points:
+
+ * Aggregate functions return a single (scalar) value and can be used in SELECT statements almost anywhere a single value can be used. For example, these functions can be used in the SELECT, HAVING, and ORDER BY clauses. However, they cannot be used in the WHERE clause.
+ * Aggregate functions ignore NULLs, except when using COUNT(*).
+ * Aggregate functions in a SELECT list don't have a column header unless you provide an alias using AS.
+ * Aggregate functions in a SELECT list operate on all rows passed to the SELECT operation. If there is no GROUP BY clause, all rows satisfying any filter in the   WHERE clause will be summarized. You will learn more about GROUP BY in the next topic.
+ * Unless you're using GROUP BY, you shouldn't combine aggregate functions with columns not included in functions in the same SELECT list.
+
+To extend beyond the built-in functions, SQL Server provides a mechanism for user-defined aggregate functions via the .NET Common Language Runtime (CLR). That topic is beyond the scope of this module.
+
+*Built-in aggregate functions*
+As mentioned, Transact-SQL provides many built-in aggregate functions. Commonly used functions include:
+```
+Function Name      Syntax             Description
+SUM                SUM(expression)    Totals all the non-NULL numeric values in a column.
+AVG                AVG(expression)    Averages all the non-NULL numeric values in a column (sum/count).
+MIN                MIN(expression)    Returns the smallest number, earliest date/time, or first-occurring string (according to collation sort rules).
+MAX                MAX(expression)    Returns the largest number, latest date/time, or last-occurring string (according to collation sort rules).
+COUNT or COUNT_BIG COUNT(*) or COUNT(expression) With (*), counts all rows, including rows with NULL values. When a column is specified as expression, returns the count of non-NULL rows for that column. COUNT returns an int; COUNT_BIG returns a big_int.
+```
+
+To use a built-in aggregate in a SELECT clause, consider the following example in the MyStore sample database:
+```
+SELECT AVG(ListPrice) AS AveragePrice,
+       MIN(ListPrice) AS MinimumPrice,
+       MAX(ListPrice) AS MaximumPrice
+FROM Production.Product
+WHERE ProductCategoryID = 15;
+```
+
+When using aggregates in a SELECT clause, all columns referenced in the SELECT list must be used as inputs for an aggregate function, or be referenced in a GROUP BY clause.
+
+Consider the following query, which attempts to include the ProductCategoryID field in the aggregated results:
+```
+SELECT ProductCategoryID, AVG(ListPrice) AS AveragePrice,
+MIN(ListPrice) AS MinimumPrice,
+MAX(ListPrice) AS MaximumPrice
+FROM Production.Product;
+```
+Running this query results in the following error
+>
+> Msg 8120, Level 16, State 1, Line 1
+>
+>Column 'Production.ProductCategoryID' is invalid in the select list because it isn't contained in either an aggregate function or the GROUP BY clause.
+
+The query treats all rows as a single aggregated group. Therefore, all columns must be used as inputs to aggregate functions.
+
+In the previous examples, we aggregated numeric data such as the price and quantities in the previous example,. Some of the aggregate functions can also be used to summarize date, time, and character data. The MIN and MAX functions can also be used with date data, to return the earliest and latest chronological values. However, AVG and SUM can only be used for numeric data, which includes integers, money, float and decimal datatypes.
+
+*Using DISTINCT with aggregate functions*
+You should be aware of the use of DISTINCT in a SELECT clause to remove duplicate rows. When used with an aggregate function, DISTINCT removes duplicate values from the input column before computing the summary value. DISTINCT is useful when summarizing unique occurrences of values, such as customers in the orders table.
+
+The following example returns the number of customers who have placed orders, no matter how many orders they placed:
+```
+SELECT COUNT(DISTINCT CustomerID) AS UniqueCustomers
+FROM Sales.SalesOrderHeader;
+COUNT(<some_column>) merely counts how many rows have some value in the column. If there are no NULL values, COUNT(<some_column>) will be the same as COUNT(*). COUNT (DISTINCT <some_column>) counts how many different values there are in the column.
+```
+
+*Using aggregate functions with NULL*
+It is important to be aware of the possible presence of NULLs in your data, and of how NULL interacts with T-SQL query components, including aggregate function. There are a few considerations to be aware of:
+
+ * With the exception of COUNT used with the (*) option, T-SQL aggregate functions ignore NULLs. For example, a SUM function will add only non-NULL values. NULLs don't evaluate to zero. COUNT(*) counts all rows, regardless of value or non-value in any column.
+ * The presence of NULLs in a column may lead to inaccurate computations for AVG, which will sum only populated rows and divide that sum by the number of non-NULL rows. There may be a difference in results between AVG(<column>) and (SUM(<column>)/COUNT(*)).
+
+If you need to summarize all rows, whether NULL or not, consider replacing the NULLs with another value that will not be ignored by your aggregate function. You can use the COALESCE function for this purpose.
+
+**Summarize data with GROUP BY**
+ 
+While aggregate functions are useful for analysis, you may wish to arrange your data into subsets before summarizing it. In this section, you will learn how to accomplish this using the GROUP BY clause.
+
+*Using the GROUP BY clause*
+As you've learned, when your SELECT statement is processed, after the FROM clause and WHERE clause have been evaluated, a virtual table is created. The contents of the virtual table are now available for further processing. You can use the GROUP BY clause to subdivide the contents of this virtual table into groups of rows.
+
+To group rows, specify one or more elements in the GROUP BY clause:
+```
+GROUP BY <value1< [, <value2>, …]
+```
+
+ GROUP BY creates groups and places rows into each group as determined by the elements specified in the clause. 
+
+ After the GROUP BY clause has been processed and each row has been associated with a group, later phases of the query must aggregate any elements of the source rows that are in the SELECT list but that don't appear in the GROUP BY list. This requirement will have an impact on how you write your SELECT and HAVING clauses.
+
+So, what’s the difference between writing the query with a GROUP BY or a DISTINCT? If all you want to know is the distinct values for CustomerID, there is no difference. But with GROUP BY, we can add other elements to the SELECT list that are then aggregated for each group.
+
+The simplest aggregate function is COUNT(*). The following query takes the original 830 source rows from CustomerID and groups them into 89 groups, based on the CustomerID values. Each distinct CustomerID value generates one row of output in the GROUP BY query
+
+```
+SELECT CustomerID, COUNT(*) AS OrderCount
+FROM Sales.SalesOrderHeader
+GROUP BY CustomerID;
+```
+ 
+For each CustomerID value, the query aggregates and counts the rows, so we result shows us how many rows in the SalesOrderHeader table belong to each customer. Note that GROUP BY does not guarantee the order of the results. Often, as a result of the way the grouping operation is performed by the query processor, the results are returned in the order of the group values. However, you should not rely on this behavior. If you need the results to be sorted, you must explicitly include an ORDER clause.
+ 
+**The clauses in a SELECT statement are applied in the following order:**
+
+FROM
+WHERE
+GROUP BY
+HAVING
+SELECT
+ORDER BY
+ 
+Column aliases are assigned in the SELECT clause, which occurs after the GROUP BY clause but before the ORDER BY clause. You can reference a column alias in the ORDER BY clause, but not in the GROUP BY clause. The following query will result in an invalid column name error:
+```
+SELECT CustomerID AS Customer,
+       COUNT(*) AS OrderCount
+FROM Sales.SalesOrderHeader
+GROUP BY Customer
+ORDER BY Customer;
+```
+ 
+However, the following query will succeed, grouping and sorting the results by the customer ID.
+
+```
+SELECT CustomerID AS Customer,
+       COUNT(*) AS OrderCount
+FROM Sales.SalesOrderHeader
+GROUP BY CustomerID
+ORDER BY Customer; 
+```
+ 
+**Troubleshooting GROUP BY errors**
+A common obstacle to becoming comfortable with using GROUP BY in SELECT statements is understanding why the following type of error message occurs:
+>
+> Msg 8120, Level 16, State 1, Line 2 Column <column_name> is invalid in the select list because it is not contained in either an aggregate function or the GROUP BY > clause.
+
+For example, the following query is permitted because each column in the SELECT list is either a column in the GROUP BY clause or an aggregate function operating on each group:
+
+```
+SELECT CustomerID, COUNT(*) AS OrderCount
+FROM Sales.SalesOrderHeader
+GROUP BY CustomerID;
+```
+ 
+The following query will return an error because PurchaseOrderNumber isn't part of the GROUP BY, and it isn't used with an aggregate function.
+
+```
+SELECT CustomerID, PurchaseOrderNumber, COUNT(*) AS OrderCount
+FROM Sales.SalesOrderHeader
+GROUP BY CustomerID;
+This query returns the error:
+```
+Msg 8120, Level 16, State 1, Line 1
+Column 'Sales.SalesOrderHeader.PurchaseOrderNumber' is invalid in the select list because it is not contained in either an aggregate function or the GROUP BY clause.
+```
+Here’s another way to think about it. This query returns one row for each CustomerID value. But rows for the same CustomerID can have different PurchaseOrderNumber values, so which of the values is the one that should be returned?
+
+If you want to see orders per customer ID and per purchase order, you can add the PurchaseOrderNumber column to the GROUP BY clause, as follows:
+
+```
+SELECT CustomerID, PurchaseOrderNumber, COUNT(*) AS OrderCount
+FROM Sales.SalesOrderHeader
+GROUP BY CustomerID, PurchaseOrderNumber;
+```
+
+ This query will return one row for each customer and each purchase order combination, along with the count of orders for that combination.
+
+ 
+ 
 
 ### <h3 id="section1-2">Querying with Transact-SQL</h3>
   
