@@ -1376,7 +1376,7 @@ As mentioned above, capturing actual execution plans, whether using SSMS or the 
 
 Starting with SQL Server 2014 SP2 and SQL Server 2016, Microsoft introduced lightweight profiling and enhanced it with SQL Server 2016 SP1 and all later versions. In the first version of this feature, lightweight profiling collected row count and I/O utilization information (the number of logical and physical reads and writes performed by the database engine to satisfy a given query). In addition, a new extended event called query_thread_profile was introduced to allow data from each operator in a query plan to be inspected. In the initial version of lightweight profiling, using the feature requires trace flag 7412 to be enabled globally.
 
-In newer releases (SQL Server 2016 SP2 CU3, SQL Server 2017 CU11, and SQL Server 2019), if lightweight profiling is not enabled globally, you can use the USE HINT query hint with QUERY_PLAN_PROFILE to enable lightweight profiling at the query level. When a query that has this hint completes execution, a query_plan_profile extended event is generated, which provides an actual execution plan. You can see an example of a query with this hint:
+In newer releases (SQL Server 2016 SP2 CU3, SQL Server 2017 CU11, and SQL Server 2019), if lightweight profiling is not enabled globally, you can use the `USE HINT` query hint with `QUERY_PLAN_PROFILE` to enable lightweight profiling at the query level. When a query that has this hint completes execution, a *query_plan_profile* extended event is generated, which provides an actual execution plan. You can see an example of a query with this hint:
 
 ```
 SELECT [stockItemName]
