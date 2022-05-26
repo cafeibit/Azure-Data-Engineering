@@ -4,8 +4,8 @@ Microsoft database systems such as SQL Server, Azure SQL Database, Azure Synapse
 
 * <a href="#section1">T-SQL</a>
   * <a href="#section1-1">Querying with Transact-SQL</a>
-  * <a href="#section1-2">Advanced Programming with Transact-SQL</a>
-  * <a href="$section1-3">T-SQL</a>
+  * <a href="#section1-2">Programming with Transact-SQL</a>
+  * <a href="#section1-3">Write advanced Transact-SQL queries</a>
 
 * <a href="#section2">Optimize query performance in Azure SQL</a>
   * <a href="#section2-1">Describe SQL Server query plans</a>
@@ -1277,8 +1277,28 @@ WHEN NOT MATCHED THEN
     VALUES (s.SalesOrderID, s.CustomerID, s.OrderDate, s.PurchaseOrderNumber, s.TotalDue);
 ```
  
-### <h3 id="section1-2">Advanced Programming with Transact-SQL</h3>
+### <h3 id="section1-2">Programming with Transact-SQL</h3>
+ 
+#### Get started with Transact-SQL programming
+
+#### Create stored procedures and user-defined functions
+ 
+#### Implement error handling with Transact-SQL
+ 
+#### Implement transactions with Transact-SQL
+ 
+### <h3 id="section1-3">Write advanced Transact-SQL queries</h3> 
   
+#### Create tables, views, and temporary objects
+ 
+#### Combine query results with set operators
+ 
+#### Write queries that use window functions
+ 
+#### Transform data by implementing pivot, unpivot, rollup, and cube
+ 
+ 
+ 
 ## <h2 id="section2">Optimize query performance in Azure SQL</h2>
 
 Analyze individual query performance and determine where improvements can be made. Explore performance-related Dynamic Management Objects. Investigate how indexes and database design affect queries.
