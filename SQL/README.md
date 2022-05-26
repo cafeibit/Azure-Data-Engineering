@@ -1026,7 +1026,7 @@ Unlike a subquery, the nested SELECT used with an INSERT isn't enclosed in paren
 
 **SELECT ... INTO**
  
-Another option for inserting rows, which is similar to INSERT SELECT, is the SELECT INTO statement. The biggest difference between INSERT SELECT and SELECT INTO is that SELECT INTO cannot be used to insert rows into an existing table, because it always creates a new table that is based on the result of the SELECT. Each column in the new table will have the same name, data type, and nullability as the corresponding column (or expression) in the SELECT list.
+Another option for inserting rows, which is similar to INSERT SELECT, is the SELECT INTO statement. **The biggest difference between INSERT SELECT and SELECT INTO is that SELECT INTO cannot be used to insert rows into an existing table**, because it always creates a new table that is based on the result of the SELECT. Each column in the new table will have the same name, data type, and nullability as the corresponding column (or expression) in the SELECT list.
 
 To use SELECT INTO, add INTO <new_table_name> in the SELECT clause of the query, just before the FROM clause. Here’s an example that extracts data from the Sales.SalesOrderHeader table into a new table named Sales.Invoice..
 
@@ -1079,8 +1079,7 @@ For example, you could insert a row into the Sales.Promotion table without speci
 
 ```
 INSERT INTO Sales.Promotion
-VALUES
-('Clearance Sale', '01/01/2021', 23, 0.10, '10% discount')
+VALUES ('Clearance Sale', '01/01/2021', 23, 0.10, '10% discount')
 ```
  
 Notice that even though the VALUES clause doesn't include a value for the PromotionID column, you don't need to specify a column list in the INSERT clause - Identity columns are exempt from this requirement.
