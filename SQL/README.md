@@ -1289,8 +1289,273 @@ WHEN NOT MATCHED THEN
 #### Implement transactions with Transact-SQL
  
 ### <h3 id="section1-3">Write advanced Transact-SQL queries</h3> 
-  
+
+Learn how to use advanced Transact-SQL features to fetch and transform data in your databases.
+ 
 #### Create tables, views, and temporary objects
+ 
+Learn how to use Transact-SQL to create tables, views, and temporary objects for your databases.
+ 
+Use Transact-SQL to enhance your querying experience. In this module, you'll learn how to use Transact-SQL capabilities including views, derived tables, and Common Table Expressions, to help you to meet your daily querying needs. For example, you can use Transact-SQL to break down complex queries into smaller and more manageable parts, and even get the data need without having to directly access the underlying source data.
+
+By the end of this module, you should be able to:
+
+* Create and query tables using Transact-SQL.
+* Create and query views using Transact-SQL.
+* Create queries using Common Table Expressions (CTE).
+* Write queries that use derived tables.
+
+**Create and query tables**
+
+You can use Transact-SQL to make tables for your databases, to populate them, and fetch data from them.
+
+*Create tables*
+Use Transact-SQL statements to create tables for your databases so that you can store and query your data. To create a table, you perform the following steps:
+
+1. Point to your database. For example, to point to a database named OnlineShop, you'd run the following statement in your chosen query editor window:
+
+```
+USE OnlineShop;
+```
+ 
+2. You can then use CREATE TABLE to create your table in your chosen database. For example, to create a Products table, you can run the following statement:
+
+```
+CREATE TABLE Products  
+(ProductID int PRIMARY KEY NOT NULL,  
+ProductName varchar(50) NOT NULL,  
+ProductDescription varchar(max) NOT NULL);
+```
+ 
+This creates a table with the following columns:
+```
+Column	Description
+ProductID	A product ID column with int type. It is also the primary key for the table.
+ProductName	A column for the name of each product of type varchar with limit of up to 50 characters. NOT NULL means the column can't be empty.
+ProductDescription	A column for the description of each product. Also of type varchar.
+``` 
+To successfully create a table, you must provide a name for your table, the names of the columns for your table, and the data type for each column.
+
+ **Note**
+
+You must have the CREATE TABLE and ALTER SCHEMA permissions to create tables.
+
+Insert and read data from a table
+Once you've created your table, you'll want to populate it with data. You can do this with Transact-SQL using the INSERT statement. For example, to add a product to a Products table, you could run the following statement:
+
+```
+INSERT Products (ProductID, ProductName, ProductDescription)  
+    VALUES (1, 'The brown fox and the yellow bear', 'A popular book for children.');
+```
+ 
+To read data from your table, you use the SELECT statement. For instance, to fetch the names and descriptions for all the products in your Products table, you'd run the following statement:
+
+```
+SELECT ProductName, ProductDescription
+    FROM Products; 
+```
+
+**Create and query views**
+
+Views are saved queries that you can create in your databases. A single view can reference one or more tables. And, just like a table, a view consists of rows and columns of data. You can use views as a source for your queries in much the same way as tables. However, views don't persistently store data; the definition of your view is unpacked at runtime and the source objects are queried.
+
+The apparent similarity between a table and a view provides an important benefit. Your applications can be written to use views instead of the underlying tables, shielding the application from making changes to the tables. This provides you with an additional layer of security for your data.
+
+As long as the view continues to present the same structure to the calling application, the application will also receive consistent results. This way, views can be considered an application programming interface (API) to a database for purposes of retrieving data.
+
+ **Note**
+
+Views must be created by a database developer or administrator with appropriate permission in the database.
+
+Create a view
+To create a view, you use the CREATE VIEW statement to name and store a single SELECT statement. You'd create a view using the following syntax:
+
+```
+CREATE VIEW <schema_name.view_name> [<column_alias_list>] 
+[WITH <view_options>]
+AS select_statement;
+```
+ 
+ **Note**
+
+The ORDER BY clause is not permitted in a view definition unless the view uses a TOP, OFFSET/FETCH, or FOR XML element.
+
+For example, to create a view named Sales.CustOrders based on a custom SELECT statement that encompasses multiple tables, you could write the following query:
+
+```
+CREATE VIEW Sales.CustOrders
+AS
+SELECT
+  O.custid, 
+  DATEADD(month, DATEDIFF(month, 0, O.orderdate), 0) AS ordermonth,
+  SUM(OD.qty) AS qty
+FROM Sales.Orders AS O
+  JOIN Sales.OrderDetails AS OD
+    ON OD.orderid = O.orderid
+GROUP BY custid, DATEADD(month, DATEDIFF(month, 0, O.orderdate), 0);
+```
+ 
+Notice that most of the code within the example consists of your SELECT statement. The SELECT statements inside view definitions can be as complex or simple as you want them to be.
+
+Query a view
+To query a view and retrieve results from it, refer to it in the FROM clause of a SELECT statement, as you would refer to a table. For example, to return the customer ID, the order month, and the quantity of items from each order in your Sales.CustOrders view, you could run the following query:
+
+```
+SELECT custid, ordermonth, qty
+FROM Sales.CustOrders; 
+```
+
+**Use temporary tables
+
+You can use Transact-SQL to create temporary tables. Temporary tables come in two types:
+
+* Local temporary tables
+* Global temporary tables
+Create local temporary tables
+Use local temporary tables to create tables scoped to your current session. This means that your temporary table is only visible to you, and when the session is over, the table no longer exists. Multiple users can create tables using the same name, and they would have no effect on each other.
+
+To create a local temporary table, you use the same approach as you would when creating a regular table. However, you'd add # before the table name to signify that it's a local temporary table:
+
+```
+CREATE TABLE #Products (
+    ProductID INT PRIMARY KEY,
+    ProductName varchar,
+    ...
+);
+```
+ 
+Create global temporary tables
+ 
+You can also create global temporary tables. A global temporary table is accessible across all sessions. But this means that a global temporary table must have a unique name, unlike a local temporary table. Global temporary tables are dropped automatically when the session that created it ends, and all tasks referencing it across all sessions have also ended. You create a global temporary table in the same way you would create a local temporary table, except you'd use ## instead of the single # specify it as a global temporary table:
+
+```
+CREATE TABLE ##Products (
+    ProductID INT PRIMARY KEY,
+    ProductName varchar,
+    ...
+);
+```
+ 
+Insert and read data from a temporary table
+ 
+You can insert data into your temporary tables (both local and global) using the same approach as regular tables, using INSERT. You just need to make sure to append the # or ## to the table name. For example:
+
+```
+INSERT #Products (ProductID, ProductName, ProductDescription)  
+    VALUES (1, 'The temporary time leap', 'A novel about temporary time leaping.');  
+```
+ 
+You can also retrieve results from a temporary table using SELECT. For example, to retrieve all rows and columns for your #Products temporary table, and order the results by product name, you'd run:
+
+```
+SELECT *  
+FROM #Products  
+ORDER BY ProductName;
+```  
+ 
+**Use Common Table Expressions**
+
+Common Table Expressions (CTEs) provide a mechanism for you to define a subquery that may then be used elsewhere in a query. Unlike a derived table, a CTE is defined at the beginning of a query and may be referenced multiple times in the outer query.
+
+CTEs are named expressions defined in a query. Like subqueries and derived tables, CTEs provide a means to break down query problems into smaller, more modular units. CTEs are limited in scope to the execution of the outer query. When the outer query ends, so does the CTE's lifetime.
+
+Write queries with CTEs to retrieve results
+You can use CTEs to retrieve results. To create a CTE, you define it in a WITH clause, based on the following syntax:
+
+```
+WITH <CTE_name>
+AS (<CTE_definition>)
+```
+ 
+For example, to use a CTE to retrieve information about orders placed per year by distinct customers, you could run the following query:
+
+```
+WITH CTE_year 
+AS
+(
+    SELECT YEAR(orderdate) AS orderyear, custid
+    FROM Sales.Orders
+)
+SELECT orderyear, COUNT(DISTINCT custid) AS cust_count
+FROM CTE_year
+GROUP BY orderyear;
+```
+ 
+You name the CTE (named CTE_year) using the WITH clause, then you use AS () to define your subquery. You can then reference your resulting CTE in the outer query, which in this case is done in the final SELECT statement (FROM CTE_year). The result would look like this:
+
+orderyear	cust_count
+2019	67
+2020	86
+2021	81
+ 
+When writing queries with CTEs, consider the following guidelines:
+
+* CTEs require a name for the table expression, in addition to unique names for each of the columns referenced in the CTE's SELECT clause.
+* CTEs may use inline or external aliases for columns.
+* Unlike a derived table, a CTE may be referenced multiple times in the same query with one definition. Multiple CTEs may also be defined in the same WITH clause.
+* CTEs support recursion, in which the expression is defined with a reference to itself. Recursive CTEs are beyond the scope of this module. 
+ 
+**Write queries that use derived tables**
+
+Derived tables allow you to write Transact-SQL statements that are more modular, helping you to break down complex queries into more manageable parts. Using derived tables in your queries can also provide workarounds for some of the restrictions imposed by the logical order of query processing, such as the use of column aliases.
+
+Like subqueries, you create derived tables in the FROM clause of an outer SELECT statement. Unlike subqueries, you write derived tables using a named expression that is logically equivalent to a table and may be referenced as a table elsewhere in the outer query.
+
+Derived tables are not stored in the database. Therefore, no special security privileges are required to write queries using derived tables, other than the rights to select from the source objects. A derived table is created at the time of execution of the outer query and goes out of scope when the outer query ends. Derived tables do not necessarily have an impact on performance, compared to the same query expressed differently. When the query is processed, the statement is unpacked and evaluated against the underlying database objects.
+
+Return results using derived tables
+ 
+To create a derived table, you write an inner query between parentheses, followed by an AS clause and a name for your derived table, using the following syntax:
+
+```
+SELECT <outer query column list>
+FROM (SELECT <inner query column list>
+    FROM <table source>) AS <derived table alias>
+```
+ 
+For example, you can use a derived table to retrieve information about orders placed per year by distinct customers:
+
+```
+SELECT orderyear, COUNT(DISTINCT custid) AS cust_count
+FROM (SELECT YEAR(orderdate) AS orderyear, custid
+    FROM Sales.Orders) AS derived_year
+GROUP BY orderyear;
+```
+ 
+The inner query builds a set of orders and places it into the derived table's derived year. The outer query operates on the derived table and summarizes the results. The results would look like this:
+
+orderyear	cust_count
+2019	67
+2020	86
+2021	81
+Pass arguments to derived tables
+Derived tables can accept arguments passed in from a calling routine, such as a Transact-SQL batch, function, or a stored procedure. You can write derived tables with local variables serving as placeholders. At runtime, the placeholders can be replaced with values supplied in the batch or with values passed as parameters to the stored procedure that invoked the query. This will allow your code to be reused more flexibly than rewriting the same query with different values each time.
+
+For example, the following batch declares a local variable (marked with the @ symbol) for the employee ID, and then uses the ability of SQL Server to assign a value to the variable in the same statement. The query accepts the @emp_id variable and uses it in the derived table expression:
+
+```
+DECLARE @emp_id INT = 9; --declare and assign the variable
+SELECT orderyear, COUNT(DISTINCT custid) AS cust_count
+FROM (    
+    SELECT YEAR(orderdate) AS orderyear, custid
+    FROM Sales.Orders
+    WHERE empid=@emp_id --use the variable to pass a value to the derived table query
+) AS derived_year
+GROUP BY orderyear;
+GO
+```
+ 
+When writing queries that use derived tables, keep the following guidelines in mind:
+
+* The nested SELECT statement that defines the derived table must have an alias assigned to it. The outer query will use the alias in its SELECT statement in much the same way you refer to aliased tables joined in a FROM clause.
+* All columns referenced in the derived table's SELECT clause should be assigned aliases, a best practice that is not always required in Transact-SQL. Each alias must be unique within the expression. The column aliases may be declared inline with the columns or externally to the clause.
+* The SELECT statement that defines the derived table expression may not use an ORDER BY clause, unless it also includes a TOP operator, an OFFSET/FETCH clause, or a FOR XML clause. As a result, there is no sort order provided by the derived table. You sort the results in the outer query.
+* The SELECT statement that defines the derived table may be written to accept arguments in the form of local variables. If the SELECT statement is embedded in a stored procedure, the arguments may be written as parameters for the procedure.
+* Derived table expressions that are nested within an outer query can contain other derived table expressions. Nesting is permitted, but it is not recommended due to increased complexity and reduced readability.
+* A derived table may not be referred to multiple times within an outer query. If you need to manipulate the same results, you will need to define the derived table expression every time, such as on each side of a JOIN operator. 
+ 
+ 
+ 
  
 #### Combine query results with set operators
  
