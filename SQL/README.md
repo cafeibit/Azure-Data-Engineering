@@ -4,8 +4,8 @@ Microsoft database systems such as SQL Server, Azure SQL Database, Azure Synapse
 
 * <a href="#section1">T-SQL</a>
   * <a href="#section1-1">Querying with Transact-SQL</a>
-  * <a href="#section1-2">Programming with Transact-SQL</a>
-  * <a href="#section1-3">Write advanced Transact-SQL queries</a>
+  * <a href="#section1-2">Programming with Transact-SQL</a> | <a href="https://docs.microsoft.com/en-ca/learn/paths/program-transact-sql/">MS Learn</a>
+  * <a href="#section1-3">Write advanced Transact-SQL queries</a> | <a href="https://docs.microsoft.com/en-ca/learn/paths/write-advanced-transact-sql-queries/">MS Learn</a>
 
 * <a href="https://docs.microsoft.com/en-ca/learn/paths/optimize-query-performance-sql-server/">Optimize query performance in Azure SQL</a>
   * <a href="#section2-1">Describe SQL Server query plans</a>
@@ -2394,6 +2394,7 @@ By the end of this module, you should be able to:
 You can use Transact-SQL to make tables for your databases, to populate them, and fetch data from them.
 
 *Create tables*
+
 Use Transact-SQL statements to create tables for your databases so that you can store and query your data. To create a table, you perform the following steps:
 
 1. Point to your database. For example, to point to a database named OnlineShop, you'd run the following statement in your chosen query editor window:
@@ -2412,19 +2413,22 @@ ProductDescription varchar(max) NOT NULL);
 ```
  
 This creates a table with the following columns:
+
 ```
 Column	Description
 ProductID	A product ID column with int type. It is also the primary key for the table.
 ProductName	A column for the name of each product of type varchar with limit of up to 50 characters. NOT NULL means the column can't be empty.
 ProductDescription	A column for the description of each product. Also of type varchar.
 ``` 
+
 To successfully create a table, you must provide a name for your table, the names of the columns for your table, and the data type for each column.
 
  **Note**
 
 You must have the CREATE TABLE and ALTER SCHEMA permissions to create tables.
 
-Insert and read data from a table
+*Insert and read data from a table*
+
 Once you've created your table, you'll want to populate it with data. You can do this with Transact-SQL using the INSERT statement. For example, to add a product to a Products table, you could run the following statement:
 
 ```
@@ -2481,7 +2485,8 @@ GROUP BY custid, DATEADD(month, DATEDIFF(month, 0, O.orderdate), 0);
  
 Notice that most of the code within the example consists of your SELECT statement. The SELECT statements inside view definitions can be as complex or simple as you want them to be.
 
-Query a view
+*Query a view*
+
 To query a view and retrieve results from it, refer to it in the FROM clause of a SELECT statement, as you would refer to a table. For example, to return the customer ID, the order month, and the quantity of items from each order in your Sales.CustOrders view, you could run the following query:
 
 ```
@@ -2489,7 +2494,7 @@ SELECT custid, ordermonth, qty
 FROM Sales.CustOrders; 
 ```
 
-**Use temporary tables
+*Use temporary tables*
 
 You can use Transact-SQL to create temporary tables. Temporary tables come in two types:
 
@@ -2508,7 +2513,7 @@ CREATE TABLE #Products (
 );
 ```
  
-Create global temporary tables
+*Create global temporary tables*
  
 You can also create global temporary tables. A global temporary table is accessible across all sessions. But this means that a global temporary table must have a unique name, unlike a local temporary table. Global temporary tables are dropped automatically when the session that created it ends, and all tasks referencing it across all sessions have also ended. You create a global temporary table in the same way you would create a local temporary table, except you'd use ## instead of the single # specify it as a global temporary table:
 
@@ -2520,7 +2525,7 @@ CREATE TABLE ##Products (
 );
 ```
  
-Insert and read data from a temporary table
+*Insert and read data from a temporary table*
  
 You can insert data into your temporary tables (both local and global) using the same approach as regular tables, using INSERT. You just need to make sure to append the # or ## to the table name. For example:
 
@@ -2567,10 +2572,12 @@ GROUP BY orderyear;
  
 You name the CTE (named CTE_year) using the WITH clause, then you use AS () to define your subquery. You can then reference your resulting CTE in the outer query, which in this case is done in the final SELECT statement (FROM CTE_year). The result would look like this:
 
+```
 orderyear	cust_count
 2019	67
 2020	86
 2021	81
+```
  
 When writing queries with CTEs, consider the following guidelines:
 
@@ -2587,7 +2594,7 @@ Like subqueries, you create derived tables in the FROM clause of an outer SELECT
 
 Derived tables are not stored in the database. Therefore, no special security privileges are required to write queries using derived tables, other than the rights to select from the source objects. A derived table is created at the time of execution of the outer query and goes out of scope when the outer query ends. Derived tables do not necessarily have an impact on performance, compared to the same query expressed differently. When the query is processed, the statement is unpacked and evaluated against the underlying database objects.
 
-Return results using derived tables
+*Return results using derived tables*
  
 To create a derived table, you write an inner query between parentheses, followed by an AS clause and a name for your derived table, using the following syntax:
 
@@ -2607,12 +2614,15 @@ GROUP BY orderyear;
 ```
  
 The inner query builds a set of orders and places it into the derived table's derived year. The outer query operates on the derived table and summarizes the results. The results would look like this:
-
+```
 orderyear	cust_count
 2019	67
 2020	86
 2021	81
-Pass arguments to derived tables
+```
+
+*Pass arguments to derived tables*
+
 Derived tables can accept arguments passed in from a calling routine, such as a Transact-SQL batch, function, or a stored procedure. You can write derived tables with local variables serving as placeholders. At runtime, the placeholders can be replaced with values supplied in the batch or with values passed as parameters to the stored procedure that invoked the query. This will allow your code to be reused more flexibly than rewriting the same query with different values each time.
 
 For example, the following batch declares a local variable (marked with the @ symbol) for the employee ID, and then uses the ability of SQL Server to assign a value to the variable in the same statement. The query accepts the @emp_id variable and uses it in the derived table expression:
@@ -2637,18 +2647,439 @@ When writing queries that use derived tables, keep the following guidelines in m
 * The SELECT statement that defines the derived table may be written to accept arguments in the form of local variables. If the SELECT statement is embedded in a stored procedure, the arguments may be written as parameters for the procedure.
 * Derived table expressions that are nested within an outer query can contain other derived table expressions. Nesting is permitted, but it is not recommended due to increased complexity and reduced readability.
 * A derived table may not be referred to multiple times within an outer query. If you need to manipulate the same results, you will need to define the derived table expression every time, such as on each side of a JOIN operator. 
- 
- 
- 
- 
+  
 #### Combine query results with set operators
+ 
+Microsoft SQL Server provides set operators for performing operations using the sets that result from two or more different queries. Set operators allow you to combine, compare, or operate on result sets.
+
+In this module, you will learn how to use the set operators UNION and INTERSECT to compare rows between two input sets. You will also learn how to use forms of the APPLY operator to use the result of one query to collect the output of a second query, returning the output as a single result set.
+
+When working with set operators, if you need the results to be sorted, add an ORDER BY statement to the final result. You should not use the ORDER BY statement with the input queries.
+
+After completing this module, you’ll be able to:
+
+* Use the UNION operator.
+* Use the INTERSECT and EXCEPT operators.
+* Use the APPLY operator. 
+
+**Use the UNION operator**
+
+The UNION operator allows two or more query result sets to be combined into a single result set. There are two ways of doing this:
+
+* UNION – the combined result does not include duplicates.
+* UNION ALL – the combined result set does include duplicates.
+ 
+ **Tip**
+
+A NULL in one set is treated as being equal to a NULL in another set.
+
+There are two rules when combining result sets using UNION:
+
+The number and the order of the columns must be the same in all queries.
+The data types must be compatible.
+ 
+ **Note**
+
+UNION is different from JOIN. JOIN compares columns from two tables, to create a result set containing rows from two tables. UNION concatenates two result sets together: all the rows in the first result set are appended to the rows in the second result set.
+
+Let’s take a simple example of two lists of customers and the result sets they return. The first query returns customers with a CustomerID between 1 and 9.
+
+```
+SELECT CustomerID, companyname, FirstName + ' ' + LastName AS 'Name'
+FROM SalesLT.Customer
+WHERE CustomerID BETWEEN 1 AND 9; 
+```
+
+A screenshot that shows results from the first SELECT statement.
+
+The second query returns customers with a CustomerID between 10 and 19.
+
+```
+SELECT customerid, companyname, FirstName + ' ' + LastName AS 'Name'
+FROM saleslt.Customer
+WHERE customerid BETWEEN 10 AND 19;
+```
+
+A screenshot that shows results from the second SELECT statement.
+
+To combine these two queries into the same result set, use the UNION operator:
+
+```
+SELECT customerid, companyname, FirstName + ' ' + LastName AS 'Name'
+FROM saleslt.Customer
+WHERE customerid BETWEEN 1 AND 9
+UNION
+SELECT customerid, companyname, FirstName + ' ' + LastName AS 'Name'
+FROM saleslt.Customer
+WHERE customerid BETWEEN 10 AND 19; 
+```
+
+This is the result set that is returned:
+
+* A screenshot that shows results from the UNION statement.
+
+As with all Transact-SQL statements, no sort order is guaranteed unless one is explicitly specified. If you require sorted output, add an ORDER BY clause at the end of the second query.
+
+With UNION or UNION ALL, both queries must have the same number of columns, and the columns must be of the same data type, allowing you to join rows from different queries.
+
+**Use the INTERSECT and EXCEPT operators**
+
+INTERSECT and EXCEPT compare two result sets against each other, and return rows in common, or rows that appear in one but not in the other.
+
+INTERSECT and EXCEPT are best explained using a Venn diagram. The circles in the diagrams below represent two result sets from the products table, one returning ProductIDs 500 to 750, and the second returning ProductIDs 751 to 1000. We want to know which colors are in both result sets, and which colors are in one, but not the other. We will use INTERSECT and EXCEPT to find out.
+
+INTERSECT Returns rows that are present in both sets.
+
+An image of a Venn diagram showing INTERSECT results.
+
+EXCEPT Returns returns distinct rows from the left input query that aren't output by the right input query.
+
+An image of a Venn diagram showing EXCEPT results.
+
+In the following code example, you want to know which colors appear in both result sets from the products table:
+
+```
+SELECT color FROM SalesLT.Product
+WHERE ProductID BETWEEN 500 and 750
+INTERSECT
+SELECT color FROM SalesLT.Product
+WHERE ProductID BETWEEN 751 and 1000;
+```
+
+In this example, you want to know which colors are in the first result set, but NOT in the second result set. In this case, use the EXCEPT operator:
+
+```
+SELECT color FROM SalesLT.Product
+WHERE ProductID BETWEEN 500 and 750
+EXCEPT
+SELECT color FROM SalesLT.Product
+WHERE ProductID BETWEEN 751 and 1000;
+```
+
+Not that the results are different, depending on the order of the queries. So the above query will return a different result set to the one below:
+
+```
+SELECT color FROM SalesLT.Product
+WHERE ProductID BETWEEN 751 and 1000
+EXCEPT
+SELECT color FROM SalesLT.Product
+WHERE ProductID BETWEEN 500 and 750; 
+```
+
+**Use the APPLY operator**
+
+As an alternative to combining or comparing rows from two sets, SQL Server provides a mechanism to apply a table expression from one set on each row in the other set. The APPLY operator enables queries that evaluate rows in one input set against the expression that defines the second input set. APPLY is actually a table operator, not a set operator, and is part of the FROM clause. APPLY is more like a JOIN, rather than as a set operator that operates on two compatible result sets of queries.
+
+Conceptually, the APPLY operator is similar to a correlated subquery in that it applies a correlated table expression to each row from a table. However, APPLY returns a table-valued result rather than a scalar or multi-valued result. For example, the table expression could be a table-valued function. You can pass elements from the left row as input parameters to the table-valued function.
+
+There are two forms of APPLY:
+
+* CROSS APPLY
+* OUTER APPLY
+
+The syntax for APPLY is as follows:
+
+```
+SELECT <column_list>
+FROM left_table_source { CROSS | OUTER } APPLY right_table_source 
+```
+
+This is best explained with an example. The first example uses an INNER JOIN to return columns from the following tables:
+
+* SalesLT.SalesOrderHeader.
+* SalesLT.SalesOrderDetail.
+
+In the following code example, the tables are joined using an INNER JOIN:
+
+```
+SELECT oh.SalesOrderID, oh.OrderDate,od.ProductID, od.UnitPrice, od.Orderqty 
+FROM SalesLT.SalesOrderHeader AS oh 
+INNER JOIN SalesLT.SalesOrderDetail AS od 
+ON oh.SalesOrderID = od.SalesOrderID;
+```
+
+In the following code example, CROSS APPLY applies the right table source to each row in the left table source. Only rows with results in both the left table and right table are returned. Most INNER JOIN statements can be rewritten as CROSS APPLY statements.
+
+```
+SELECT oh.SalesOrderID, oh.OrderDate,
+od.ProductID, od.UnitPrice, od.Orderqty 
+FROM SalesLT.SalesOrderHeader AS oh 
+CROSS APPLY (SELECT productid, unitprice, Orderqty 
+        FROM SalesLT.SalesOrderDetail AS od 
+        WHERE oh.SalesOrderID = SalesOrderID
+              ) AS od;
+```	      
+	      
+In both cases, the result set is the same:
+
+A screenshot showing the result set from the CROSS APPLY operator.
  
 #### Write queries that use window functions
  
+SQL windowing operations allow you to define a subset of rows from a result set and apply functions against those rows. Window functions allow you to perform operations such as assign a rank order to a row or divide a result set into different parts. Once you understand how window functions work, you can use them in place of constructs such as self-joins or temporary tables.
+
+After completing this module, you’ll be able to:
+
+* Describe window functions.
+* Use the OVER clause.
+* Use RANK, AGGREGATE, and OFFSET functions. 
+
+**Describe window functions**
+
+Window functions allow you to perform calculations such as ranking, aggregations, and offset comparisons between rows.
+
+Window functions require a set of rows to work on, known as a window. The OVER clause is used to define the window you want to work on. You can then use a window function on the subset of rows you have defined.
+
+Window functions solve common problems such as generating row numbers in a result set or calculating running totals. Windows also provide an efficient way to compare values in one row with values in another without needing to join a table to itself.
+
+Windows and window functions provide functionality that is difficult to replicate with other SQL commands:
+
+* Ordering the rows that are passed to a window function, without affecting the sort order of the output query.
+* Dividing a result set into different parts and applying a window function to each.
+* Subdividing a partition, by setting upper and lower boundaries for the window frame.
+ 
+**Use the OVER clause**
+
+You have already learned that window functions require the OVER clause to create and manipulate windows. The OVER clause defines the rows that the window function is applied to. This may be all the rows, or a subset of the rows. It can also define the order of the rows for a window function.
+
+You can use the OVER clause with functions to compute aggregated values such as moving averages, cumulative aggregates, running totals, or a top N per group results.
+
+The OVER clause can take the following arguments:
+
+* PARTITION BY – divides the query result set into different parts.
+* ORDER BY - defines the logical order of the rows of the result set.
+* ROWS/RANGE - limits the rows by specifying start and end points. This requires the ORDER BY argument and the default value is from the start of the partition to the current element.
+
+If you don't specify an argument to the OVER clause, the window functions will be applied on the entire result set.
+
+The following diagram shows the relationship between SELECT, OVER, and PARTITION BY:
+
+An image of a diagram showing how PARTITION BY further sub-divides the rows defined in the OVER clause.
+
+PARTITION BY
+
+The PARTITION BY clause divides up the result set into partitions before applying the window function. If PARTITION BY is not specified, the window function is applied to all rows of the query. Partitions use one of the columns made available in the FROM clause.
+
+ORDER BY
+
+ORDER BY defines the logical order of the rows within each partition. As an example, the RANK function requires rows to be ordered so that it can return the rank position of each row. The default order is ASC, but it is best practice to specify ASC or DESC after the order by expressions. NULL is treated as the lowest possible value.
+
+ROWS or RANGE clauses
+
+The ROW or RANGE arguments set a start and end boundary around the rows being operated on. ROW or RANGE requires an ORDER BY subclause within the OVER clause.
+
+The ROWS clause limits the rows within a partition by specifying a fixed number of rows preceding or following the current row.
+
+the RANGE clause logically limits the rows within a partition by specifying a range of values with respect to the value in the current row.
+
+CURRENT ROW
+
+Specifies that the window starts or ends at the current row when used with ROWS or the current value when used with RANGE. CURRENT ROW can be specified as both a starting and ending point.
+
+BETWEEN AND
+
+Used with ROWS or RANGE to specify the start and end boundary points of the window. 
+ 
+**Use RANK, AGGREGATE, and OFFSET functions**
+
+In window operations, you can use aggregate functions such as SUM, MIN, and MAX to operate on a set of rows defined by the OVER clause and its arguments.
+
+Window functions can be categorized as:
+
+* Aggregate functions. Such as SUM, AVG, and COUNT which operate on a window and return a scalar value.
+* Ranking functions. Such as RANK, ROW_NUMBER, and NTILE. Ranking functions require a sort order and return a ranking value for each row in a partition.
+* Analytic functions. Such as CUME_DIST, PERCENTILE_CONT, or PERCENTILE_DISC. Analytic functions calculate the distribution of values in the partition.
+* Offset functions. Such as LAG, LEAD, and LAST_VALUE. Offset functions return values from other rows relative to the position of the current row.
+
+Aggregate functions
+
+Aggregate functions return totals, averages, or counts of things. Aggregate functions perform a calculation and return a single value. With the exception of COUNT(*), aggregate functions do not count NULL values.
+
+Consider the following code, which applies some common aggregate functions to the prices of products in the products table:
+
+```
+SELECT Name, ProductNumber, Color, SUM(Weight) 
+OVER(PARTITION BY Color) AS WeightByColor
+FROM SalesLT.Product
+ORDER BY ProductNumber;
+```
+
+This returns a column called WeightByColor which contains the total weight for all products of the same color as show in the partial result set below.
+
+A screenshot showing results from the OVER and PARTITION BY Color clause.
+
+Ranking functions
+
+Ranking functions assign a number to each row, depending on its position within an order you have specified. The order is specified using the ORDER BY clause.
+
+Consider the following code, which applies all four ranking functions to products in the products table.
+
+```
+SELECT productid, name, listprice 
+    ,ROW_NUMBER() OVER (ORDER BY productid) AS "Row Number"  
+    ,RANK() OVER (ORDER BY listprice) AS PriceRank  
+    ,DENSE_RANK() OVER (ORDER BY listprice) AS "Dense Rank"  
+    ,NTILE(4) OVER (ORDER BY listprice) AS Quartile  
+FROM SalesLT.Product 
+```
+
+This returns a column for each of the function, with the appropriate ranking number.
+
+A screenshot showing results from ranking functions.
+
+Analytic functions
+
+Analytic functions calculate a value based on a group of rows. Analytic functions are used to calculate moving averages, running totals, and top-N results. These functions include:
+
+* CUME_DIST
+* FIRST_VALUE
+* RECENT_RANK
+* PERCENTILE_CONT
+* PERCENTIL_DISC
+* OFFSET functions
+
+Offset functions allow you to return a value subsequent or previous rows within a result set.
+
+Offset functions operate on a position that is either relative to the current row, or relative to the starting or ending boundary of the window frame. The offset functions are:
+
+LAG and LEAD - operate on an offset to the current row and require the ORDER BY clause.
+FIRST_VALUE and LAST_VALUE - operate on an offset from the window frame. The syntax for the LAG function is shown below. The LEAD function works in the same way.
+
+```
+LAG (scalar_expression [,offset] [,default])  
+    OVER ( [ partition_by_clause ] order_by_clause )
+```    
+    
+In the following code example, the LEAD offset function returns the following year’s budget value:
+
+```
+SELECT [Year], Budget, LEAD(Budget, 1, 0) OVER (ORDER BY [Year]) AS 'Next'
+    FROM dbo.Budget
+    ORDER BY [Year];
+```
+
+The syntax for LAST_VALUE is shown below. FIRST_VALUE works in the same way.
+
+```
+LAST_VALUE ( [ scalar_expression ] )  
+OVER ( [ partition_by_clause ] order_by_clause rows_range_clause )  
+The syntax is similar to LAG and LEAD, with the addition of the rows/range clause.
+```
+
 #### Transform data by implementing pivot, unpivot, rollup, and cube
  
+You can use Transact-SQL to enable you to transform and group data. This way, you can represent it in different ways that will help you to meet your requirements. You're able to do this because you can use operators such as PIVOT, UNPIVOT, and subclauses such as CUBE, ROLLUP, and GROUPING SET to retrieve data in different orientations and groupings. In this module, you'll learn how to use these operators and subclauses in Transact-SQL.
+
+After completing this module, you'll be able to:
+
+* Write queries that pivot and unpivot result sets.
+* Write queries that specify multiple groups with GROUPING SET, CUBE, and ROLLUP.
+
+**Write queries that pivot and unpivot result sets**
+
+Use pivot in SQL Server to rotate the way data is displayed from a rows-based orientation to a columns-based orientation. When pivoting, you consolidate values in a column to a list of distinct values, and then projecting that list across as column headings. Typically, this includes aggregation to column values in the new columns.
+
+For example, the partial source data below lists repeating values for Category and Orderyear, along with values for Qty, for each instance of a Category/Orderyear pair:
+
+* values in the Qty column were grouped by Category and aggregated.
+
+Use PIVOT to pivot a result set
+You can pivot a result set using the PIVOT operator. The Transact-SQL PIVOT table operator works on the output of the FROM clause in a SELECT statement. To use PIVOT, you need to supply three elements to the operator:
+
+Grouping: in the FROM clause, you provide the input columns. From those columns, PIVOT will determine which column(s) will be used to group the data for aggregation. This is based on looking at which columns aren't being used as other elements in the PIVOT operator.
+Spreading: you provide a comma-delimited list of values to be used as the column headings for the pivoted data. The values need to occur in the source data.
+Aggregation: you provide an aggregation function (SUM, and so on) to be performed on the grouped rows.
+Additionally, you need to assign a table alias to the result table of the PIVOT operator. The following example shows the elements in place:
+
+```
+SELECT  Category, [2019],[2020],[2021]
+FROM  ( SELECT  Category, Qty, Orderyear FROM Sales.CategoryQtyYear) AS D 
+          PIVOT(SUM(qty) FOR orderyear IN ([2019],[2020],[2021])) AS pvt;
+```	  
+	  
+In the example above, Orderyear is the column providing the spreading values, Qty is used for aggregation, and Category for grouping. Orderyear values are enclosed in delimiters to indicate that they're identifiers of columns in the result.
+
+Use UNPIVOT to unpivot a result set
+Unpivoting data is the logical reverse of pivoting data. Instead of turning rows into columns, unpivot turns columns into rows. This is a technique useful in taking data that has already been pivoted (with or without using a Transact-SQL PIVOT operator) and returning it to a row-oriented tabular display. You can use the UNPIVOT table operator to accomplish this.
+
+To use the UNPIVOT operator, you provide three elements:
+
+* Source columns to be unpivoted.
+* A name for the new column that will display the unpivoted values.
+* A name for the column that will display the names of the unpivoted values.
+
+The following example specifies 2019, 2020, and 2021 as the columns to be unpivoted, using the new column name orderyear and the qty values to be displayed in a new qty column.
+
+```
+SELECT category, qty, orderyear
+FROM Sales.PivotedCategorySales
+UNPIVOT(qty FOR orderyear IN([2019],[2020],[2021])) AS unpvt;
+```
+
+When unpivoting data, one or more columns is defined as the source to be converted into rows. The data in those columns is spread, or split, into one or more new rows, depending on how many columns are being unpivoted. In the following source data, three columns will be unpivoted. Each Orderyear value will be copied into a new row and associated with its Category value. Any NULLs will be removed in the process and no row is created:
+
+Unpivoting does not restore the original data. Detail-level data was lost during the aggregation process in the original pivot. UNPIVOT has no ability to allocate values to return to original detail values.
  
- 
+**Write queries that specify multiple groupings with grouping sets**
+
+You use the GROUP BY clause in a SELECT statement in Transact-SQL to arrange rows in groups, typically to support aggregations. However, if you need to group by different attributes at the same time, for example to report at different levels, you would normally need multiple queries combined with UNION ALL. Instead, if you need to produce aggregates of multiple groupings in the same query, you can use the GROUPING SETS subclause of the GROUP BY clause in Transact-SQL. GROUPING SETS provides an alternative to using UNION ALL to combine results from multiple individual queries, each with its own GROUP BY clause.
+
+Use the GROUPING SETS subclause
+
+To use GROUPING SETS, you specify the combinations of attributes on which to group, as in the following syntax example:
+
+```
+SELECT <column list with aggregate(s)>
+FROM <source>
+GROUP BY 
+GROUPING SETS(
+    (<column_name>),--one or more columns
+    (<column_name>),--one or more columns
+    () -- empty parentheses if aggregating all rows
+        );
+```	
+	
+For example, suppose you want to use GROUPING SETS to aggregate on the Category and Cust columns from a Sales.CategorySales table, in addition to the empty parentheses notation to aggregate all rows:
+
+```
+SELECT Category, Cust, SUM(Qty) AS TotalQty
+FROM Sales.CategorySales
+GROUP BY 
+    GROUPING SETS((Category),(Cust),())
+ORDER BY Category, Cust; 
+```
+
+Notice the presence of NULLs in the results. NULLs may be returned because a NULL was stored in the underlying source, or because it is a placeholder in a row generated as an aggregate result. For example, in the previous results, the first row displays NULL, NULL, 999. This represents a grand total row. The NULL in the Category and Cust columns are placeholders because neither Category nor Cust take part in the aggregation.
+
+ **Tip**
+
+If you want to know whether a NULL marks a placeholder or comes from the underlying data, you can use GROUPING_ID. Visit the reference page for GROUPING_ID for more information.
+
+Use the CUBE and ROLLUP subclauses
+
+Like GROUPING SETS, the CUBE and ROLLUP subclauses also enable multiple groupings for aggregating data. However, CUBE and ROLLUP do not need you to specify each set of attributes to group. Instead, given a set of columns, CUBE will determine all possible combinations and output groupings. ROLLUP creates combinations, assuming the input columns represent a hierarchy. Therefore, CUBE and ROLLUP can be thought of as shortcuts to GROUPING SETS.
+
+To use CUBE, append the keyword CUBE to the GROUP BY clause and provide a list of columns to group. For example, to group on all combinations of columns Category and Cust, you'd use the following syntax in your query:
+
+```
+SELECT Category, Cust, SUM(Qty) AS TotalQty
+FROM Sales.CategorySales
+GROUP BY CUBE(Category,Cust);
+```
+
+This outputs groupings for the following combinations: (Category, Cust), (Cust, Category), (Cust), (Category) and the aggregate on all empty ():
+
+To use ROLLUP, you'd append the keyword ROLLUP to the GROUP BY clause and provide a list of columns to group. For example, to group on combinations of the Category, Subcategory, and Product columns, you'd use the following syntax in your query:
+
+```
+SELECT Category, Subcategory, Product, SUM(Qty) AS TotalQty
+FROM Sales.ProductSales
+GROUP BY ROLLUP(Category,Subcategory, Product);
+```
+
+This would result in groupings for the following combinations: (Category, Subcategory, Product), (Category, Subcategory), (Category), and the aggregate on all empty (). The order in which columns are supplied matters: ROLLUP assumes that the columns are listed in an order that expresses a hierarchy. It provides subtotals for each grouping, along with a grand total for all groupings at the end.
+
+
 ## <h2 id="section2">Optimize query performance in Azure SQL</h2>
 
 Analyze individual query performance and determine where improvements can be made. Explore performance-related Dynamic Management Objects. Investigate how indexes and database design affect queries. 
