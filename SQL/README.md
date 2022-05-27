@@ -750,6 +750,7 @@ FROM OPENROWSET('SQLNCLI', 'Server=SalesDB;Trusted_Connection=yes;',
     FROM AdventureWorks.Production.Product') AS a;
 ```
 To use remote servers, you must enable some advanced options in the SQL Server instance where you're running the query. The OPENXML and OPENJSON functions enable you to query structured data in XML or JSON format and extract values into a tabular rowset. A detailed exploration of rowset functions is beyond the scope of this module. For more information, see the <a href="https://docs.microsoft.com/en-us/sql/t-sql/functions/functions?view=sql-server-ver16">Transact-SQL reference documentation</a>.
+
 ```
 USE AdventureWorks2012;  
 GO  
@@ -772,7 +773,7 @@ WHERE TerritoryID IS NOT NULL AND SalesYTD <> 0;
 
 T-SQL provides aggregate functions such as SUM, MAX, and AVG to perform calculations that take multiple values and return a single result.
 
-*Working with aggregate functions*
+Working with aggregate functions
 
 Most of the queries we have looked at operate on a row at a time, using a WHERE clause to filter rows. Each row returned corresponds to one row in the original data set. Many aggregate functions are provided in SQL Server. In this section, we’ll look at the most common functions such as SUM, MIN, MAX, AVG, and COUNT.
 
@@ -786,8 +787,10 @@ When working with aggregate functions, you need to consider the following points
 
 To extend beyond the built-in functions, SQL Server provides a mechanism for user-defined aggregate functions via the .NET Common Language Runtime (CLR). That topic is beyond the scope of this module.
 
-*Built-in aggregate functions*
+**Built-in aggregate functions**
+
 As mentioned, Transact-SQL provides many built-in aggregate functions. Commonly used functions include:
+
 ```
 Function Name      Syntax             Description
 SUM                SUM(expression)    Totals all the non-NULL numeric values in a column.
@@ -798,6 +801,7 @@ COUNT or COUNT_BIG COUNT(*) or COUNT(expression) With (*), counts all rows, incl
 ```
 
 To use a built-in aggregate in a SELECT clause, consider the following example in the MyStore sample database:
+
 ```
 SELECT AVG(ListPrice) AS AveragePrice,
        MIN(ListPrice) AS MinimumPrice,
@@ -809,13 +813,17 @@ WHERE ProductCategoryID = 15;
 When using aggregates in a SELECT clause, all columns referenced in the SELECT list must be used as inputs for an aggregate function, or be referenced in a GROUP BY clause.
 
 Consider the following query, which attempts to include the ProductCategoryID field in the aggregated results:
+
 ```
 SELECT ProductCategoryID, AVG(ListPrice) AS AveragePrice,
 MIN(ListPrice) AS MinimumPrice,
 MAX(ListPrice) AS MaximumPrice
 FROM Production.Product;
+```
 
 Running this query results in the following error
+
+```
 Msg 8120, Level 16, State 1, Line 1
 Column 'Production.ProductCategoryID' is invalid in the select list because it isn't contained in either an aggregate function or the GROUP BY clause.
 ```
@@ -824,21 +832,24 @@ The query treats all rows as a single aggregated group. Therefore, all columns m
 
 In the previous examples, we aggregated numeric data such as the price and quantities in the previous example,. Some of the aggregate functions can also be used to summarize date, time, and character data. The MIN and MAX functions can also be used with date data, to return the earliest and latest chronological values. However, AVG and SUM can only be used for numeric data, which includes integers, money, float and decimal datatypes.
 
-*Using DISTINCT with aggregate functions*
+**Using DISTINCT with aggregate functions**
+
 You should be aware of the use of DISTINCT in a SELECT clause to remove duplicate rows. When used with an aggregate function, DISTINCT removes duplicate values from the input column before computing the summary value. DISTINCT is useful when summarizing unique occurrences of values, such as customers in the orders table.
 
 The following example returns the number of customers who have placed orders, no matter how many orders they placed:
+
 ```
 SELECT COUNT(DISTINCT CustomerID) AS UniqueCustomers
 FROM Sales.SalesOrderHeader;
 COUNT(<some_column>) merely counts how many rows have some value in the column. If there are no NULL values, COUNT(<some_column>) will be the same as COUNT(*). COUNT (DISTINCT <some_column>) counts how many different values there are in the column.
 ```
 
-*Using aggregate functions with NULL*
+**Using aggregate functions with NULL**
+
 It is important to be aware of the possible presence of NULLs in your data, and of how NULL interacts with T-SQL query components, including aggregate function. There are a few considerations to be aware of:
 
  * With the exception of COUNT used with the (*) option, T-SQL aggregate functions ignore NULLs. For example, a SUM function will add only non-NULL values. NULLs don't evaluate to zero. COUNT(*) counts all rows, regardless of value or non-value in any column.
- * The presence of NULLs in a column may lead to inaccurate computations for AVG, which will sum only populated rows and divide that sum by the number of non-NULL rows. There may be a difference in results between AVG(<column>) and (SUM(<column>)/COUNT(*)).
+ * The presence of NULLs in a column may lead to inaccurate computations for AVG, which will sum only populated rows and divide that sum by the number of non-NULL rows. There may be a difference in results between `AVG(<column>)` and `(SUM(<column>)/COUNT(*))`.
 
 If you need to summarize all rows, whether NULL or not, consider replacing the NULLs with another value that will not be ignored by your aggregate function. You can use the COALESCE function for this purpose.
 
@@ -1766,6 +1777,7 @@ EXECUTE sp_executesql
           WHERE CompanyName = @company',  
           N'@company nvarchar(128)',  
           @company = "Sharp Bikes";                
+```
 
 **Create user-defined functions**
 
@@ -1866,9 +1878,9 @@ SCHEMABINDING is optional when creating the function. When you specify SCHEMABIN
 
 SCHEMABINDING is removed if any of the following occur:
 
-The function is dropped
+* The function is dropped
  
-The function is modified with ALTER statement without specifying SCHEMABINDING 
+* The function is modified with ALTER statement without specifying SCHEMABINDING 
  
 #### Implement error handling with Transact-SQL
  
