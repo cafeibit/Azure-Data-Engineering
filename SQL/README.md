@@ -1279,14 +1279,1086 @@ WHEN NOT MATCHED THEN
 ```
  
 ### <h3 id="section1-2">Programming with Transact-SQL</h3>
- 
+
 #### Get started with Transact-SQL programming
 
+Transact-SQL (T-SQL) provides a robust programming language with features that let you temporarily store values in variables, apply conditional execution of commands, pass parameters to stored procedures, and control the flow of your programs. 
+ 
+In this module, you'll learn how to enhance your T-SQL code with programming elements. After completing this module, you will be able to:
+
+* Describe the language elements of T-SQL used for simple programming tasks.
+* Describe batches and how they're handled by SQL Server.
+* Declare and assign variables and synonyms.
+* Use IF and WHILE blocks to control program flow. 
+ 
+**Describe T-SQL for programming**
+
+Transact-SQL (T-SQL) is a proprietary extension of the open standard Structured Query Language (SQL). It supports declared variables, string and data processing, error and exception handling, and transaction control. While SQL is a programming language, T-SQL adds support for procedural programming and the use of local variables.
+
+A T-SQL program will usually start with a BEGIN statement and terminate with an END statement, with the statements you'll want to execute in between.
+
+As you move from executing code objects to creating them, you'll need to understand how multiple statements interact with the server on execution. As you develop programs, you'll need to temporarily store values. For example, you might need to temporarily store values that will be used as parameters in stored procedures.
+
+Finally, you might want to create aliases, or pointers, to objects so that you can reference them by a different name or from a different location than where they're defined.
+
+Here are a few of the supported T-SQL programming structures:
+
+* IF..ELSE - A conditional statement that lets you decide what aspects of your code will execute.
+* WHILE - A looping statement that is ideal for running iterations of T-SQL statements.
+* DECLARE - You'll use this to define variables.
+* SET - One of the ways you'll assign values to your variables.
+* BATCHES - Series of T-SQL statements that are executed as a unit.
+ 
+**Describe batches**
+
+T-SQL batches are collections of one or more T-SQL statements that are submitted to SQL Server by a client as a single unit. SQL Server operates on all the statements in a batch at the same time when parsing, optimizing, and executing the code.
+
+If you're a report writer who typically writes queries using SELECT statements and not procedures, it's still important to understand batch boundaries. These boundaries will affect your work with variables and parameters in stored procedures and other routines. For example, a variable must be declare in the same batch in which it's referenced. It's important, therefore, to recognize what is contained in a batch.
+
+Batches are delimited by the client application. How you mark the end of a batch depends on the settings of your client. For Microsoft clients including SQL Server Management Studio (SSMS), Azure Data Studio and SQLCMD the keyword is GO.
+
+In this example, there are two distinct batches each terminated with a GO:
+
+```
+CREATE NEW <view_name>
+AS ...
+GO
+CREATE PROCEDURE <procedure_name>
+AS ...
+GO
+```
+ 
+The batch terminator GO isn't a T-SQL keyword, but is one recognized by SSMS to indicate the end of a batch.
+
+When working with T-SQL batches, there are two important considerations to keep in mind:
+
+* Batches are boundaries for variable scope, which means a variable defined in one batch may only be referenced by other code in the same batch
+* Some statements, typically data definition statements such as CREATE VIEW, CREATE FUNCTION and CREATE PROCEDURE may not be combined with others in the same batch.
+ 
+**Working with batches**
+ 
+A batch is collections of T-SQL statements submitted to SQL Server for parsing and execution. Understanding how batches are parsed will be useful in identifying error messages and behavior. When a batch is submitted by a client, such as when you press the Execute button in SSMS, the batch is parsed for syntax errors by the SQL Server engine. Any errors found will cause the entire batch to be rejected; there will be no partial execution of statements within the batch.
+
+If the batch passes the syntax check, then SQL Server runs other steps, resolving object names, checking permissions, and optimizing the code for execution. Once this process completes and execution begins, statements succeed or fail individually. This is an important contrast to syntax checking. When a runtime error occurs on one line, the next line may be executed, unless you've added error handling to the code.
+
+For example, the following batch contains a syntax error:
+
+```
+INSERT INTO dbo.t1 VALUE(1,2,N'abc');
+INSERT INTO dbo.t1 VALUES(2,3,N'def');
+GO
+```
+ 
+It gives this error message:
+
+```
+Msg 102, Level 15, State 1, Line 1
+Incorrect syntax near 'VALUE'.
+```
+ 
+The error occurred in line 1, but the entire batch is rejected, and execution doesn't continue with line 2. Even if each of the INSERT statements were reversed and the syntax error occurred in the second line, the first line wouldn't be executed because the entire batch would be rejected.
+
+Using the previous example, this batch doesn't contain an error:
+
+```
+INSERT INTO dbo.t1 VALUES(1,2,N'abc');
+INSERT INTO dbo.t1 VALUES(2,3,N'def');
+GO
+```
+ 
+In the previous samples, we've used INSERT statements rather than SELECT because it's more common for modification statements to be grouped in batches than SELECT statements. 
+ 
+**Declare and assign variables and synonyms**
+
+In T-SQL, as with other programming languages, variables are objects that allow temporary storage of a value for later use. You have already encountered variables when you used them to pass parameter values to stored procedures and functions.
+
+In T-SQL, variables must be declared before they can be used. They may be assigned a value, or initialized, when they are declared. Declaring a variable includes providing a name and a data type, as shown below. To declare a variable, you must use the DECLARE statement.
+
+```
+--Declare and initialize the variables.
+DECLARE @numrows INT = 3, @catid INT = 2;
+--Use variables to pass the parameters to the procedure.
+EXEC Production.ProdsByCategory @numrows = @numrows, @catid = @catid;
+GO
+```
+ 
+Variables must be declared in the same batch in which they're referenced. In other words, all T-SQL variables are local in scope to the batch, both in visibility and lifetime. Only other statements in the same batch can see a variable declared in the batch. A variable is automatically destroyed when the batch ends.
+
+**Working with variables**
+ 
+Once you've declared a variable, you must initialize it, or assign it a value. You can do that in three ways:
+
+* In SQL Server 2008 or later, you may initialize a variable using the DECLARE statement.
+* In any version of SQL Server, you may assign a single (scalar) value using the SET statement.
+* In any version of SQL Server, you can assign a value to a variable using a SELECT statement. Be sure that the SELECT statement returns exactly one row. An empty result will leave the variable with its original value; more than one result will cause an error.
+ 
+The following example shows the three ways of declaring and assigning values to variables:
+
+```
+DECLARE @var1 AS INT = 99;
+DECLARE @var2 AS NVARCHAR(255);
+SET @var2 = N'string';
+DECLARE @var3 AS NVARCHAR(20);
+SELECT @var3 = lastname FROM HR.Employees WHERE empid=1;
+SELECT @var1 AS var1, @var2 AS var2, @var3 AS var3;
+GO
+```
+ 
+This generates the following results.
+```
+var1	var2	var3
+99	string	Davis
+ ```
+ 
+**Working with synonyms**
+ 
+In SQL Server, synonyms provide a method for creating a link, or alias, to an object stored in the same database or even on another instance of SQL Server. Objects that might have synonyms defined for them include tables, views, stored procedures, and user-defined functions.
+
+Synonyms can be used to make a remote object appear local or to provide an alternative name for a local object. For example, synonyms can be used to provide an abstraction layer between client code and the actual database objects used by the code. The code references objects by their aliases, regardless of the object’s actual name.
+
+ **Note**
+
+You can create a synonym which points to an object that does not yet exist. This is called deferred name resolution. The SQL Server engine will not check for the existence of the actual object until the synonym is used at runtime.
+
+To manage synonyms, use the data definition language (DDL) commands CREATE SYNONYM, ALTER SYNONYM, and DROP SYNONYM, as in the following example:
+
+```
+CREATE SYNONYM dbo.ProdsByCategory FOR TSQL.Production.ProdsByCategory;
+GO
+EXEC dbo.ProdsByCategory @numrows = 3, @catid = 2;
+```
+ 
+To create a synonym, you must have 'CREATE SYNONYM' permission as well as permission to alter the schema in which the synonym will be stored.
+
+ **Note**
+
+To create a synonym, the user must have CREATE SYNONYM permission and either own or have ALTER SCHEMA in the destination schema.
+
+A synonym is an "empty" object that is resolved to the source object when referenced at runtime.
+
+**Use IF and WHILE blocks to control program flow**
+
+All programming languages include elements that help you to determine the flow of the program, or the order in which statements are executed. While not as fully featured as languages like C#, T-SQL provides a set of control-of-flow keywords you can use to perform logic tests and create loops containing your T-SQL data manipulation statements. In this lesson, you'll learn how to use the T-SQL IF and WHILE keywords.
+
+Understand the T-SQL control of flow language
+ 
+SQL Server provides language elements that control the flow of program execution within T-SQL batches, stored procedures, and multistatement user-defined functions. These control-of-flow elements mean you can programmatically determine whether to execute statements and programmatically determine the order of those statements that should be executed.
+
+These elements include, but aren't limited to:
+
+* IF...ELSE, which executes code based on a Boolean expression.
+* WHILE, which creates a loop that executes providing a condition is true.
+* BEGIN…END, which defines a series of T-SQL statements that should be executed together.
+* Other keywords, for example, BREAK, CONTINUE, WAITFOR, and RETURN, which are used to support T-SQL control-of-flow operations.
+ 
+Here is an example of the IF statement:
+
+```
+IF OBJECT_ID('dbo.tl') IS NOT NULL
+    DROP TABLE dbo.tl
+GO
+``` 
+ 
+Use conditional logic in your programs using IF...ELSE
+ 
+The IF...ELSE structure is used in T-SQL to conditionally execute a block of code based on a predicate. The IF statement determines whether or not the following statement or block (if BEGIN...END is used) executes. If the predicate evaluates to TRUE, the code in the block is executed. When the predicate evaluates to FALSE or UNKNOWN, the block is not executed, unless the optional ELSE keyword is used to identify another block of code.
+
+For example, the following IF statement, without an ELSE, will only execute the statements between BEGIN and END if the predicate evaluates to TRUE, indicating that the object exists. If it evaluates to FALSE or UNKNOWN, no action is taken and execution resumes after the END statement:
+
+```
+USE TSQL;
+GO
+IF OBJECT_ID('HR.Employees') IS NULL --this object does exist in the sample database
+BEGIN
+    PRINT 'The specified object does not exist';
+END;
+```
+ 
+With the use of ELSE, you have another execution option when the IF predicate evaluates to FALSE or UNKNOWN, as in the following example:
+
+```
+IF OBJECT_ID('HR.Employees') IS NULL
+BEGIN
+    PRINT 'The specified object does not exist';
+END
+ELSE
+BEGIN
+    PRINT 'The specified object exists';
+END;
+```
+ 
+Within data manipulation operations, using IF with the EXISTS keyword can be a useful tool for efficient existence checks, as in the following example:
+
+```
+IF EXISTS (SELECT * FROM Sales.EmpOrders WHERE empid =5)
+BEGIN
+    PRINT 'Employee has associated orders';
+END;
+```
+ 
+Understand looping using WHILE statements
+ 
+The WHILE statement is used to execute code in a loop based on a predicate. Like the IF statement, the WHILE statement determines whether the following statement or block (if BEGIN...END is used) executes. The loop continues to execute as long as the condition evaluates to TRUE. Typically, you control the loop with a variable tested by the predicate and manipulated in the body of the loop itself..
+
+The following example uses the @empid variable in the predicate and changes its value in the BEGIN...END block:
+
+```
+DECLARE @empid AS INT = 1, @lname AS NVARCHAR(20);
+WHILE @empid <=5
+   BEGIN
+	SELECT @lname = lastname FROM HR.Employees
+		WHERE empid = @empid;
+	PRINT @lname;
+	SET @empid += 1;
+   END;
+```
+                
+For extra options within a WHILE loop, you can use the CONTINUE and BREAK keywords to control the flow. 
+                
 #### Create stored procedures and user-defined functions
+ 
+Learn how to use Stored procedures to group T-SQL statements so they can be used and reused whenever needed. You may need to execute stored procedures that someone else has created or create your own.                
+                
+#### Implement error handling with Transact-SQL
+ 
+Stored procedures are named groups of Transact-SQL (T-SQL) statements that can be used and reused whenever they're needed. Stored procedures can return results, manipulate data, and perform administrative actions on the server. You may need to execute stored procedures that someone else has created or create your own.
+
+Stored procedure can contain both data definition commands and data manipulation commands, providing a clean interface between a database and an application.
+
+There are advantages to using stored procedures, including:
+
+* Re-use of code. Stored procedure can be written, tested, and then reused as needed. This helps to eliminate errors and reduce development time.
+Security. Stored procedures allow users and programs to perform certain operations on database objects, without giving permissions to the underlying tables. This allows you to control which processes and activities are allowed, thereby improving security.
+* Improve quality. You can also include appropriate error handling code and make sure that each stored procedure is properly tested before being used in a production environment.
+* Improve performance. When stored procedures are first executed, an execution plan is created. That execution plan can be reused when the stored procedure is executed again. This is typically quicker than creating an execution plan every time the code is executed.
+* Lower maintenance. Stored procedures provide an interface to the data tier. When changes to the underlying database objects change, only the procedures are updated providing a clean separation between the data and application tiers.
+ 
+There are three types of stored procedures:
+
+* User-defined stored procedures.
+* Temporary stored procedures.
+* System stored procedures.
+ 
+This module will show you how to call a stored procedure, pass a parameter to a stored procedure, and create and amend stored procedures. You'll also learn how to construct dynamic SQL and write inline table-valued functions.
+
+After completing this module, you’ll be able to:
+
+* Return results by executing stored procedures.
+* Pass parameters to procedures.
+* Create simple stored procedures that encapsulate a SELECT statement.
+* Construct and execute dynamic SQL with EXEC and sp_executesql.
+* Create simple user-defined functions and write queries against them.                
+
+**Call stored procedures**
+
+Stored procedures may be called by an application, by a user, or when SQL Server starts.
+
+Execute a stored procedure by a user
+                
+When an application or user executes a stored procedure, the EXECUTE command or its shortcut, EXEC is used, followed by the two-part name of the procedure. For example:
+
+EXEC dbo.uspGetEmployeeManagers
+
+System stored procedures are also called using the EXECUTE or EXEC keyword. The calling database collation is used when matching system procedure names. If the database collation is case-sensitive, you must execute the stored procedure with exact case of the procedure name.
+
+If the stored procedure is the first statement in the T-SQL batch, the procedure can be executed without the EXECUTE or EXEC keyword.
+
+To check the exact system procedure names, use the catalog views:
+
+* `sys.system_objects`
+
+* `sys.system_parameters`
+
+System stored procedures are prefixed with sp_. System stored procedures are not created by users, but are part of all user-defined and system-defined databases. They do not require a fully qualified name to be executed, but it is best practice to include the sys schema name. For example:
+
+`EXEC sys.sp_who;`
+
+Automatically execute a stored procedure
+                
+You can run a stored procedure every time SQL Server starts. You might want to carry out database maintenance operations, or run a procedure as a background process. Stored procedures that run automatically cannot contain input or output parameters.
+
+Use the sp_procoption to run a stored procedure every time an instance of SQL Server is started. The syntax is:
+
+```
+sp_procoption [ @ProcName = ] 'procedure'     
+    , [ @OptionName = ] 'option'     
+    , [ @OptionValue = ] 'value'
+```
+                
+For example:
+
+```
+EXEC sp_procoption @ProcName = myProcedure    
+    , @OptionName = 'startup'   
+    , @OptionValue = 'on';
+```
+                
+To execute multiple procedures that doesn't need to execute them in parallel, make one procedure the startup procedure and call the other procedures from the startup procedure. This will uses only one worker thread.
+
+Startup procedures must be in the master database.
+
+**Pass parameters to stored procedures**
+
+One of the advantages of using stored procedures is that you can pass parameters to them at runtime. Input parameters can be used filter the query results, such as in the predicate of a WHERE clause, or the value in a TOP operator. Procedure parameters can also return values to the calling program if the parameter is marked as an OUTPUT parameter. You can also assign a default value to a parameter.
+
+Input parameters
+ 
+Stored procedures declare their input parameters by name and data type in the header of the CREATE PROCEDURE statement. The parameter is then used as a local variable within the body of the procedure. You can declare and use more than one parameter in a stored procedure. Input parameters are the default type of parameter.
+
+Parameter names must be prefixed by the @ character, and be unique in the scope of the procedure.
+
+To pass a parameter to a stored procedure, use the following syntax:
+
+ `EXEC <schema_name>.<procedure_name> @<parameter_name> = 'VALUE'`
+ 
+For example, a stored procedure called ProductsBySupplier in the Products schema, would be executed with a parameter named supplierid using the following code:
+
+`EXEC Products.ProductsBySupplier @supplierid = 5`
+ 
+It is best practice to pass parameter values as name-value pairs. Multiple parameters are separated with commas. For example, if the parameter is called customerid and the value to pass is 5, use the following code:
+
+`EXEC customers.customerid @customerid=5`
+ 
+You can also pass parameters by position, omitting the parameter name. However, parameters must be passed either by name or by position - you cannot mix the way parameters are passed to the procedure. If parameters are passed by order, they must be in the identical order as they are listed in the CREATE PROCEDURE statement.
+
+You can pass values as a constant, or as a variable, such as:
+
+`EXEC customers.customerid @CustomerID`
+ 
+You can't, however, use a function to pass a parameter. For example, the following code would raise an error:
+
+`EXEC customers.customerid GETDATE()`
+Check that parameters are of the correct data type. For example, if a procedure accepts an NVARCHAR, pass in the Unicode character string format: N'string'.
+
+You can view parameter names and data types in Azure Data Studio or SQL Server Management Studio (SSMS). Expand the list of database objects until you see the Stored Procedures folder, beneath the Programmability folder.
+
+Expand the Programming folder to view stored procedures and parameter data types
+
+Stored procedures two-part names are displayed, together with a Parameters folder that contains for each parameter:
+
+* Parameter name.
+* Data type.
+* An in arrow indicating an input parameter.
+* An out arrow indicating an output parameter.
+* You can query a system catalog view such as sys.parameters to retrieve parameter definitions together with the object ID.
+
+Default values
+                
+If a parameter was declared with a default value, you don't have to pass value when the stored procedure is run. If a value is passed it will be used, but if no value is passed, then the default is used.
+
+When the stored procedure is created, paramters are given default values using the = operator, such as:
+
+```
+CREATE PROCEDURE Sales.SalesYTD  
+    -- Set NULL as the default value
+    @SalesPerson nvarchar(50) = NULL 
+    AS ...
+```
+ 
+Output parameters
+ 
+You've seen how to pass a value into a stored procedure, known as an input parameter.
+
+However, you can also return a value to the calling program. This is known as an OUTPUT parameter. Use the OUTPUT or OUT keyword to specify an output parameter in the CREATE PROCEDURE statement. The procedure returns the current value of the output parameter to the calling program when the procedure exits.
+
+The calling program must also use the OUTPUT keyword when executing the procedure to save the parameter's value in a variable that can be used in the calling program.
+
+In the following T-SQL code fragment, two parameters are defined as OUTPUT parameters, @ComparePrice and @ListPrice.
+
+```
+CREATE PROCEDURE Production.uspGetList @Product varchar(40)
+    , @MaxPrice money   
+    , @ComparePrice money OUTPUT  
+    , @ListPrice money OUT  
+AS 
+```
+ 
+Values are then assigned to the OUTPUT parameters in the body of the stored procedure, for example, SET @ComparePrice = @MaxPrice;.
+
+**Create a stored procedure**
+
+Stored procedures are created with the CREATE PROCEDURE keywords. To create a stored procedure, you'll need the following permissions:
+
+CREATE PROCEDURE permission in the database.
+                
+ALTER permission on the schema in which the procedure is being created.
+Write and test your SELECT statement first, and when you're happy that it's working correctly add the CREATE PROCEDURE keywords before the schema and procedure name.
+
+As an example, the following code will create a stored procedure called TopProducts in the SalesLT schema.
+
+```                
+CREATE PROCEDURE SalesLT.TopProducts AS
+SELECT TOP(10) name, listprice
+    FROM SalesLT.Product
+    GROUP BY name, listprice
+    ORDER BY listprice DESC;
+```
+                
+To amend a stored procedure, use the ALTER PROCEDURE keywords. For example, the following code will amend the TopProducts stored procedure to return the top 100 products.
+
+```
+ALTER PROCEDURE SalesLT.TopProducts AS
+    SELECT TOP(100) name, listprice
+    FROM SalesLT.Product
+    GROUP BY name, listprice
+    ORDER BY listprice DESC;
+```
+                
+When you amend a stored procedure using the ALTER PROCEDURE keywords, any security permissions that have been assigned to the stored procedure are retained. After initial development, this is normally preferable to dropping and recreating the stored procedure.
+
+Alternatively, use DROP PROCEDURE 'procedure_name', as in the following code:
+
+`DROP PROCEDURE myProcedure; `
+
+**Use dynamic SQL with EXEC and sp-execute-sql**
+
+Dynamic SQL allows you to build a character string that can be executed as T-SQL as an alternative to stored procedures. Dynamic SQL is useful when you don't know certain values until execution time.
+
+There are two ways of creating dynamic SQL, either using:
+
+1. EXECUTE or EXEC keywords.
+2. The system stored procedure sp_executesql.
+ 
+Dynamic SQL using EXECUTE or EXEC
+ 
+To write a dynamic SQL statement with EXECUTE or EXEC, the syntax is:
+
+`EXEC (@string_variable);`
+
+In the following example, we declare a variable called @sqlstring of type VARCHAR, and then assign a string to it.
+
+```
+DECLARE @sqlstring AS VARCHAR(1000);
+    SET @sqlstring='SELECT customerid, companyname, firstname, lastname 
+    FROM SalesLT.Customer;'
+EXEC(@sqlstring);
+GO
+```
+ 
+Dynamic SQL using Sp_executesql
+ 
+Sp_executesql allows you to execute a T-SQL statement with parameters. Sp_executesql can be used instead of stored procedures when you want to pass a different value to the statement. The T-SQL statement stays the same, and only the parameter values change. Like stored procedures, it's likely that the SQL Server query optimizer will reuse the execution plan.
+
+Sp_executesql takes a T-SQL statement as an argument, which can be either a Unicode constant or a Unicode valuable. For example, both these code examples are valid:
+
+```
+DECLARE @sqlstring1 NVARCHAR(1000);
+SET @SqlString1 =
+    N'SELECT TOP(10) name, listprice
+    FROM SalesLT.Product
+    GROUP BY name, listprice
+    ORDER BY listprice DESC;'
+EXECUTE sp_executesql @SqlString1;
+
+OR
+
+EXECUTE sp_executesql N'SELECT TOP(10) name, listprice
+    FROM SalesLT.Product
+    GROUP BY name, listprice
+    ORDER BY listprice DESC;
+```
+ 
+In this example, a parameter is being passed to the T-SQL statement:
+
+```
+EXECUTE sp_executesql   
+          N'SELECT * FROM SalesLT.Customer   
+          WHERE CompanyName = @company',  
+          N'@company nvarchar(128)',  
+          @company = "Sharp Bikes";                
+
+**Create user-defined functions**
+
+User-defined functions (UDF) are similar to stored procedures in that they're stored separately from tables in the database. These functions accept parameters, perform an action, and then return the action result as a single (scalar) value or a result set (table-valued). You can then use the function in place of a table when writing a SELECT statement. User-defined functions are meant to perform calculations and use that result within another statement. Whereas stored procedures can encapsulate the function and statement, and even modify data within the database.
+
+We'll review three types of user-defined functions. For more details of the different functions, review the T-SQL reference documentation.
+
+Inline table-valued functions
+ 
+Inline table-valued functions (TVF) are the simplest function created based on a SELECT statement, and they're the preferred choice for performance.
+
+In the following example, a table-valued function is created with an input parameter for unitprice.
+
+```
+CREATE FUNCTION SalesLT.ProductsListPrice(@cost money)  
+RETURNS TABLE  
+AS  
+RETURN  
+    SELECT ProductID, Name, ListPrice  
+    FROM SalesLT.Product  
+    WHERE ListPrice > @cost; 
+```
+ 
+When the table-valued function is run with a value for the parameter, then all products with a unit price more than this value will be returned.
+
+The following code uses the table-valued function in place of a table.
+
+```
+SELECT Name, ListPrice  
+FROM SalesLT.ProductsListPrice(500);
+```
+ 
+Multi-statement table-valued functions
+ 
+Unlike the inline TVF, a multi-statement table-valued function (MSTVF) can have more than one statement and has different syntax requirements.
+
+Notice how in the following code, we use a BEGIN/END in addition to RETURN:
+
+```
+CREATE FUNCTION Sales.mstvf_OrderStatus 
+     ( @CustomerID int )
+RETURNS 
+@Results TABLE 
+     ( CustomerID int, OrderDate datetime )
+AS
+BEGIN
+     INSERT INTO @Results
+     SELECT CustomerID, OrderDate
+     FROM Sales.Customer AS SC 
+     INNER JOIN Sales.SalesOrderHeader AS SOH 
+        ON SC.CustomerID = SOH.CustomerID
+     WHERE Status >= 5
+ RETURN;
+END;
+GO;
+```
+ 
+Once created, you reference the MSTVF in place of a table just like with the previous inline function above. You can also reference the output in the FROM clause and join it with other tables.
+
+```
+SELECT *
+FROM Sales.mstvf_OrderStatus(22);
+```
+ 
+Performance considerations
+The Query Optimizer is unable to estimate how many rows will return for a multi-statement table-valued function, but can with the inline table-valued function. Therefore, use the inline TVF when possible for better performance. If you don't need to join the MSTVF with other tables and/or you know the result will only be a few rows, then the performance impact isn't as concerning. If you expect a large result set and need to join with other tables, instead consider using a temp table to store the results and then join to the temp table.
+
+In SQL Server versions 2017 and higher, Microsoft introduced features for intelligent query processing to improve performance for MSTVF. See more details about the Intelligent Query Processing features in the T-SQL Reference Documentation.
+
+Scalar user-defined functions
+A scalar user-defined function returns only one value unlike table-valued functions and therefore is often used for simple, frequent statements.
+
+Here's an example to get the product list price for a specific product on a certain day:
+
+```
+CREATE FUNCTION dbo.ufn_GetProductListPrice
+(@ProductID [int], @OrderDate [datetime])
+RETURNS [money] 
+AS 
+BEGIN
+    DECLARE @ListPrice money;
+        SELECT @ListPrice = plph.[ListPrice]
+        FROM [Production].[Product] p 
+        INNER JOIN [Production].[ProductListPriceHistory] plph 
+        ON p.[ProductID] = plph.[ProductID] 
+            AND p.[ProductID] = @ProductID 
+            AND StartDate = @OrderDate
+    RETURN @ListPrice;
+END;
+GO
+```
+ 
+For this function, both parameters must be provided to get the value. Depending on the function, you can list the function in the SELECT statement in a more complex query.
+
+`   SELECT dbo.ufn_GetProductListPrice (707, '2011-05-31')`
+Bind function to referenced objects
+SCHEMABINDING is optional when creating the function. When you specify SCHEMABINDING, it binds the function to the referenced objects, and then objects can't be modified without also modifying the function. The function must first be modified or dropped to remove dependencies before modifying the object.
+
+SCHEMABINDING is removed if any of the following occur:
+
+The function is dropped
+ 
+The function is modified with ALTER statement without specifying SCHEMABINDING 
  
 #### Implement error handling with Transact-SQL
  
+Transact-SQL is a powerful declarative language that lets you explore and manipulate your database. As the complexity of your programs increase, so does the risk of errors occurring. 
+ 
+Transact-SQL (T-SQL) is a powerful declarative language that lets you explore and manipulate your database. As the complexity of your programs increase, so does the risk of errors occurring, for example, from a data type mismatch, or variables not containing expected values. If not managed correctly, these errors can cause your programs to stop running, or to produced unexpected behaviors.
+
+Here you'll cover basic T-SQL error handling, including how you can raise errors intentionally and set up alerts to fire when errors occur.
+
+After completing this lesson, you'll be able to:
+
+* Raise errors using the RAISERROR statement.
+* Raise errors using the THROW statement.
+* Use the @@ERROR system variable.
+* Create custom errors.
+* Create alerts that fire when errors occur. 
+ 
+**Implement T-SQL error handling**
+
+An error indicates a problem or notable issue that arises during a database operation. Errors can be generated by the SQL Server Database Engine in response to an event or failure at the system level; or you can generate application errors in your Transact-SQL code.
+
+Elements of database engine errors
+Whatever of the cause, every error is composed of the following elements:
+
+* Error number - Unique number identifying the specific error.
+* Error message - Text describing the error.
+* Severity - Numeric indication of seriousness from 1 to 25.
+* State - Internal state code for the database engine condition.
+* Procedure - The name of the stored procedure or trigger in which the error occurred.
+* Line number - Which statement in the batch or procedure generated the error.
+
+System errors
+ 
+System errors are predefined, and you can view them in the sys.messages system view. When a system error occurs, SQL Server may take automatic remedial action, depending on the severity of the error. For example, when a high-severity error occurs, SQL Server may take a database offline or even stop the database engine service.
+
+Custom errors
+ 
+You can generate errors in Transact-SQL code to respond to application-specific conditions or to customize information sent to client applications in response to system errors. These application errors can be defined inline where they're generated, or you can predefine them in the sys.messages table alongside the system-supplied errors. The error numbers used for custom errors must be 50001 or above.
+
+To add a custom error message to sys.messages, use sp_addmessage. The user for the message must be a member of the sysadmin or serveradmin fixed server roles.
+
+This is the sp_addmessage syntax:
+
+```
+sp_addmessage [ @msgnum= ] msg_id , [ @severity= ] severity , [ @msgtext= ] 'msg' 
+     [ , [ @lang= ] 'language' ] 
+     [ , [ @with_log= ] { 'TRUE' | 'FALSE' } ] 
+     [ , [ @replace= ] 'replace' ]
+```
+ 
+Here is an example of a custom error message using this syntax:
+
+`sp_addmessage 50001, 10, N’Unexpected value entered’;`
+ 
+In addition, you can define custom error messages, members of the sysadmin server role can also use an additional parameter, @with_log. When set to TRUE, the error will also be recorded in the Windows Application log. Any message written to the Windows Application log is also written to the SQL Server error log. Be judicious with the use of the @with_log option because network and system administrators tend to dislike applications that are “chatty” in the system logs. However, if the error needs to be trapped by an alert, the error must first be written to the Windows Application log.
+
+ **Note**
+
+Raising system errors is not supported.
+
+Messages can be replaced without deleting them first by using the @replace = ‘replace’ option.
+
+The messages are customizable and different ones can be added for the same error number for multiple languages, based on a language_id value.
+
+ **Note**
+
+English messages are language_id 1033.
+
+Raise errors using RAISERROR
+ 
+Both PRINT and RAISERROR can be used to return information or warning messages to applications. RAISERROR allows applications to raise an error that could then be caught by the calling process.
+
+RAISERROR
+The ability to raise errors in T-SQL makes error handling in the application easier, because it's sent like any other system error. RAISERROR is used to:
+
+Help troubleshoot T-SQL code.
+Check the values of data.
+Return messages that contain variable text.
+ 
+ **Note**
+
+Using a PRINT statement is similar to raising an error of severity 10.
+
+Here is an example of a custom error message using RAISERROR.
+
+```
+RAISERROR (N'%s %d', -- Message text,
+    10, -- Severity,
+    1, -- State,
+    N'Custom error message number',
+    2)
+```
+ 
+When triggered, it returns:
+
+`Custom error message number 2`
+ 
+In the previous example, %d is a placeholder for a number and %s is a placeholder for a string. In addition, you should note that a message number wasn't mentioned. When errors with message strings are raised using this syntax, they always have error number 50000.
+
+Raise errors using THROW
+The THROW statement offers a simpler method of raising errors in code. Errors must have an error number of at least 50000.
+
+THROW
+ 
+THROW differs from RAISERROR in several ways:
+
+Errors raised by THROW are always severity 16.
+The messages returned by THROW aren't related to any entries in sys.sysmessages.
+Errors raised by THROW only cause transaction abort when used in conjunction with SET XACT_ABORT ON and the session is terminated.
+
+ ```
+THROW 50001, 'An Error Occured',0
+```
+ 
+Capture error codes using @@Error
+ 
+Most traditional error handling code in SQL Server applications has been created using @@ERROR. Structured exception handling was introduced in SQL Server 2005 and provides a strong alternative to using @@ERROR. It will be discussed in the next lesson. A large amount of existing SQL Server error handling code is based on @@ERROR, so it is important to understand how to work with it.
+
+@@ERROR
+ 
+@@ERROR is a system variable that holds the error number of the last error that has occurred. One significant challenge with @@ERROR is that the value it holds is quickly reset as each additional statement is executed.
+
+For example, consider the following code:
+
+```
+RAISERROR(N'Message', 16, 1);
+IF @@ERROR <> 0
+PRINT 'Error=' + CAST(@@ERROR AS VARCHAR(8));
+GO
+```
+ 
+You might expect that, when the code is executed, it would return the error number in a printed string. However, when the code is executed, it returns:
+
+```
+Msg 50000, Level 16, State 1, Line 1
+Message
+Error=0
+```
+ 
+The error was raised but the message printed was “Error=0”. In the first line of the output, you can see that the error, as expected, was actually 50000, with a message passed to RAISERROR. This is because the IF statement that follows the RAISERROR statement was executed successfully and caused the @@ERROR value to be reset. For this reason, when working with @@ERROR, it's important to capture the error number into a variable as soon as it's raised, and then continue processing with the variable.
+
+Look at the following code that demonstrates this:
+
+```
+DECLARE @ErrorValue int;
+RAISERROR(N'Message', 16, 1);
+SET @ErrorValue = @@ERROR;
+IF @ErrorValue <> 0
+PRINT 'Error=' + CAST(@ErrorValue AS VARCHAR(8));
+```
+ 
+When this code is executed, it returns the following output:
+
+```
+Msg 50000, Level 16, State 1, Line 2
+Message
+Error=50000
+```
+ 
+The error number is correctly reported now.
+
+Centralizing error handling
+One other significant issue with using @@ERROR for error handling is that it's difficult to centralize within your T-SQL code. Error handling tends to end up scattered throughout the code. It would be possible to centralize error handling using @@ERROR to some extent, by using labels and GOTO statements. However, this would be frowned upon by most developers' today as a poor coding practice.
+
+Create error alerts
+ 
+For certain categories of errors, administrators might create SQL Server alerts, because they wish to be notified as soon as these occur. This can even apply to user-defined error messages. For example, you might want to raise an alert whenever a transaction log fills. Alerting is commonly used to bring high severity errors (such as severity 19 or above) to the attention of administrators.
+
+Raising alerts
+ 
+Alerts can be created for specific error messages. The alerting service works by registering itself as a callback service with the event logging service. This means that alerts only work on logged errors.
+
+There are two ways to make an error raise an alert—you can use the WITH LOG option when raising the error or the message can be altered to make it logged by executing sp_altermessage. The WITH LOG option affects only the current statement. Using sp_altermessage changes the error behavior for all future use. Modifying system errors via sp_altermessage is only possible from SQL Server 2005 SP3 or SQL Server 2008 SP1 onwards. 
+ 
+**Implement structured exception handling**
+
+Now you have an understanding of the nature of errors and basic error handling in T-SQL, it's time to look at a more advanced form of error handling. Structured exception handling was introduced in SQL Server 2005.
+
+Here, you'll see how to use it and evaluate its benefits and limitations. Including the TRY CATCH block, the role of error handling functions, understanding the difference between catchable and noncatchable errors. Finally you'll see how errors can be managed and surfaced when necessary.
+
+What is TRY/CATCH block programming
+Structured exception handling is more powerful than error handling based on the @@ERROR system variable. It allows you to prevent code from being littered with error handling code and to centralize that error handling code. Centralization of error handling code also means you can focus more on the purpose of the code rather than the error handling it contains.
+
+TRY block and CATCH block
+ 
+When using structured exception handling, code that might raise an error is placed within a TRY block. TRY blocks are enclosed by BEGIN TRY and END TRY statements.
+
+Should a catchable error occur - most errors can be caught, execution control moves to the CATCH block. The CATCH block is a series of T-SQL statements enclosed by BEGIN CATCH and END CATCH statements.
+
+ **Note**
+
+While BEGIN CATCH and END TRY are separate statements, the BEGIN CATCH must immediately follow the END TRY.
+
+Current limitations
+ 
+High-level languages often offer a try/catch/finally construct, and are often used to release resources implicitly. There's no equivalent FINALLY block in T-SQL.
+
+Understand the difference between catchable and noncatchable errors
+It's important to realize that, while TRY/CATCH blocks allow you to catch a much wider range of errors than you could with @@ERROR, you can't catch every type.
+
+Catchable vs. noncatchable errors
+ 
+Not all errors can be caught by TRY/CATCH blocks within the same scope where the TRY/CATCH block exists. Often, errors that cannot be caught in the same scope can be caught in a surrounding scope. For example, you might not be able to catch an error within the stored procedure that contains the TRY/CATCH block. However, you're likely to catch that error in a TRY/CATCH block in the code that called the stored procedure where the error occurred.
+
+Common noncatchable errors
+ 
+Common examples of noncatchable errors are:
+
+* Compile errors, such as syntax errors, that prevent a batch from compiling.
+* Statement level recompilation issues that usually relate to deferred name resolution. For example, you could create a stored procedure that refers to an unknown table. An error is only thrown when the procedure tries to resolve the name of the table to an objectid.
+ 
+How to rethrow errors using THROW
+ 
+If the THROW statement is used in a CATCH block without any parameters, it will rethrow the error that caused the code to enter the CATCH block. You can use this technique to implement error logging in the database by catching errors and logging their details, and then throwing the original error to the client application, so that it can be handled there.
+
+Here is an example of how to rethrow an error.
+
+```
+BEGIN TRY
+    -- code to be executed
+END TRY
+BEGIN CATCH
+    PRINT ERROR_MESSAGE0.
+    THROW
+END CATCH
+```
+ 
+In some earlier versions of SQL Server, there was no method to throw a system error. While THROW can't specify a system error to raise, when THROW is used without parameters in a CATCH block, it will reraise both system and user errors.
+
+What are error handling functions
+ 
+CATCH blocks make the error-related information available throughout the duration of the CATCH block. This includes subscopes, such as stored procedures, run from within the CATCH block.
+
+Error handling functions
+ 
+You should recall that, when programming with @@ERROR, the value held by the @@ERROR system variable was reset as soon as the next statement was executed.
+
+Another key advantage of structured exception handling in T-SQL is that a series of error handling functions has been provided and these keep their values throughout the CATCH block. Separate functions provide each property of an error that has been raised.
+
+This means you can write generic error handling stored procedures that can still access the error-related information.
+
+* CATCH blocks make the error-related information available throughout the duration of the CATCH block.
+* @@Error is reset when the next statement is run.
+ 
+Manage errors in code
+ 
+SQL CLR integration allows for the execution of managed code within SQL Server. High-level .NET languages, such as C# and VB, have detailed exception handling available to them. Errors can be caught using standard .NET try/catch/finally blocks.
+
+Errors in managed code
+ 
+In general, you might wish to catch errors within managed code as much as possible. It's important to realize, though, that any errors not handled in the managed code are passed back to the calling T-SQL code. Whenever any error that occurs in managed code is returned to SQL Server, it will appear to be a 6522 error. Errors can be nested and that particular error will be wrapping the real cause of the error.
+
+Another rare but possible cause of errors in managed code would be that the code could execute a RAISERROR T-SQL statement via a SqlCommand object. 
+ 
 #### Implement transactions with Transact-SQL
+ 
+In this module, you will learn how to construct transactions to control the behavior of multiple Transact-SQL (T-SQL) statements. You will learn how to determine whether an error has occurred, and when to roll back statements.
+
+After completing this module, you’ll be able to:
+
+* Describe transactions.
+* Compare transactions and batches.
+* Create and manage transactions.
+* Handle errors in transactions.
+* Describe concurrency. 
+ 
+**Describe transactions**
+
+A transaction is one or more T-SQL statements that are treated as a unit. If a single transaction fails, then all of the statements fail. If a transaction is successful, you know that all the data modification statements in the transaction were successful and committed to the database.
+
+Transactions ensure all statements within a transaction either succeed or all fail, no partial completion is permitted. Transactions encapsulate operations that must logically occur together, such as multiple entries into related tables that are part of a single operation.
+
+Consider a business that stores purchases in a Sales.Order table, and payments in a Sales.Payment table. When someone buys something both tables must be updated. If this is implemented without transactions, and an error occurs when the payment is being written to the database, the Sales.Order insert will still be committed, leaving the payment table without an entry.
+
+When this is implemented with transactions, either both entries are made or neither entry is made. If there's an error writing the payment to the table, the order insert will also be rolled back. This means the database is always in a consistent state.
+
+Diagram showing the difference between using transactions and not using transactions.
+
+It should be noted that this refers to severe errors, such as hardware or network errors. Errors in SQL statements would only cause the transaction to roll back in certain circumstances and it is important to review the subsequent units in this module to fully understand the implications of using transactions.
+
+There are different types of transactions:
+
+* Explicit transactions
+ 
+The keywords BEGIN TRANSACTION and either COMMIT or ROLLBACK start and end each batch of statements. This allows you to specify which statements must be either committed or rolled back together.
+
+* Implicit transactions
+ 
+A transaction is started when the previous transaction has completed. Each transaction is explicitly completed with a COMMIT or ROLLBACK statement.
+
+ACID characteristics
+ 
+Online Transactional Processing (OLTP) systems require transactions to meet "ACID" characteristics:
+
+* Atomicity – each transaction is treated as a single unit, which succeeds completely or fails completely. For example, a transaction that involved debiting funds from one account and crediting the same amount to another account must complete both actions. If either action can't be completed, then the other action must fail.
+* Consistency – transactions can only take the data in the database from one valid state to another. To continue the debit and credit example above, the completed state of the transaction must reflect the transfer of funds from one account to the other.
+* Isolation – concurrent transactions cannot interfere with one another, and must result in a consistent database state. For example, while the transaction to transfer funds from one account to another is in-process, another transaction that checks the balance of these accounts must return consistent results - the balance-checking transaction can't retrieve a value for one account that reflects the balance before the transfer, and a value for the other account that reflects the balance after the transfer.
+* Durability – when a transaction has been committed, it will remain committed. After the account transfer transaction has completed, the revised account balances are persisted so that even if the database system were to be switched off, the committed transaction would be reflected when it is switched on again. 
+ 
+**Compare transactions and batches**
+
+It's helpful to compare the behavior of T-SQL batches, enclosed within a TRY/CATCH block, to the behavior of transactions.
+
+Consider the following code that is inserting two customer orders, requiring a row in the SalesLT.SalesOrderHeader table, and one or more rows in the SalesLT.SalesOrderDetail table. All the INSERT statements are enclosed within the TRY block.
+
+* If the first insert fails, execution passes to the CATCH block and no further code is executed.
+* If the second insert fails, execution passes to the CATCH block and no further code is executed. However, the first insert was successful, and isn't rolled back leaving the database in an inconsistent state. A row was inserted for the order, but no row for the order detail.
+ 
+```
+BEGIN TRY
+	INSERT INTO dbo.Orders(custid, empid, orderdate) 
+		VALUES (68, 9, '2021-07-12');
+	INSERT INTO dbo.Orders(custid, empid, orderdate) 
+		VALUES (88, 3, '2021-07-15');
+	INSERT INTO dbo.OrderDetails(orderid,productid,unitprice,qty) 
+		VALUES (1, 2, 15.20, 20);
+	INSERT INTO dbo.OrderDetails(orderid,productid,unitprice,qty) 
+		VALUES (999, 77, 26.20, 15);
+END TRY
+BEGIN CATCH
+	SELECT ERROR_NUMBER() AS ErrNum, ERROR_MESSAGE() AS ErrMsg;
+END CATCH;
+```
+ 
+Compare this to implementing the code within a transaction. The TRY/CATCH block is still used for error handling, however the INSERT statements for the Orders and OrderDetails tables are enclosed within BEGIN TRANSACTION/COMMIT TRANSACTION keywords. This ensures that all statements are treated as a single transaction, which either succeeds or fails. Either one row is written to both the Orders and OrderDetails table, or neither row is inserted. In this way, the database can never be in an inconsistent state.
+
+```
+BEGIN TRY
+ BEGIN TRANSACTION;
+	INSERT INTO dbo.Orders(custid, empid, orderdate) 
+		VALUES (68,9,'2006-07-15');
+	INSERT INTO dbo.OrderDetails(orderid,productid,unitprice,qty) 
+		VALUES (99, 2,15.20,20);
+	COMMIT TRANSACTION;
+END TRY
+BEGIN CATCH
+ SELECT ERROR_NUMBER() AS ErrNum, ERROR_MESSAGE() AS ErrMsg;
+ ROLLBACK TRANSACTION;
+END CATCH; 
+```
+ 
+**Create and manage transactions**
+
+To explicitly start a transaction, use the BEGIN TRANSACTION, or the shortened version, BEGIN TRAN.
+
+Once a transaction has been started, it must be ended with either:
+
+* COMMIT TRANSACTION, or
+* ROLLBACK TRANSACTION.
+ 
+This ensures that all the statements within the transaction are committed together or rolled back together if there's an error.
+
+Transactions last until a COMMIT TRANSACTION or ROLLBACK TRANSACTION command is issued, or the connection is dropped. If the connection is dropped part way through a transaction, the whole transaction is rolled back.
+
+Transactions may be nested, in which case the inner transactions will be rolled back if the outer transaction rolls back.
+
+No error is detected
+ 
+When the statements in your transaction have completed without error, use COMMIT TRANSACTION, sometimes shortened to COMMIT TRAN. This commits the changes to the database. This will also release resources such as locks held during the transaction.
+
+If an error is detected
+ 
+If an error occurred within the transaction, use the ROLLBACK command.
+
+ROLLBACK undoes any modifications made to data during the transaction, leaving it in the state it was before the transaction started. ROLLBACK also releases resources, such as locks, held for the transaction.
+
+XACT_ABORT
+ 
+When SET XACT_ABORT is ON, if SQL Server raises an error, the entire transaction is rolled back. When SET XACT_ABORT is OFF, only the statement that raised the error is rolled back if the severity of the error is low.
+
+For example, when SET XACT_ABORT is OFF a transaction has three statements. Two have no errors, but the third one breaks a check constraint. In this example, even though the three statements are in a transaction, two of them are committed. In the same example, if the error had been caused by an incorrect data type, this would have been severe enough to issue a rollback and none of the statements would have committed.
+
+Because it is not always clear whether the transaction will be committed or rolled back, it is essential to add error handling to transactions. 
+ 
+**Handle errors in transactions**
+
+Structured exception handing uses the TRY/CATCH construct to test for errors, and handle errors. When using exception handling with transactions, it is important to place the COMMIT or ROLLBACK keywords in the correct place in relation to the TRY/CATCH blocks.
+
+Commit transactions
+ 
+When using transactions with structured exception handling, place the COMMIT the transaction inside the TRY block as in the following code example:
+
+```
+BEGIN TRY
+ BEGIN TRANSACTION
+ 	INSERT INTO dbo.Orders(custid, empid, orderdate)
+	VALUES (68,9,'2006-07-12');
+	INSERT INTO dbo.OrderDetails(orderid,productid,unitprice,qty)
+	VALUES (1, 2,15.20,20);
+ COMMIT TRANSACTION
+END TRY 
+```
+ 
+Rollback transaction
+ 
+When used with structured exception handling, place the ROLLBACK the transaction inside the CATCH block as in the following code example:
+
+```
+BEGIN TRY
+ BEGIN TRANSACTION;
+ 	INSERT INTO dbo.Orders(custid, empid, orderdate)
+	VALUES (68,9,'2006-07-12');
+	INSERT INTO dbo.OrderDetails(orderid,productid,unitprice,qty)
+	VALUES (1, 2,15.20,20);
+ COMMIT TRANSACTION;
+END TRY
+BEGIN CATCH
+	SELECT ERROR_NUMBER() AS ErrNum, ERROR_MESSAGE() AS ErrMsg;
+	ROLLBACK TRANSACTION;
+END CATCH;
+```
+ 
+XACT_STATE
+ 
+To avoid rolling back an active transaction, use the XACT_STATE function. XACT_STATE returns the following values:
+
+Return value	Meaning
+ 
+* 1	The current request has an active, committable user transaction.
+* 0	No active transaction.
+* -1	The current request has an active user transaction, but an error has occurred that has caused the transaction to be classified as an uncommittable transaction.
+ 
+XACT_State can be used before the ROLLBACK command, to check whether the transaction is active.
+
+The following code shows the XACT_STATE function being used within the CATCH block so that the transaction is only rolled back if there is an active user transaction.
+
+```
+BEGIN TRY
+ BEGIN TRANSACTION;
+ 	INSERT INTO dbo.SimpleOrders(custid, empid, orderdate) 
+	VALUES (68,9,'2006-07-12');
+	INSERT INTO dbo.SimpleOrderDetails(orderid,productid,unitprice,qty) 
+	VALUES (1, 2,15.20,20);
+ COMMIT TRANSACTION;
+END TRY
+BEGIN CATCH
+	SELECT ERROR_NUMBER() AS ErrNum, ERROR_MESSAGE() AS ErrMsg;
+	IF (XACT_STATE()) <> 0
+    	BEGIN
+        ROLLBACK TRANSACTION;
+    	END;
+	ELSE .... -- provide for other outcomes of XACT_STATE()
+END CATCH; 
+```
+ 
+**Describe concurrency**
+
+A core feature of multiuser databases is concurrency. Concurrency uses locking and blocking to enables data to remain consistent with many users updating and reading data at the same time. For example, because of shipping costs, all of our products have a $5 price increase. At the same time, because of currency rates, all products have a 3% price decrease. If these updates happen at exactly the same time, the final price will be variable and there are likely to be many errors. Using locking, you can ensure that one update will complete before the other one begins.
+
+Concurrency occurs at the transaction level. A writing transaction can block other transactions from updating and even reading the same data. Equally, a reading transaction can block other readers or even some writers. For this reason, it's important to avoid needlessly long transactions or transactions spanning excessive amounts of data.
+
+There are many specific transaction isolation levels that can be used to define how a database system handles multiple users. For the purposes of this module, we'll look at broad categories of isolation level, optimistic locking, and pessimistic locking.
+
+ **Note**
+
+The full detail of transaction locking beyond concurrency is related more to performance and not only dependent on the code - although good code performs better. Please review the in-depth SQL Server Transaction Locking and Row Versioning Guide for more details. For information about blocking, also review the SQL Server Performance documentation.
+
+Optimistic concurrency
+ 
+With optimistic locking there's an assumption that few conflicting updates will occur. At the start of the transaction, the initial state of the data is recorded. Before the transaction is committed, the current state is compared with the initial state. If the states are the same, the transaction is completed. If the states are different, the transaction is rolled back.
+
+For example, you have a table containing last years sales orders. This data is infrequently updated, but reports are run often. By using optimistic locking, transactions don't block each other and the system runs more efficiently. Unfortunately, errors have been found in last years data and updates need to take place. While one transaction is updating every row, another transaction makes a minor edit to a single row at the same time. Because the state of the data was changed while the initial transaction was running, the whole transaction is rolled back.
+
+Pessimistic concurrency
+ 
+With pessimistic locking there's an assumption that many updates are happening to the data at the same time. By using locks only one update can happen at the same time, and reads of the data are prevented while updates are taking place. This can prevent large rollbacks, as seen in the previous example, but can cause queries to be blocked unnecessarily.
+
+It's important to consider the nature of your data and the queries running on the data when deciding whether to use optimistic or pessimistic concurrency to ensure optimum performance.
+
+Snapshot isolation
+ 
+There are five different isolation levels in SQL Server, but for this module we'll concentrate on just READ_COMMITTED_SNAPSHOT_OFF and READ_COMMITTED_SNAPSHOT_ON. READ_COMMITTED_SNAPSHOT_OFF is the default isolation level for SQL Server. READ_COMMITTED_SNAPSHOT_ON is the default isolation level for Azure SQL Database.
+
+READ_COMMITTED_SNAPSHOT_OFF will hold locks on the affected rows until the end of the transaction if q query is using the read committed transaction isolation level. While it's possible for some updates to occur, such as the creation of a new row, this will prevent most conflicting changes to the data being read or updated. This is pessimistic concurrency.
+
+READ_COMMITTED_SNAPSHOT_ON takes a snapshot of the data. Updates are then done on that snapshot allowing other connections to query the original data. At the end of the transaction the current state of the data is compared to the snapshot. If the data is the same, the transaction is committed. If the data differs, the transaction is rolled back.
+
+To change the isolation level to READ_COMMITTED_SNAPSHOT_ON issue the following command:
+
+`ALTER DATABASE *db_name* SET READ_COMMITTED_SNAPSHOT ON;`
+ 
+To change the isolation level to READ_COMMITTED_SNAPSHOT_OFF issue the following command:
+
+`ALTER DATABASE *db_name* SET READ_COMMITTED_SNAPSHOT OFF;`
+ 
+If the database has been altered to turn on read committed snapshot, any transaction that uses the default read committed isolation level will use optimistic locking.
+
+ **Note**
+
+Snapshot isolation only occurs for read committed transactions. Transactions that use other isolation levels are not affected. 
  
 ### <h3 id="section1-3">Write advanced Transact-SQL queries</h3> 
 
