@@ -7,10 +7,11 @@ Microsoft database systems such as SQL Server, Azure SQL Database, Azure Synapse
   * <a href="#section1-2">Programming with Transact-SQL</a>
   * <a href="#section1-3">Write advanced Transact-SQL queries</a>
 
-* <a href="#section2">Optimize query performance in Azure SQL</a>
+* <a href="https://docs.microsoft.com/en-ca/learn/paths/optimize-query-performance-sql-server/">Optimize query performance in Azure SQL</a>
   * <a href="#section2-1">Describe SQL Server query plans</a>
-  * <a href="#section2-2">Explore performance-based design</a>
-  * <a href="#section2-3">Evaluate performance improvements</a>
+  * <a href="#section2-2">Explore query performance optimization</a>
+  * <a href="#section2-3">Explore performance-based design</a>
+  * <a href="#section2-4">Evaluate performance improvements</a>
   
 ## <h2 id="section1">T-SQL</h2>
 
@@ -1531,12 +1532,723 @@ GO
  
 The example above is a good solution but it does require a fairly large development effort, and a firm understanding of your data distribution. It also may require maintenance as the data changes. 
  
-####  
+### <h3 id="section2-2">Explore query performance optimization</h3>
 
-### <h3 id="section2-2">Explore performance-based design</h3>
+Read and understand various forms of execution plans. Compare estimated vs actual plans. Learn how and why plans are generated. Understand the purpose and benefits of the Query Store.
+ 
+The most important skill you should acquire in database performance tuning is being able to read and understand query execution plans. The plans explain the behavior of the database engine as it executes queries and retrieves the results.
+
+Query Store helps you quickly identify your most expensive queries, and find any changes in performance. The Query Store provides a powerful data collection including the automation of query plan and execution runtime. SQL Server and Azure SQL provide locking and blocking in order to manage concurrency and ensure data consistency. Finally, you can adjust the isolation levels in SQL Server to help manage concurrency.
+ 
+#### Understand query plans
+
+It's helpful to have a basic understanding of how database optimizers work before taking a deeper dive into execution plan details. SQL Server uses what is known as cost-based query optimizer. The query optimizer calculates a cost for multiple possible plans based on the statistics it has on the columns being utilized, and the possible indexes that can be used for each operation in each query plan. Based on this information, it comes up with a total cost for each plan. Some complex queries can have thousands of possible execution plans. The optimizer doesn't evaluate every possible plan, but uses heuristics to determine plans that are likely to have good performance. The optimizer will then choose the lowest cost plan of all the plans evaluated for a given query.
+
+Because the query optimizer is cost-based, it's important that it has good inputs for decision making. The statistics SQL Server uses to track the distribution of data in columns and indexes need be kept up to date, or it can cause suboptimal execution plans to be generated. SQL Server automatically updates its statistics as data changes in a table; however, more frequent updates may be needed for rapidly changing data. The engine uses many factors when building a plan including compatibility level of the database, row estimates based on statistics and available indexes.
+
+When a user submits a query to the database engine, the following process happens:
+
+1. The query is parsed for proper syntax and a parse tree of database objects is generated if the syntax is correct.
+2. The parse tree from Step 1 is taken as input to a database engine component called the Algebrizer for binding. This step validates that columns and objects in the query exist and identifies the data types that are being processed for a given query. This step outputs a query processor tree, which is in the input for step 3.
+3. Because query optimization is a relatively expensive process in terms of CPU consumption, the database engine caches execution plans in a special area of memory called the plan cache. If a plan for a given query already exists, that plan is retrieved from the cache. The queries whose plans are stored in cache will each have a hash value generated based on the T-SQL in the query. This value is referred to as the query_hash. The engine will generate a query_hash for the current query and then look to see if it matches any existing queries in the plan cache.
+4. If the plan doesn't exist, the Query Optimizer then uses its cost-based optimizer to generate several execution plan options based on the statistics about the columns, tables, and indexes that are used in the query, as described above. The output of this step is a query execution plan.
+5. The query is then executed using an execution plan that is pulled from the plan cache, or a new plan generated in step 4. The output of this step is the results of your query.
+ 
+ **Note**
+
+To learn more about how the query processor works, see Query Processing Architecture Guide
+
+Let’s look at an example. Consider the following query:
+
+```
+SELECT orderdate,
+        AVG(salesAmount)
+FROM FactResellerSales
+WHERE ShipDate = '2013-07-07'
+GROUP BY orderdate;
+```
+ 
+In this example SQL Server will check for the existence of the OrderDate, ShipDate, and SalesAmount columns in the table FactResellerSales. If those columns exist, it will then generate a hash value for the query, and examine the plan cache for a matching hash value. If there's plan for a query with a matching hash the engine will try to reuse that plan. If there's no plan with a matching hash, it will examine the statistics it has available on the OrderDate and ShipDate columns. The WHERE clause referencing the ShipDate column is what is known as the predicate in this query. If there's a nonclustered index that includes the ShipDate column SQL Server will most likely include that in the plan, if the costs are lower than retrieving data from the clustered index. The optimizer will then choose the lowest cost plan of the available plans and execute the query.
+
+Query plans combine a series of relational operators to retrieve the data, and also capture information about the data such as estimated row counts. Another element of the execution plan is the memory required to perform operations such as joining or sorting data. The memory needed by the query is called the memory grant. The memory grant is a good example of the importance of statistics. If SQL Server thinks an operator is going to return 10,000,000 rows, when it's only returning 100, a much larger amount of memory is granted to the query. A memory grant that is larger than necessary can cause a twofold problem. First, the query may encounter a RESOURCE_SEMAPHORE wait, which indicates that query is waiting for SQL Server to allocate it a large amount of memory. SQL Server defaults to waiting for 25 times the cost of the query (in seconds) before executing, up to 24 hours. Second, when the query is executed, if there isn't enough memory available, the query will spill to tempdb, which is much slower than operating in memory.
+
+The execution plan also stores other metadata about the query, including, but not limited to, the database compatibility level, the degree of parallelism of the query, and the parameters that are supplied if the query is parameterized.
+
+Query plans can be viewed either in a graphical representation or in a text-based format. The text-based options are invoked with SET commands and apply only to the current connection. Text-based plans can be viewed anywhere you can run T-SQL queries.
+
+Most DBAs prefer to look at plans graphically, because a graphical plan allows you to see the plan as a whole, including what’s called the shape of the plan, easily. There are several ways you can view and save graphical query plans. The most common tool used for this purpose is SQL Server Management Studio, but estimated plans can also be viewed in Azure Data Studio. There are also third-party tools that support viewing graphical execution plans.
+
+There are three different types of execution plans that can be viewed.
+
+**Estimated Execution Plan**
+ 
+This type is the execution plan as generated by the query optimizer. The metadata and size of query memory grant are based on estimates from the statistics as they exist in the database at the time of query compilation. To see a text-based estimated plan run the command SET SHOWPLAN_ALL ON before running the query. When you run the query, you'll see the steps of the execution plan, but the query will NOT be executed, and you won't see any results. The SET option will stay in effect until you set it OFF.
+
+**Actual Execution Plan**
+ 
+This type is same plan as the estimated plan; however this plan also contains the execution context for the query, which includes the estimated and actual row counts, any execution warnings, the actual degree of parallelism (number of processors used) and elapsed and CPU times used during the execution. To see a text-based actual plan run the command SET STATISTICS PROFILE ON before running the query. The query will execute, and you get the plan and the results.
+
+**Live Query Statistics**
+ 
+This plan viewing option combines the estimated and actual plans into an animated plan that displays execution progress through the operators in the plan. It refreshes every second and shows the actual number of rows flowing through the operators. The other benefit to Live Query Statistics is that it shows the handoff from operator to operator, which may be helpful in troubleshooting some performance issues. Because the type of plan is animated, it's only available as a graphical plan.
+ 
+#### Explain estimated and actual query plans
+ 
+#### Describe dynamic management views and functions
+
+SQL Server provides several hundred dynamic management objects. These objects contain system information that can be used to monitor the health of a server instance, diagnose problems, and tune performance. Dynamic management views and functions return internal data about the state of the database or the instance. Dynamic Management Objects can be either views (DMVs) or functions (DMFs), but most people use the acronym DMV to refer to both types of object.
+
+There are two levels of DMVs, server scoped and database scoped.
+
+* Server scoped objects – require VIEW SERVER STATE permission on the server
+* Database scoped objects – require the VIEW DATABASE STATE permission within the database
+ 
+The names of the DMVs are all prefixed with sys.dm_ followed by the functional area and then the specific function of the object. SQL Server supports three categories of DMVs:
+
+* Database-related dynamic management objects
+* Query execution related dynamic management objects
+* Transaction related dynamic management objects
+ 
+To learn about queries to monitor server and database performance, see Monitoring Microsoft Azure SQL Database and Azure SQL Managed Instance performance using dynamic management views.
+
+ **Note**
+
+For older versions of SQL Server where the query store is not available, you can use the view sys.dm_exec_cached_plans in conjunction with the functions sys.dm_exec_sql_text and sys.dm_exec_query_plan to return information about execution plans. However, unlike with Query Store, you will not be able to see changes in plans for a given query.
+
+Azure SQL Database has a slightly different set of the DMVs available than SQL Server; some objects are available only in Azure SQL Database, while other objects are only available in SQL Server. Some are scoped at the server level and aren't applicable in the Azure model (the waits_stats DMV below is an example of a server-scoped DMV), while others are specific to Azure SQL Database, like sys.dm_db_resource_stats and provide Azure-specific information that isn't available in (or relevant to) SQL Server. 
+ 
+#### Explore Query Store
+
+The SQL Server Query Store is a per-database feature that automatically captures a history of queries, plans, and runtime statistics to simplify performance troubleshooting and query tuning. It also provides insight into database usage patterns and resource consumption.
+
+In total, the Query Store contains three stores:
+
+* Plan store - used for storing estimated execution plan information
+* Runtime stats store - used for storing execution statistics information
+* Wait stats store - for persisting wait statistics information
+ 
+Screenshot of the Query Store components.
+
+Enable the Query Store
+The Query Store is enabled by default in Azure SQL databases. If you want to use it with SQL Server and Azure Synapse Analytics, you need to enable it first. To enable the Query Store feature, use the following query valid for your environment:
+
+```
+-- SQL Server
+ALTER DATABASE <database_name> SET QUERY_STORE = ON (OPERATION_MODE = READ_WRITE);
+
+-- Azure Synapse Analytics
+ALTER DATABASE <database_name> SET QUERY_STORE = ON;
+```
+ 
+How the Query Store collects data
+The Query Store integrates with the query processing pipeline at many stages. Within each integration point, data is collected in memory and written to disk asynchronously to minimize I/O overhead. The integration points are as follows:
+
+When a query executes for the first time, its query text and initial estimated execution plan are sent to the Query Store and persisted.
+
+The plan updates in the Query Store when a query recompiles. If the recompile results in a newly generated execution plan, it also persists in the Query Store to augment the previous plans. In addition, the Query Store keeps track of the execution statistics for each query plan for comparison purposes.
+
+During the compile and check for recompile phases, the Query Store identifies if there's a forced plan for the query to be executed. The query is recompiled if the Query Store provides a forced plan different from the plan in the procedure cache.
+
+When a query executes, its runtime statistics persist in the Query Store. The Query Store aggregates this data to ensure an accurate representation of every query plan.
+
+Screenshot of the Query Store integration points in the query execution pipeline displayed as a flow chart.
+
+To learn more about how Query Store collects data, see How Query Store collects data.
+
+Common scenarios
+The SQL Server Query Store provides valuable insight into the performance of the operations performed in a database. The most common scenarios include:
+
+Identifying and fixing performance regression due to inferior query execution plan selection
+
+Identifying and tuning the highest resource consumption queries
+
+A/B testing to evaluate the impacts of database and application changes
+
+Ensuring performance stability after SQL Server upgrades
+
+Determining the most frequently used queries
+
+Audit the history of query plans for a query
+
+Identifying and improving ad hoc workloads
+
+Understand the prevalent wait categories of a database and the contributing queries and plans affecting wait times
+
+Analyze database usage patterns over time as it applies to resource consumption (CPU, I/O, Memory)
+
+Discover the Query Store views
+Once Query Store is enabled on a database, the Query Store folder is visible for the database in Object Explorer. For Azure Synapse Analytics, the Query Store views are displayed under System Views. The Query Store views provide aggregated, quick insights into the performance aspects of the SQL Server database.
+
+Screenshot of S S M S Object Explorer with the Query Store views highlighted.
+
+Regressed Queries
+A regressed query is a query that is experiencing performance degradation over time due to execution plan changes. Estimated execution plans change due to many factors, including schema changes, statistics changes, and index changes. The first instinct may be to investigate the procedure cache, but the problem with the procedure cache is that it only stores the latest execution plan for a query; even then, plans are evicted based on the memory demands of the system. However, the Query Store persists several execution plans stored for each query, thus providing the flexibility to choose a specific plan in a concept known as plan forcing to solve the issue of a query performance regression caused by a plan change.
+
+The Regressed Queries view can pinpoint queries whose execution metrics are regressing due to execution plan changes over a specified timeframe. The Regressed Queries view allows filtering based on selecting a metric (such as duration, CPU time, row count, and more) and a statistic (total, average, min, max, or standard deviation). Then, the view lists the top 25 regressed queries based on the filter provided. A graphical bar chart view of the queries displays by default, but you can optionally view the queries in a grid format.
+
+The plan summary pane displays the persisted query plans associated with the query over time after selecting a query from the top-left query pane. You'll see a graphical query plan in the bottom pane by selecting a query plan in the Plan Summary pane. In addition, toolbar buttons are available in both the plan summary pane and graphical query plan pane to force the selected plan for the selected query. This pane structure and behavior is consistently used across all SQL Query views.
+
+Screenshot of the Query Store Regressed Queries view displaying each of the different panes.
+
+Alternatively, you can use the sp_query_store_force_plan stored procedure to use plan forcing.
+
+```
+EXEC sp_query_store_force_plan @query_id=73, @plan_id=79
+ ```
+ 
+Overall Resource Consumption
+The Overall Resource Consumption view allows for analyzing total resource consumption for multiple execution metrics (such as execution count, duration, wait time, and more) for a specified timeframe. The rendered charts are interactive; when selecting a measure from one of the charts, a drill through view displaying the queries associated with the chosen measure displays in a new tab.
+
+Screenshot of the SQL Query Store Overall resource consumption view with a configuration dialog indicating the different metrics available for display.
+
+The details view provides the top 25 resource consumer queries that contributed to the metric that was selected. This details view uses the consistent interface that allows for the inspection of the associated queries and their details, evaluate saved estimated query plans, and optionally use plan forcing to improve performance. This view is valuable when system resource contention becomes an issue, such as when CPU usage reaches capacity.
+
+Screenshot of the top 25 resource consumption for the database.
+
+Top Resource Consuming Queries
+The Top Resource Consuming Queries view is similar to the details drill down of the Overall Resource Consumption view. It also allows for selecting a metric and a statistic as a filter. However, the queries it displays are the top 25 most impactful queries based on the chosen filter and timeframe.
+
+Screenshot of the top resource consuming queries view for the database.
+
+The Top Resource Consuming Queries view provides the first indication of the ad hoc nature of the workload when identifying and improving ad hoc workloads. For example, in the following image, the Execution Count metric and the Total statistic are selected to unveil that approximately 90% of the top resource-consuming queries are only executed once.
+
+Screenshot of the top resource consuming queries filtered by execution count.
+
+Queries With Forced Plans
+The Queries With Forced Plans view provides a quick look into the queries that have forced query plans. This view becomes relevant if a forced plan no longer performs as expected and needs to be reevaluated. This view provides the ability to review all persisted estimated execution plans for a selected query easily determining if another plan is now better suited for performance. If so, toolbar buttons are available to unforce a plan as required.
+
+Screenshot of the queries with forced plans.
+
+Queries With High Variation
+Query performance can vary between executions. The Queries with High Variation view contains an analysis of queries that have the highest variation or standard deviation for a selected metric. The interface is consistent with most Query Store views allowing for query detail inspection, execution plan evaluation, and optionally forcing a specific plan. Use this view to tune unpredictable queries into a more consistent performance pattern.
+
+Screenshot with the queries with high variation.
+
+Query Wait Statistics
+The Query Wait Statistics view analyzes the most active wait categories for the database and renders a chart. This chart is interactive; selecting a wait category drills into the details of the queries that contribute to the wait time statistic.
+
+Screenshot of the queries with high variation view displays.
+
+The details view interface is also consistent with most query store views allowing for query detail inspection, execution plan evaluation, and optionally forcing a specific plan. This view helps identify queries that are affecting user experience across applications.
+
+Tracking Query
+The Tracking Query view allows analyzing a specific query based on an entered query ID value. Once run, the view provides the complete execution history of the query. A checkmark on an execution indicates a forced plan was used. This view can provide insight into queries such as those with forced plans to verify that query performance is remaining stable.
+
+Screenshot of the Tracking Query view filtering by a specific query ID.
+
+Using the Query Store to find query waits
+When the performance of a system begins to degrade, it makes sense to consult query wait statistics to potentially identify a cause. In addition to identifying queries that need tuning, it can also shed light on potential infrastructure upgrades that would be beneficial.
+
+The SQL Query Store provides the Query Wait Statistics view to provide insight into the top wait categories for the database. Currently, there are 23 wait categories.
+
+A bar chart displays the most impactful wait categories for the database when you open the Query Wait Statistics view. In addition, a filter located in the toolbar of the wait categories pane allows for the wait statistics to be calculated based on total wait time (default), average wait time, minimum wait time, maximum wait time, or standard deviation wait time.
+
+Screenshot of the Query Wait Statistics view displaying the most impactful categories as a bar chart.
+
+Selecting a wait category will drill through to the details of the queries that contribute to that wait category. From this view, you have the ability to investigate individual queries that are the most impactful. You can access the persisted estimated execution plans display in the Plan summary pane by selecting a query in the query pane. Selecting a query plan from the Plan summary pane will display the graphical query plan in the bottom pane. From this view, you have the ability to force or unforce a query plan for the query to improve performance.
+
+Screenshot of the Query Wait Statistics view displaying the most impactful queries for the wait category. 
+ 
+#### Identify problematic query plans
+ 
+#### Describe blocking and locking
+
+One feature of relational databases is locking, which is essential to maintain the atomicity, consistency, and isolation properties of the ACID model. All RDBMSs will block actions that would violate the consistency and isolation of writes to a database. SQL programmers are responsible for starting and ending transactions at the right point, in order to ensure the logical consistency of their data. In turn, the database engine provides locking mechanisms that also protect the logical consistency of the tables affected by those queries. These actions are a foundational part of the relational model.
+
+On SQL Server, blocking occurs when one process holds a lock on a specific resource (row, page, table, database), and a second process attempts to acquire a lock with an incompatible lock type on the same resource. Typically, locks are held for a short period, and when the process holding the lock releases it, the blocked process can then acquire the lock and complete its transaction.
+
+SQL Server locks the smallest amount of data needed to successfully complete the transaction. This behavior allows maximum concurrency. For example, if SQL Server is locking a single row, all other rows in the table are available for other processes to use, so concurrent work can go on. However, each lock requires memory resources, so it’s not cost-effective for one process to have thousands of individual locks on a single table. SQL Server tries to balance concurrency with cost. One technique used is called lock escalation. If SQL Server needs to lock more than 5000 rows on a single object in a single statement, it will escalate the multiple row locks to a single table lock.
+
+Locking is normal behavior and happens many times during a normal day. Locking only become a problem when it causes blocking that isn't quickly resolved. There are two types of performance issues that can be caused by blocking:
+
+* A process holds locks on a set of resources for an extended period of time before releasing them. These locks cause other processes to block, which can degrade query performance and concurrency.
+
+* A process gets locks on a set of resources, and never releases them. This problem requires administrator intervention to resolve.
+
+Another blocking scenario is deadlocking, which occurs when one transaction has a lock on a resource, and another transaction has a lock on a second resource. Each transaction then attempts to take a lock on the resource, which is currently locked by the other transaction. Theoretically, this scenario would lead to an infinite wait, as neither transaction could complete. However, the SQL Server engine has a mechanism for detecting these scenarios and will kill one of the transactions in order to alleviate the deadlock, based on which transaction has performed the least of amount of work that would need to be rolled back. The transaction that is killed is known as the deadlock victim. Deadlocks are recorded in the system_health extended event session, which is enabled by default.
+
+It's important to understand the concept of a transaction. Auto-commit is the default mode of SQL Server and Azure SQL Database, which means the changes made by the statement below would automatically be recorded in the database's transaction log.
+
+```
+INSERT INTO DemoTable (A) VALUES (1);
+```
+ 
+In order to allow developers to have more granular control over their application code, SQL Server also allows you to explicitly control your transactions. The query below would take a lock on a row in the DemoTable table what wouldn't be released until a subsequent command to commit the transaction was added.
+
+```
+BEGIN TRANSACTION
+
+INSERT INTO DemoTable (A) VALUES (1);
+```
+ 
+The proper way to write the above query is as follows:
+
+```
+BEGIN TRANSACTION
+
+INSERT INTO DemoTable (A) VALUES (1);
+
+COMMIT TRANSACTION
+```
+ 
+The COMMIT TRANSACTION command explicitly commits a record of the changes to the transaction log. The changed data will eventually make its way into the data file asynchronously. These transactions represent a unit of work to the database engine. If the developer forgets to issue the COMMIT TRANSACTION command, the transaction will stay open and the locks won't be released. This is one of the main reasons for long running transactions.
+
+The other mechanism the database engine uses to help the concurrency of the database is row versioning. When a row versioning isolation level is enabled to the database, engine maintains versions of each modified row in TempDB. This is typically used in mixed use workloads, in order to prevent reading queries from blocking queries that are writing to the database.
+
+To monitor open transactions awaiting commit or rollback run the following query:
+
+```
+SELECT tst.session_id, [database_name] = db_name(s.database_id)
+    , tat.transaction_begin_time
+    , transaction_duration_s = datediff(s, tat.transaction_begin_time, sysdatetime()) 
+    , transaction_type = CASE tat.transaction_type  WHEN 1 THEN 'Read/write transaction'
+        WHEN 2 THEN 'Read-only transaction'
+        WHEN 3 THEN 'System transaction'
+        WHEN 4 THEN 'Distributed transaction' END
+    , input_buffer = ib.event_info, tat.transaction_uow     
+    , transaction_state  = CASE tat.transaction_state    
+        WHEN 0 THEN 'The transaction has not been completely initialized yet.'
+        WHEN 1 THEN 'The transaction has been initialized but has not started.'
+        WHEN 2 THEN 'The transaction is active - has not been committed or rolled back.'
+        WHEN 3 THEN 'The transaction has ended. This is used for read-only transactions.'
+        WHEN 4 THEN 'The commit process has been initiated on the distributed transaction.'
+        WHEN 5 THEN 'The transaction is in a prepared state and waiting resolution.'
+        WHEN 6 THEN 'The transaction has been committed.'
+        WHEN 7 THEN 'The transaction is being rolled back.'
+        WHEN 8 THEN 'The transaction has been rolled back.' END 
+    , transaction_name = tat.name, request_status = r.status
+    , tst.is_user_transaction, tst.is_local
+    , session_open_transaction_count = tst.open_transaction_count  
+    , s.host_name, s.program_name, s.client_interface_name, s.login_name, s.is_user_process
+FROM sys.dm_tran_active_transactions tat 
+INNER JOIN sys.dm_tran_session_transactions tst  on tat.transaction_id = tst.transaction_id
+INNER JOIN Sys.dm_exec_sessions s on s.session_id = tst.session_id 
+LEFT OUTER JOIN sys.dm_exec_requests r on r.session_id = s.session_id
+CROSS APPLY sys.dm_exec_input_buffer(s.session_id, null) AS ib
+ORDER BY tat.transaction_begin_time DESC;
+```
+ 
+**Isolation levels**
+ 
+SQL Server offers several isolation levels to allow you to define the level of consistency and correctness you need guaranteed for your data. Isolation levels let you find a balance between concurrency and consistency. The isolation level doesn't affect the locks taken to prevent data modification, a transaction will always get an exclusive lock on the data that is modifying. However, your isolation level can affect the length of time that your locks are held. Lower isolation levels increase the ability of multiple user process to access data at the same time, but increase the data consistency risks that can occur. The isolation levels in SQL Server are as follows:
+
+* Read uncommitted – Lowest isolation level available. Dirty reads are allowed, which means one transaction may see changes made by another transaction that haven't yet been committed.
+
+* Read committed – allows a transaction to read data previously read, but not modified by another transaction with without waiting for the first transaction to finish. This level also releases read locks as soon as the select operation is performed. This is the default SQL Server level.
+
+* Repeatable Read – This level keeps read and write locks that are acquired on selected data until the end of the transaction.
+
+* Serializable – This is the highest level of isolation where transactions are isolated. Read and write locks are acquired on selected data and not released until the end of the transaction.
+
+SQL Server also includes two isolation levels that include row-versioning.
+
+* Read Committed Snapshot – In this level read operations take no row or page locks, and the engine presents each operation with a consistent snapshot of the data as it existed at the start of the query. This level is typically used when users are running frequent reporting queries against an OLTP database, in order to prevent the read operations from blocking the write operations.
+
+* Snapshot – This level provides transaction level read consistency through row versioning. This level is vulnerable to update conflicts. If a transaction running under this level reads data modified by another transaction, an update by the snapshot transaction will be terminated and roll back. This isn't an issue with read committed snapshot isolation.
+
+Isolation levels are set for each session with the T-SQL SET command, as shown:
+
+```
+SET TRANSACTION ISOLATION LEVEL
+
+ { READ UNCOMMITTED
+
+ | READ COMMITTED
+
+ | REPEATABLE READ
+
+ | SNAPSHOT
+
+ | SERIALIZABLE
+
+ }
+```
+ 
+There's no way to set a global isolation level all queries running in a database, or for all queries run by a particular user. It's a session level setting.
+
+Monitoring for blocking problems
+Identifying blocking problem can be troublesome as they can be sporadic in nature. There's a DMV called sys.dm_tran_locks, which can be joined with sys.dm_exec_requests in order to provide further information on locks that each session is holding. A better way to monitor for blocking problems is to do so on an ongoing basis using the Extended Events engine.
+
+Blocking problems typically fall into two categories:
+
+Poor transactional design. As shown above, a transaction that has no COMMIT TRANSACTION will never end. While that is a simple example, trying to do too much work in a single transaction or having a distributed transaction, which uses a linked server connection, can lead to unpredictable performance.
+
+Long running transactions caused by schema design. Frequently this can be an update on a column with a missing index, or poorly designed update query.
+
+Monitoring for locking-related performance problems allows you to quickly identity performance degradation related to locking.
+
+For more information about how to monitor blocking, see Understand and resolve SQL Server blocking problems.
+ 
+### <h3 id="section2-3">Explore performance-based design</h3>
 
 Explore normalization for relational databases. Investigate the impact of proper datatype usage. Compare types of indexes.
 
-### <h3 id="section2-3">Evaluate performance improvements</h3>
+Database design is an important aspect of database performance, even though it’s not always under the control of the database administrator. You may be working with third- party vendor applications that you didn't build. Whenever possible, it’s important to design your database properly for the workload, whether it’s an online transaction processing (OLTP) or data warehouse workload. Many design decisions, such as choosing the right datatypes, can make large differences in the performance of your databases.
+ 
+#### Describe normalization
+
+Database normalization is a design process used to organize a given set of data into tables and columns in a database. Each table should contain data relating to a specific ‘thing’ and only have data that supports that same ‘thing’ included in the table. The goal of this process is to reduce duplicate data contained within your database, to reduce performance degradation of database inserts and updates. For example, a customer address change is much easier to implement if the only place of the customer address is stored in the Customers table. The most common forms of normalization are first, second, and third normal form and are described below.
+
+**First normal form**
+ 
+First normal form has the following specifications:
+
+* Create a separate table for each set of related data
+* Eliminate repeating groups in individual tables
+* Identify each set of related data with a primary key
+ 
+In this model, you shouldn't use multiple columns in a single table to store similar data. For example, if product can come in multiple colors, you shouldn't have multiple columns in a single row containing the different color values. The first table, below (ProductColors), isn't in first normal form as there are repeating values for color. For products with only one color, there's wasted space. And what if a product came in more than three colors? Rather than having to set a maximum number of colors, we can recreate the table as shown in the second table, ProductColor. We also have a requirement for first normal form that there's a unique key for the table, which is column (or columns) whose value uniquely identifies the row. Neither of the columns in the second table is unique, but together, the combination of ProductID and Color is unique. When multiple columns are needed, we call that a composite key. 
+
+**Second normal form**
+ 
+Second normal form has the following specification, in addition to those required by first normal form:
+
+* If the table has a composite key, all attributes must depend on the complete key and not just part of it.
+ 
+Second normal form is only relevant to tables with composite keys, like in the table ProductColor, which is the second table above. Consider the case where the ProductColor table also includes the product’s price. This table has a composite key on ProductID and Color, because only using both column values can we uniquely identify a row. If a product’s price doesn't change with the color, we might see data as shown in this table: 
+ 
+The table above is not in second normal form. The price value is dependent on the ProductID but not on the Color. There are three rows for ProductID 1, so the price for that product is repeated three times. The problem with violating second normal form is that if we have to update the price, we have to make sure we update it everywhere. If we update the price in the first row, but not the second or third, we would have something called an ‘update anomaly’. After the update, we wouldn’t be able to tell what the actual price for ProductID 1 was. The solution is to move the Price column to a table that has ProductID as a single column key, because that is the only column that Price depends on. For example, we could use Table 3 to store the Price.
+
+If the price for a product was different based on its color, the fourth table would be in the second normal form, since the price would depend on both parts of the key: the ProductID and the Color.
+
+Third normal form
+Third normal form is typically the aim for most OLTP databases. Third normal form has the following specification, in addition to those required by second normal form:
+
+All nonkey columns are non-transitively dependent on the primary key.
+The transitive relationship implies that one column in a table is related to other columns, through a second column. Dependency means that a column can derive its value from another, as a result of a dependency. For example, your age can be determined from your date of birth, making your age dependent on your date of birth. Refer back to the third table, ProductInfo. This table is in second normal form, but not in third. The ShortLocation column is dependent on the ProductionCountry column, which isn't the key. Like second normal form, violating third normal form can lead to update anomalies. We would end up with inconsistent data if we updated the ShortLocation in one row but didn't update it in all the rows where that location occurred. To prevent this, we could create a separate table to store country names and their shortened forms.
+
+Denormalization
+While the third normal form is theoretically desirable, it isn't always possible for all data. In addition, a normalized database doesn't always give you the best performance. Normalized data frequently requires multiple join operations to get all the necessary data returned in a single query. There's a tradeoff between normalizing data when the number of joins required to return query results has high CPU utilization, and denormalized data that has fewer joins and less CPU required, but opens up the possibility of update anomalies.
+
+ Note
+
+Denormalized data is not the same as unnormalized. For denormalization, we start by designing tables that are normalized. Then we can add additional columns to some tables to reduce the number of joins required, but as we do so, we are aware of the possible update anomalies. We then make sure we have triggers or other kinds of processing that will make sure that when we perform an update, all the duplicate data is also updated.
+
+Denormalized data can be more efficient to query, especially for read heavy workloads like a data warehouse. In those cases, having extra columns may offer better query patterns and/or more simplistic queries.
+
+Star schema
+While most normalization is aimed at OLTP workloads, data warehouses have their own modeling structure, which is usually a denormalized model. This design uses fact tables, which record measurements or metrics for specific events like a sale, and joins them to dimension tables, which are smaller in terms of row count, but may have a large number of columns to describe the fact data. Some example dimensions would include inventory, time, and/or geography. This design pattern is used to make the database easier to query and offer performance gains for read workloads.
+
+A Sample Star Schema
+
+The above image shows an example of a star schema, including a FactResellerSales fact table, and dimensions for date, currency, and products. The fact table contains data related to the sales transactions, and the dimensions only contain data related to a specific element of the sales data. For example, the FactResellerSales table contains only a ProductKey to indicate which product was sold. All of the details about each product are stored in the DimProduct table, and related back to the fact table with the ProductKey column.
+
+Related to star schema design is a snowflake schema, which uses a set of more normalized tables for a single business entity. The following image shows an example of a single dimension for a snowflake schema. The Products dimension is normalized and stored in three tables called DimProductCategory, DimProductSubcategory, and DimProduct.
+
+Sample Snowflake Schema
+
+The main difference between star and snowflake schemas is that the dimensions in a snowflake schema are normalized to reduce redundancy, which saves storage space. The tradeoff is that your queries require more joins, which can increase your complexity and decrease performance.
+
+#### Choose appropriate data types
+
+SQL Server offers a wide variety of data types to choose from, and your choice can affect performance in many ways. While SQL Server can convert some data types automatically (we call this an ‘implicit conversion’, conversion can be costly and can also negatively affect query plans. The alternative is an explicit conversion, where you use the CAST or CONVERT function in your code to force a data type conversion.
+
+Additionally, choosing data types that are much larger than needed can cause wasted space and require more pages than is necessary to be read. It's important to choose the right data types for a given set of data—which will reduce the total storage required for the database and improve the performance of queries executed.
+
+ **Note**
+
+In some cases, conversions are not possible at all. For example, a date cannot be converted to a bit. Conversions can negatively impact query performance by causing index scans where seeks would have been possible, and additional CPU overhead from the conversion itself.
+
+The image below indicates in which cases SQL Server can do an implicit conversion and in which cases you must explicitly convert data types in your code.
+
+Chart of Type Conversions in SQL Server and Azure SQL
+
+SQL Server offers a set of system supplied data types for all data that can be used in your tables and queries. SQL Server allows the creation of user defined data types in either T-SQL or the .NET framework. 
+ 
+#### Design indexes
+
+SQL Server has several index types to support different types of workloads. At a high level, an index can be thought of as an on-disk structure that is associated with a table or a view, that enables SQL Server to more easily find the row or rows associated with the index key (which consists of one or more columns in the table or view), compared to scanning the entire table.
+
+**Clustered indexes**
+ 
+A common DBA job interview question is to ask the candidate the difference between a clustered and nonclustered index, as indexes are a fundamental data storage technology in SQL Server. A clustered index is the underlying table, stored in sorted order based on the key value. There can only be one clustered index on a given table, because the rows can be stored in one order. A table without a clustered index is called a heap, and heaps are typically only used as staging tables. An important performance design principle is to keep your clustered index key as narrow as possible. When considering the key column(s) for your clustered index, you should consider columns that are unique or that contain many distinct values. Another property of a good clustered index key is for records that are accessed sequentially, and are used frequently to sort the data retrieved from the table. Having the clustered index on the column used for sorting can prevent the cost of sorting every time that query executes, because the data will be already stored in the desired order.
+
+ **Note**
+
+When we say that the table is ‘stored’ in a particular order, we are referring to the logical order, not necessarily the physical, on-disk order. Indexes have pointers between pages, and the pointers help create the logical order. When scanning an index ‘in order’, SQL Server follows the pointers from page to page. Immediately after creating an index, it is most likely also stored in physical order on the disk, but after you start making modifications to the data, and new pages need to be added to the index, the pointers will still give us the correct logical order, but the new pages will most like not be in physical disk order.
+
+**Nonclustered indexes**
+ 
+Nonclustered indexes are a separate structure from the data rows. A nonclustered index contains the key values defined for the index, and a pointer to the data row that contains the key value. You can add another nonkey columns to the leaf level of the nonclustered index to cover more columns using the included columns feature in SQL Server. You can create multiple nonclustered indexes on a table.
+
+An example of when you need to add an index or add columns to an existing nonclustered index is shown below:
+
+Query and Query Execution Plan with a Key Lookup operator
+
+The query plan indicates that for each row retrieved using the index seek, more data will need to be retrieved from the clustered index (the table itself). There's a nonclustered index, but it only includes the product column. If you add the other columns in the query to a nonclustered index as shown below, you can see the execution plan change to eliminate the key lookup.
+
+Changing the Index and the Query Plan with No Key Lookup
+
+The index created above is an example of a covering index, where in addition to the key column you're including extra columns to cover the query and eliminate the need to access the table itself.
+
+Both nonclustered and clustered indexes can be defined as unique, meaning there can be no duplication of the key values. Unique indexes are automatically created when you create a PRIMARY KEY or UNIQUE constraint on a table.
+
+The focus of this section is on b-tree indexes in SQL Server—these are also known as row store indexes. The general structure of a b-tree is shown below:
+
+The B-tree architecture of an index in SQL Server and Azure SQL
+
+Each page in an index b-tree is a called an index node, and the top node of b-tree is called the root node. The bottom nodes in an index are called leaf nodes and the collection of leaf nodes is the leaf level.
+
+Index design is a mixture of art and science. A narrow index with few columns in its key requires less time to update and has lower maintenance overhead; however it may not be useful for as many queries as a wider index that includes more columns. You may need to experiment with several indexing approaches based on the columns selected by your application’s queries. The query optimizer will generally choose what it considers to be the best existing index for a query; however, that doesn't mean that there isn't a better index that could be built.
+
+Properly indexing a database is a complex task. When planning your indexes for a table, you should keep a few basic principles in:
+
+Understand the workloads of the system. A table that is used mainly for insert operations will benefit far less from extra indexes than a table used for data warehouse operations that are 90% read activity.
+Understand what queries are run most frequently, and optimize your indexes around those queries
+Understand the data types of the columns used in your queries. Indexes are ideal for integer data types, or unique or non-null columns.
+Create nonclustered indexes on columns that are frequently used in predicates and join clauses, and keep those indexes as narrow as possible to avoid overhead.
+Understand your data size/volume – A table scan on a small table will be a relatively cheap operation and SQL Server may decide to do a table scan simply because it's easy (trivial) to do. A table scan on a large table would be costly.
+Another option SQL Server provides is the creation of filtered indexes. Filtered indexes are best suited to columns in large tables where a large percentage of the rows has the same value in that column. A practical example would be an employee table, as shown below, that stored the records of all employees, including ones who had left or retired.
+
+```
+CREATE TABLE [HumanResources].[Employee](
+     [BusinessEntityID] [int] NOT NULL,
+     [NationalIDNumber] [nvarchar](15) NOT NULL,
+     [LoginID] [nvarchar](256) NOT NULL,
+     [OrganizationNode] [hierarchyid] NULL,
+     [OrganizationLevel] AS ([OrganizationNode].[GetLevel]()),
+     [JobTitle] [nvarchar](50) NOT NULL,
+     [BirthDate] [date] NOT NULL,
+     [MaritalStatus] [nchar](1) NOT NULL,
+     [Gender] [nchar](1) NOT NULL,
+     [HireDate] [date] NOT NULL,
+     [SalariedFlag] [bit] NOT NULL,
+     [VacationHours] [smallint] NOT NULL,
+     [SickLeaveHours] [smallint] NOT NULL,
+     [CurrentFlag] [bit] NOT NULL,
+     [rowguid] [uniqueidentifier] ROWGUIDCOL NOT NULL,
+     [ModifiedDate] [datetime] NOT NULL)
+```
+ 
+In this table, there's a column called CurrentFlag, which indicates if an employee is currently employed. This example uses the bit datatype, indicating only two values, one for currently employed and zero for not currently employed. A filtered index with a WHERE CurrentFlag = 1, on the CurrentFlag column would allow for efficient queries of current employees.
+
+You can also create indexes on views, which can provide significant performance gains when views contain query elements like aggregations and/or table joins.
+
+**Columnstore indexes**
+ 
+Columnstore offers improved performance for queries that run large aggregation workloads. This type of index was originally targeted at data warehouses, but over time columnstore indexes have been used in many other workloads in order to help solve query performance issues on large tables. As of SQL Server 2014, there are both nonclustered and clustered columnstore indexes. Like b-tree indexes, a clustered columnstore index is the table itself stored in a special way, and nonclustered columnstore indexes are stored independently of the table. Clustered columnstore indexes inherently include all the columns in a given table. However, unlike rowstore clustered indexes, clustered columnstore indexes are NOT sorted.
+
+Nonclustered columnstore indexes are typically used in two scenarios, the first is when a column in the table has a data type that isn't supported in a columnstore index. Most data types are supported but XML, CLR, sql_variant, ntext, text, and image aren't supported in a columnstore index. Since a clustered columnstore always contains all the columns of the table (because it IS the table), a nonclustered is the only option. The second scenario is a filtered index—this scenario is used in an architecture called hybrid transactional analytic processing (HTAP), where data is being loaded into the underlying table, and at the same time reports are being run on the table. By filtering the index (typically on a date field), this design allows for both good insert and reporting performance.
+
+Columnstore indexes are unique in their storage mechanism, in that each column in the index is stored independently. It offers a two-fold benefit. A query using a columnstore index only needs to scan the columns needed to satisfy the query, reducing the total IO performed, and it allows for greater compression, since data in the same column is likely to be similar in nature.
+
+Columnstore indexes perform best on analytic queries that scan large amounts of data, like fact tables in a data warehouse. Starting with SQL Server 2016 you can augment a columnstore index with another b-tree nonclustered index, which can be helpful if some of your queries do lookups against singleton values.
+
+Columnstore indexes also benefit from batch execution mode, which refers to processing a set of rows (typically around 900) at a time versus the database engine processing those rows one at time. Instead of loading each record independently and processing them, the query engine computes the calculation in that group of 900 records. This processing model reduces the number of CPU instructions dramatically.
+
+```
+SELECT SUM(Sales) FROM SalesAmount;
+```
+ 
+Batch mode can provide significant performance increase over traditional row processing. SQL Server 2019 also includes batch mode for rowstore data. While batch mode for rowstore doesn't have the same level of read performance as a columnstore index, analytical queries may see up to a 5x performance improvement.
+
+The other benefit columnstore indexes offer to data warehouse workloads is an optimized load path for bulk insert operations of 102,400 rows or more. While 102,400 is the minimum value to load directly into the columnstore, each collection of rows, called a rowgroup, can be up to approximately 1,024,000 rows. Having fewer, but fuller, rowgroups makes your SELECT queries more efficient, because fewer row groups need to be scanned to retrieve the requested records. These loads take place in memory and are directly loaded to the index. For smaller volumes, data is written to a b-tree structure called a delta store, and asynchronously loaded into the index.
+
+Columnstore Index Load Example
+
+In this example, the same data is being loaded into two tables, FactResellerSales_CCI_Demo and FactResellerSales_Page_Demo. The FactResellerSales_CCI_Demo has a clustered columnstore index, and the FactResellerSales_Page_Demo has a clustered b-tree index with two columns and is page compressed. As you can see each table is loading 1,024,000 rows from the FaceResellerSalesXL_CCI table. When SET STATISTICS TIME is ON, SQL Server keeps track of the elapsed time of the query execution. Loading the data into the columnstore table took roughly 8 seconds, where loading into the page compressed table took nearly 20 seconds. In this example, all the rows going into the columnstore index are loaded into a single rowgroup.
+
+If you load less than 102,400 rows of data into a columnstore index in a single operation, it's loaded in b-tree structure known as a delta store. The database engine moves this data into the columnstore index using an asynchronous process called the tuple mover. Having open delta stores can affect the performance of your queries, because reading those records is less efficient than reading from the columnstore. You can also reorganize the index with the COMPRESS_ALL_ROW_GROUPS option in order to force the delta stores to be added and compressed into the columnstore indexes.
+
+
+### <h3 id="section2-4">Evaluate performance improvements</h3>
 
 Evaluate possible changes to indexes. Determine the impact of changes to queries and indexes. Explore Query Store hints.
+
+One of the challenges of the DBA’s role is to evaluate the changes they make to code or data structures on a busy, production system. While tuning a single query in isolation offers easy metrics such as elapsed time or logical reads, making minor tweaks on a busy system may require deeper evaluation.
+ 
+#### Describe wait statistics
+
+One holistic way of monitoring server performance is to evaluate what the server is waiting on. Wait statistics are complex, and SQL Server is instrumented with hundreds of waiting types, which monitors each running thread and logs what the thread is waiting on.
+
+Detecting and troubleshooting SQL Server performance issues require an understanding of how wait statistics work, and how the database engine uses them while processing a request.
+
+Screenshot of how wait statistics work.
+
+Wait statistics are broken down into three types of waits: resource waits, queue waits, and external waits.
+
+* Resource waits occur when a worker thread in SQL Server requests access to a resource that is currently being used by a thread. Examples of resources wait are locks, latches, and disk I/O waits.
+* Queue waits occur when a worker thread is idle and waiting for work to be assigned. Example queue waits are deadlock monitoring and deleted record cleanup.
+* External waits occur when SQL Server is waiting on an external process like a linked server query to complete. An example of an external wait is a network wait related to returning a large result set to a client application.
+ 
+You can check sys.dm_os_wait_stats system view to explore all the waits encountered by threads that executed, and sys.dm_db_wait_stats for Azure SQL Database. The sys.dm_exec_session_wait_stats system view lists active waiting sessions.
+
+These system views allow the DBA to get an overview of the performance of the server, and to readily identify configuration or hardware issues. This data is persisted from the time of instance startup, but the data can be cleared as needed to identify changes.
+
+Wait statistics are evaluated as a percentage of the total waits on the server.
+
+Screenshot of the top 10 waits by percentage.
+
+The result of this query from sys.dm_os_wait_stats shows the wait type, and the aggregation of percent of time waiting (Wait Percentage column) and the average wait time in seconds for each wait type.
+
+In this case, the server has Always On Availability Groups in place, as indicated by the REDO_THREAD_PENDING_WORK and PARALLEL_REDO_TRAN_TURN wait types. The relatively high percentage of CXPACKET and SOS_SCHEDULER_YIELD waits indicates that this server is under some CPU pressure.
+
+As DMVs provide a list of wait types with the highest time accumulated since the last SQL Server startup, collecting and storing wait statistic data periodically could help you understand and correlate performance problems with other database events.
+
+Considering that DMVs provide you with a list of wait types with the highest time accumulated since the last SQL Server startup, collecting and storing wait statistics periodically might help you understand and correlate performance problems with other database events.
+
+There are several types of waits available in SQL Server, but some of them are common.
+
+* RESOURCE_SEMAPHORE—this wait type is indicative of queries waiting on memory to become available, and may indicate excessive memory grants to some queries. This problem is typically observed by long query runtimes or even time outs. These wait types can be caused by out-of-date statistics, missing indexes, and excessive query concurrency.
+
+* LCK_M_X—frequent occurrences of this wait type can indicate a blocking problem, that can be solved by either changing to the READ COMMITTED SNAPSHOT isolation level, or making changes in indexing to reduce transaction times, or possibly better transaction management within T-SQL code.
+
+( PAGEIOLATCH_SH—this wait type can indicate a problem with indexes (or a lack of useful indexes), where SQL Server is scanning too much data. Alternatively, if the wait count is low, but the wait time is high, it can indicate storage performance problems. You can observe this behavior by analyzing the data in the waiting_tasks_count and the wait_time_ms columns in the sys.dm_os_wait_stats system view, to calculate an average wait time for a given wait type.
+
+* SOS_SCHEDULER_YIELD—this wait type can indicate high CPU utilization, which is correlated with either high number of large scans, or missing indexes, and often with high numbers of CXPACKET waits.
+
+* CXPACKET—if this wait type is high it can indicate improper configuration. Prior to SQL Server 2019, the max degree of parallelism default setting is to use all available CPUs for queries. Additionally, the cost threshold for parallelism setting defaults to 5, which can lead to small queries being executed in parallel, which can limit throughput. Lowering MAXDOP and increasing the cost threshold for parallelism can reduce this wait type, but the CXPACKET wait type can also indicate high CPU utilization, which is typically resolved through index tuning.
+
+* PAGEIOLATCH_UP—this wait type on data pages 2:1:1 can indicate TempDB contention on Page Free Space (PFS) data pages. Each data file has one PFS page per 64 MB of data. This wait is typically caused by only having one TempDB file, as prior to SQL Server 2016 the default behavior was to use one data file for TempDB. The best practice is to use one file per CPU core up to eight files. It's also important to ensure your TempDB data files are the same size and have the same autogrowth settings to ensure they're used evenly. SQL Server 2016 and higher control the growth of TempDB data files to ensure they grow in a consistent, simultaneous fashion.
+
+In addition to the aforementioned DMVs, the Query Store also tracks waits associated with a given query. However, waits data tracked by Query Store isn't tracked at the same granularity as the data in the DMVs, but it can provide a nice overview of what a query is waiting on.
+ 
+####  Tune and maintain indexes
+
+The most common (and most effective) method for tuning T-SQL queries is to evaluate and adjust your indexing strategy. Properly indexed databases perform fewer IOs to return query results, and with fewer IOs there's reduced pressure on both the IO and storage systems. Reducing IO even allows for better memory utilization. Keep in mind the read/write ratio of your queries.
+
+A heavy write workload may indicate that the cost of writing rows to extra indexes isn't of much benefit. An exception would be if the workload performs mainly updates that also need to do lookup operations. Update operations that do lookups can benefit from extra indexes or columns added to an existing index. Your goal should always be to get the most benefit out of the smallest number of indexes on your tables.
+
+A common performance tuning approach is as follows:
+
+* Evaluate existing index usage using sys.dm_db_index_operational_stats and sys.dm_db_index_usage_stats.
+
+* Consider eliminating unused and duplicate indexes, but this should be done carefully. Some indexes may only be used during monthly/quarterly/annual operations, and may be important for those processes. You may also consider creating indexes to support those operations just before the operations are scheduled, to reduce the overhead of having otherwise unused indexes on a table.
+
+* Review and evaluate expensive queries from the Query Store, or Extended Events capture, and work to manually craft indexes to better serve those queries.
+
+* Create the index(s) in a non-production environment, and test query execution and performance and observe performance changes. It's important to note any hardware differences between your production and non-production environments, as the amount of memory and the number of CPUs could affect your execution plan.
+
+* After testing carefully, implement the changes to your production system.
+
+Verify the column order of your indexes—the leading column drives column statistics and usually determines whether the optimizer will choose the index. Ideally, the leading column will be selective and used in the WHERE clause of many of your queries. Consider using a change control process for tracking changes that could affect application performance. Before dropping an index, save the code in your source control, so the index can be quickly recreated if an infrequently run query requires the index to perform well.
+
+Finally, columns used for equality comparisons should precede columns used for inequality comparisons and that columns with greater selectivity should precede columns with fewer distinct values.
+
+**Resumable index**
+ 
+Resumable index allows index maintenance operations to be paused, or take place in a time window, and be resumed later. A good example of where to use resumable index operations is to reduce the impact of index maintenance in a busy production environment. You can then perform rebuild operations during a specific maintenance window giving you more control over the process.
+
+Furthermore, creating an index for a large table can negatively affect the performance of the entire database system. The only way to fix this issue in versions prior to SQL Server 2019 is to kill the index creation process. Then you have to start the process over from the beginning if the system rolls back the session.
+
+With resumable index, you can pause the build and then restart it later at the point it was paused.
+
+The following example shows how to create a resumable index:
+
+```
+-- Creates a nonclustered index for the Customer table
+
+CREATE INDEX IX_Customer_PersonID_ModifiedDate 
+    ON Sales.Customer (PersonID, StoreID, TerritoryID, AccountNumber, ModifiedDate)
+WITH (RESUMABLE=ON, ONLINE=ON)
+GO
+```
+ 
+In a query window, resume the index operation:
+
+```
+ALTER INDEX IX_Customer_PersonID_ModifiedDate ON Sales.Customer PAUSE
+GO
+```
+ 
+The statement above uses the PAUSE clause to temporarily stop the creation of the resumable online index.
+
+You can check the current execution status for a resumable online index by querying the sys.index_resumable_operations system view.
+
+ **Note**
+
+Resumable index is only supported with online operations.
+ 
+#### Understand query hints
+
+Query hints are options or strategies that can be applied to enforce the query processor to use a particular operator in the execution plan for SELECT, INSERT, UPDATE, or DELETE statements. Query hints override any execution plan the query processor might select for a given query with the OPTION clause.
+
+In most cases, the query optimizer selects an efficient execution plan based on the indexes, statistics, and data distribution. Database administrators rarely need to intervene manually.
+
+You can change the execution plan of the query by adding query hints to the end of the query. For example, if you add OPTION (MAXDOP <integer_value>) to the end of a query that uses a single CPU, the query may use multiple CPUs (parallelism) depending on the value you choose. Or, you can use OPTION (RECOMPILE) to ensure that the query generates a new, temporary plan each time it's executed.
+
+```
+--With maxdop hint
+SELECT ProductID, OrderQty, SUM(LineTotal) AS Total  
+FROM Sales.SalesOrderDetail  
+WHERE UnitPrice < $5.00  
+GROUP BY ProductID, OrderQty  
+ORDER BY ProductID, OrderQty  
+OPTION (MAXDOP 2)
+GO
+
+--With recompile hint
+SELECT City
+FROM Person.Address
+WHERE StateProvinceID=15 OPTION (RECOMPILE)
+GO
+```
+                       
+Although query hints may provide a localized solution to various performance-related issues, you should avoid using them in production environment for the following reasons.
+
+Having a permanent query hint on your query can result in structural database changes that would be beneficial to that query not being applicable.
+You can't benefit from new and improved features in subsequent versions of SQL Server if you bind a query to a specific execution plan.
+However, there are several query hints available on SQL Server, which are used for different purposes. Let's discuss a few of them below:
+
+FAST <integer_value>—retrieves the first <integer_value> number of rows while continuing query execution. It works better with small data sets and low value for fast query hint. As row count is increased, query cost becomes higher.
+
+OPTIMIZE FOR—provides instructions to the query optimizer that a particular value for a local variable should be used when a query is compiled and optimized.
+
+USE PLAN—the query optimizer will use a query plan specified by the xml_plan attribute.
+
+RECOMPILE—creates a new, temporary plan for the query and discards it immediately after the query is executed.
+
+{ LOOP | MERGE | HASH } JOIN—specifies all join operations are performed by LOOP JOIN, MERGE JOIN, or HASH JOIN in the whole query. The optimizer chooses the least expensive join strategy from among the options if you specify more than one join hint.
+
+MAXDOP <integer_value>—overrides the max degree of parallelism value of sp_configure. The query specifying this option also overrides the Resource Governor.
+
+You can also apply multiple query hints in the same query. The following example uses the HASH GROUP and FAST <integer_value> query hints in the same query.
+
+```
+SELECT ProductID, OrderQty, SUM(LineTotal) AS Total  
+FROM Sales.SalesOrderDetail  
+WHERE UnitPrice < $5.00  
+GROUP BY ProductID, OrderQty  
+ORDER BY ProductID, OrderQty  
+OPTION (HASH GROUP, FAST 10);  
+GO    
+```
+                       
+To learn more about query hints, see Hints (Transact-SQL).
+
+Query Store hints (in preview)
+The Query Store hints feature in Azure SQL Database provides a simple method for shaping query plans without modifying application code.
+
+Query Store hints are useful when the query optimizer doesn't generate an efficient execution plan, and when the developer or DBA can't modify to the original query text. In some applications, the query text may be hardcoded or automatically generated.
+
+Screenshot of how Query Store hints work.
+
+To use Query Store hints, you need to identify the Query Store query_id of the query statement you wish to modify through Query Store catalog views, built-in Query Store reports, or Query Performance Insight for Azure SQL Database. Then, execute sp_query_store_set_hints with the query_id and query hint string you wish to apply to the query.
+
+The example below shows how to obtain the query_id for a specific query, and then use it to apply the RECOMPILE and MAXDOP hints to the query.
+
+```
+SELECT q.query_id, qt.query_sql_text
+FROM sys.query_store_query_text qt 
+    INNER JOIN sys.query_store_query q 
+        ON qt.query_text_id = q.query_text_id 
+WHERE query_sql_text like N'%ORDER BY CustomerName DESC%'  
+  AND query_sql_text not like N'%query_store%'
+GO
+
+--Assuming the query_id returned by the previous query is 42
+EXEC sys.sp_query_store_set_hints @query_id= 42, @query_hints = N'OPTION(RECOMPILE, MAXDOP 1)'
+GO
+```
+                       
+There are a few scenarios where Query Store hints can help with query-level performance issues.
+
+Recompile a query on each execution.
+Limit the maximum degree of parallelism for a statistic update operation.
+Use a Hash join instead of a Nested Loops join.
+Use compatibility level 110 for a specific query while keeping the database at the current compatibility.
+ Note
+
+Query Store hints are also supported by SQL Managed Instance.
+
+For more information about Query Store hints, see Query Store hints.
