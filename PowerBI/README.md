@@ -1,4 +1,4 @@
-<a href="https://docs.microsoft.com/en-ca/learn/paths/prepare-data-power-bi/">Prepare for Data Analysis</a>
+# <a href="https://docs.microsoft.com/en-ca/learn/paths/prepare-data-power-bi/">Prepare for Data Analysis</a>
 
 # Get data in Power BI
 
