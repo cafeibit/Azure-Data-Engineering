@@ -18,7 +18,7 @@
 
  <a href="#section8">Use data loading best practices in Azure Synapse Analytics</a>
 
- <a href="#section9">Manage and monitor data warehouse activities in Azure Synapse Analytics</a。
+ <a href="#section9">Manage and monitor data warehouse activities in Azure Synapse Analytics</a>
  
  
 ## <h2 id="section1">Reading and Writing to Synapse</h2>
@@ -85,13 +85,14 @@
  
  Also enter the JDBC connection string for your Azure Synapse instance. Make sure you substitute in your password as indicated within the generated string.
 
-<code>
-storageAccount = "name-of-your-storage-account"<br>
-containerName = "data"<br>
-accessKey = "your-storage-key"<br>
-jdbcURI = ""<br>
+```
+storageAccount = "name-of-your-storage-account"
+containerName = "data"
+accessKey = "your-storage-key"
+jdbcURI = ""
 
-spark.conf.set(f"fs.azure.account.key.{storageAccount}.blob.core.windows.net", accessKey)</code><br>
+spark.conf.set(f"fs.azure.account.key.{storageAccount}.blob.core.windows.net", accessKey)
+```
 
  #### Read from the Customer Table
  
@@ -103,33 +104,36 @@ spark.conf.set(f"fs.azure.account.key.{storageAccount}.blob.core.windows.net", a
  - the connector uses a caching directory on the Azure Blob Container.
  - `forwardSparkAzureStorageCredentials` is set to `true` so that the Synapse instance can access the blob for its MPP read via Polybase
 
- `cacheDir = f"wasbs://{containerName}@{storageAccount}.blob.core.windows.net/cacheDir`
+```
+ cacheDir = f"wasbs://{containerName}@{storageAccount}.blob.core.windows.net/cacheDir
 
-  `tableName = "dbo.DimCustomer"`
+  tableName = "dbo.DimCustomer"
 
-  `customerDF = (spark.read`
-     `.format("com.databricks.spark.sqldw")`
-     `.option("url", jdbcURI)`
-     `.option("tempDir", cacheDir)`
-     `.option("forwardSparkAzureStorageCredentials", "true")`
-     `.option("dbTable", tableName)`
-     `.load())`
+  customerDF = (spark.read
+     .format("com.databricks.spark.sqldw")
+     .option("url", jdbcURI)
+     .option("tempDir", cacheDir)
+     .option("forwardSparkAzureStorageCredentials", "true")
+     .option("dbTable", tableName)
+     .load())
 
-  `customerDF.createOrReplaceTempView("customer_data")`<br>
- 
+  customerDF.createOrReplaceTempView("customer_data")
+```
+
  ###  Use SQL queries to count the number of rows in the Customer table and to display table metadata.
+```
+%sql
+select count(*) from customer_data
 
-`%sql`
-`select count(*) from customer_data`
-
- `%sql`
+ %sql
  `describe customer_data`
- 
+ ```
  Note that `CustomerKey` and `CustomerAlternateKey` use a very similar naming convention.
 
- 
-  `%sql`
-  `select CustomerKey, CustomerAlternateKey from customer_data limit 10:`
+ ```
+  %sql
+  select CustomerKey, CustomerAlternateKey from customer_data limit 10:
+ ``` 
  
  In a situation in which we may be merging many new customers into this table, we can imagine that we may have issues with uniqueness with regard to the `CustomerKey`. Let us redefine `CustomerAlternateKey` for stronger uniqueness using a [UUID](https://en.wikipedia.org/wiki/Universally_unique_identifier).
  
@@ -137,14 +141,16 @@ spark.conf.set(f"fs.azure.account.key.{storageAccount}.blob.core.windows.net", a
  
  **Note:** It is a best practice to update the Synapse instance via a staging table.
  
-<code>import uuid</code><br>
+```
+import uuid
 
-<code>from pyspark.sql.types import StringType</code><br>
-<code>from pyspark.sql.functions import udf</code><br>
+from pyspark.sql.types import StringType
+from pyspark.sql.functions import udf
 
-<code>uuidUdf = udf(lambda : str(uuid.uuid4()), StringType())</code><br>
-<code>customerUpdatedDF = customerDF.withColumn("CustomerAlternateKey", uuidUdf())</code><br>
-<code>display(customerUpdatedDF)</code><br>
+uuidUdf = udf(lambda : str(uuid.uuid4()), StringType())
+customerUpdatedDF = customerDF.withColumn("CustomerAlternateKey", uuidUdf())
+display(customerUpdatedDF)
+```
  
 ### Use the Polybase Connector to Write to the Staging Table
 
@@ -279,25 +285,27 @@ SECRET = 'sv=2018-03-28&ss=bf&srt=sco&sp=rl&st=2019-10-14T12%3A10%3A25Z&se=2061-
   
    --Next you will create a file format named QuotedCSVWithHeaderFormat and FORMAT_TYPE of parquet that defines two file types. CSV and parquet.
    
-   `CREATE EXTERNAL FILE FORMAT QuotedCsvWithHeaderFormat `
+ ```
+ CREATE EXTERNAL FILE FORMAT QuotedCsvWithHeaderFormat `
    
-   `WITH (`
+   WITH (
    
-    `FORMAT_TYPE = DELIMITEDTEXT, `
+    FORMAT_TYPE = DELIMITEDTEXT, 
     
-    `FORMAT_OPTIONS ( FIELD_TERMINATOR = ',', STRING_DELIMITER = '"', FIRST_ROW = 2   ) `
+    FORMAT_OPTIONS ( FIELD_TERMINATOR = ',', STRING_DELIMITER = '"', FIRST_ROW = 2   ) 
     
-    `); `
+    ); 
     
-   `GO `
+ GO 
    
-   `CREATE EXTERNAL FILE FORMAT ParquetFormat WITH (  FORMAT_TYPE = PARQUET );`
+ CREATE EXTERNAL FILE FORMAT ParquetFormat WITH (  FORMAT_TYPE = PARQUET );
+ ```
    
    --Create an external table on protected data
    
    With the database scoped credential, external data source, and external file format defined, you can create external tables that access data on an Azure storage account that allows access to users with some Azure AD identity or SAS key. You can create external tables the same way you create regular SQL Server external tables. 
    
-   `USE [mydbname]; 
+```USE [mydbname]; 
 GO 
 CREATE EXTERNAL TABLE populationExternalTable 
 ( 
@@ -310,13 +318,15 @@ WITH (
     LOCATION = 'csv/population/population.csv', 
     DATA_SOURCE = sqlondemanddemo, 
     FILE_FORMAT = QuotedCSVWithHeaderFormat 
-);`
+);
+```
 
   --Create an external table on public data
   
   You can create external tables that read data from the files placed on publicly available Azure storage. This setup script will create a public external data source with a Parquet file format definition that is used in the following query:
 
- `CREATE EXTERNAL TABLE Taxi ( 
+`` 
+CREATE EXTERNAL TABLE Taxi ( 
     vendor_id VARCHAR(100) COLLATE Latin1_General_BIN2,  
     pickup_datetime DATETIME2,  
     dropoff_datetime DATETIME2, 
@@ -330,7 +340,8 @@ WITH (
         LOCATION = 'puYear=*/puMonth=*/*.parquet', 
         DATA_SOURCE = YellowTaxi, 
         FILE_FORMAT = ParquetFormat 
-);`
+);
+```
    
 * Create views in Azure Synapse serverless SQL pools
 
@@ -344,7 +355,7 @@ Views will allow you to reuse queries that you create. Views are also needed if 
   
   You can create views in the same way you create regular SQL Server views. The following query creates a view that reads population.csv file.
   
-  `USE [mydbname]; 
+```USE [mydbname]; 
 GO 
  
 DROP VIEW IF EXISTS populationView; 
@@ -364,11 +375,13 @@ WITH (
     [country_name] VARCHAR (100) COLLATE Latin1_General_BIN2, 
     [year] smallint, 
     [population] bigint 
-) AS [r];`
+) AS [r];
+```
 
 --The view in this example uses the OPENROWSET function that uses an absolute path to the underlying files. If you have EXTERNAL DATA SOURCE with a root URL of your storage, you can use OPENROWSET with DATA_SOURCE and relative file path:
 
-`CREATE VIEW TaxiView 
+```
+CREATE VIEW TaxiView 
 AS SELECT *, nyc.filepath(1) AS [year], nyc.filepath(2) AS [month] 
 FROM 
     OPENROWSET( 
@@ -378,7 +391,7 @@ FROM
     ) AS nyc`
     
     
-    `USE [mydbname]; 
+    USE [mydbname]; 
 GO 
  
  --Use view
@@ -389,7 +402,8 @@ FROM populationView
 WHERE 
     [year] = 2019 
 ORDER BY 
-    [population] DESC;`
+    [population] DESC;
+```    
     
 ## <h2 id="section4">Use Azure Synapse serverless SQL pools for transforming the data in the lake</h2>
 
