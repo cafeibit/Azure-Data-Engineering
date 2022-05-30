@@ -535,23 +535,27 @@ For this reason, there's no need to create credentials or specify them in the co
   * The account used needs to be a member of the Storage Blob Data Contributor role on the default storage account.
   * If you want to create users, you need to connect to the dedicated SQL pool database from which you want transfer data to or from as shown in the following example: 
   
-  `--SQL Authenticated User`
+ ```
+ --SQL Authenticated User
   
-  `CREATE USER Leo FROM LOGIN Leo;`
+  CREATE USER Leo FROM LOGIN Leo;
 
-  `--Azure Active Directory User`
+  --Azure Active Directory User
   
-  `CREATE USER [chuck@contoso.com] FROM EXTERNAL PROVIDER;`
+  CREATE USER [chuck@contoso.com] FROM EXTERNAL PROVIDER;
+  ```
 
   * When you want to assign the user account to a role, you can use the following script as an example:
 
-  `--SQL Authenticated user`
+  ```
+  --SQL Authenticated user
   
-  `EXEC sp_addrolemember 'db_exporter', 'Leo';`
+  EXEC sp_addrolemember 'db_exporter', 'Leo';
 
-  `--Azure Active Directory User`
+  --Azure Active Directory User
 
-  `EXEC sp_addrolemember 'db_exporter',[chuck@contoso.com]`
+  EXEC sp_addrolemember 'db_exporter',[chuck@contoso.com]
+  ```
   
   * Once the authentication is in place, you can transfer data to or from a dedicated SQL pool attached within the workspace.
 
@@ -593,7 +597,8 @@ By using Azure Active Directory to transfer data to and from an Apache Spark poo
  
   --For an external table, you need to pre-create the data source and file format in dedicated SQL pool using **SQL** queries:
   
-  `CREATE EXTERNAL DATA SOURCE <DataSourceName>
+  ```
+  CREATE EXTERNAL DATA SOURCE <DataSourceName>
   WITH
    ( LOCATION = 'abfss://...' ,
     TYPE = HADOOP
@@ -602,17 +607,19 @@ By using Azure Active Directory to transfer data to and from an Apache Spark poo
  WITH (  
     FORMAT_TYPE = PARQUET,
     DATA_COMPRESSION = 'org.apache.hadoop.io.compress.SnappyCodec'  
- );`
+ );
+ ```
  
 * It is not necessary to create an EXTERNAL CREDENTIAL object if you are using Azure AD pass-through authentication from the storage account. The only thing you need to keep in mind is that you need to be a member of the "Storage Blob Data Contributor" role on the storage account. The next step is to use the df.write command within **Scala** with DATA_SOURCE, FILE_FORMAT, and the sqlanalytics command in a similar way to writing data to an internal table.
 
  The example is shown below:
  
- `df.write.
+ ```
+ df.write.
     option(Constants.DATA_SOURCE, <DataSourceName>).
     option(Constants.FILE_FORMAT, <FileFormatName>).
-    sqlanalytics("<DBName>.<Schema>.<TableName>", Constants.EXTERNAL)`
-    
+    sqlanalytics("<DBName>.<Schema>.<TableName>", Constants.EXTERNAL)
+ ```   
     
 ### Authenticate between spark and SQL pool in Azure Synapse Analytics
 
