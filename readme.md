@@ -822,10 +822,13 @@ Exploratory data analysis can involve querying metadata about the data that is s
   
 ### Set-up dedicated data load accounts
 1. **The first step is to connect to master and create a login.**
-   <br>-- Connect to master
-`CREATE LOGIN loader WITH PASSWORD = 'a123STRONGpassword!';`<br>
+```
+-- Connect to master
+CREATE LOGIN loader WITH PASSWORD = 'a123STRONGpassword!';
+```
 2. **Next, connect to the dedicated SQL pool and create a user.**
-  <br>`-- Connect to the SQL pool
+```
+-- Connect to the SQL pool
 CREATE USER loader FOR LOGIN loader;
 GRANT ADMINISTER DATABASE BULK OPERATIONS TO loader;
 GRANT INSERT ON <yourtablename> TO loader;
@@ -844,7 +847,8 @@ CREATE WORKLOAD CLASSIFIER [wgcELTLogin]
 WITH (
         WORKLOAD_GROUP = 'DataLoads'
     ,MEMBERNAME = 'loader'
-);`
+);
+```
 
 ### Simplify ingestion with the Copy Activity
 
@@ -874,40 +878,47 @@ That is to say, data sources that contain invalid data formats, corrupted record
   * They must process this data and store it in Synapse Analytics.
   * To create the DailySalesCounts table and load data using the COPY statement. 
   * As before, be sure to replace YOURACCOUNT with the name of your ADLS Gen2 account:
-  * `CREATE TABLE [wwi_staging].DailySalesCounts`<br>
-    `(`<br>
-        `[Date] [int]  NOT NULL,`<br>
-        `[NorthAmerica] [int]  NOT NULL,`<br>
-        `[SouthAmerica] [int]  NOT NULL,`<br>
-        `[Europe] [int]  NOT NULL,`<br>
-        `[Africa] [int]  NOT NULL,`<br>
-        `[Asia] [int]  NOT NULL`<br>
-    `)`<br>
-`GO`<br>
+  
+  ```CREATE TABLE [wwi_staging].DailySalesCounts
+    (
+        [Date] [int]  NOT NULL,
+        [NorthAmerica] [int]  NOT NULL,
+        [SouthAmerica] [int]  NOT NULL,
+        [Europe] [int]  NOT NULL,
+        [Africa] [int]  NOT NULL,
+        [Asia] [int]  NOT NULL
+    )
+   GO
+   ```
 
 **Note:** Replace <PrimaryStorage> with the workspace default storage account name.
  
-`COPY INTO wwi_staging.DailySalesCounts`<br>
-`FROM 'https://YOURACCOUNT.dfs.core.windows.net/wwi-02/campaign-analytics/dailycounts.txt'`<br>
-`WITH (`<br>
-    `FILE_TYPE = 'CSV',`<br>
-    `FIELDTERMINATOR='.',`<br>
-    `ROWTERMINATOR=','`<br>
-`)`<br>
-`GO`<br>
+```
+COPY INTO wwi_staging.DailySalesCounts
+FROM 'https://YOURACCOUNT.dfs.core.windows.net/wwi-02/campaign-analytics/dailycounts.txt'
+WITH (
+    FILE_TYPE = 'CSV',
+    FIELDTERMINATOR='.',
+    ROWTERMINATOR=','
+)
+GO
+```
  
  * Attempt to load using PolyBase
    *  to create a new external file format, external table, and load data using PolyBase:
-   *  `CREATE EXTERNAL FILE FORMAT csv_dailysales`<br>
-`WITH (`<br>
-    `FORMAT_TYPE = DELIMITEDTEXT,`<br>
-   ` FORMAT_OPTIONS (`<br>
-        `FIELD_TERMINATOR = '.',`<br>
-        `DATE_FORMAT = '',`<br>
-        `USE_TYPE_DEFAULT = False`<br>
-    `)`<br>
-`);`<br>
-`GO`<br>
+   
+ ```
+ CREATE EXTERNAL FILE FORMAT csv_dailysales
+     WITH (
+        FORMAT_TYPE = DELIMITEDTEXT,
+        FORMAT_OPTIONS (
+        FIELD_TERMINATOR = '.',
+        DATE_FORMAT = '',
+        USE_TYPE_DEFAULT = False
+    )
+  );
+ GO
+ ```
 
 `CREATE EXTERNAL TABLE [wwi_external].DailySalesCounts`<br>
     `(`<br>
