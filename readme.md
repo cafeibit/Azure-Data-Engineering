@@ -325,7 +325,7 @@ WITH (
   
   You can create external tables that read data from the files placed on publicly available Azure storage. This setup script will create a public external data source with a Parquet file format definition that is used in the following query:
 
-`` 
+``` 
 CREATE EXTERNAL TABLE Taxi ( 
     vendor_id VARCHAR(100) COLLATE Latin1_General_BIN2,  
     pickup_datetime DATETIME2,  
@@ -355,7 +355,8 @@ Views will allow you to reuse queries that you create. Views are also needed if 
   
   You can create views in the same way you create regular SQL Server views. The following query creates a view that reads population.csv file.
   
-```USE [mydbname]; 
+```
+USE [mydbname]; 
 GO 
  
 DROP VIEW IF EXISTS populationView; 
