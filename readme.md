@@ -422,7 +422,7 @@ Azure Synapse serverless SQL pools can be used for data transformations. If you 
   
   *  Export, in parallel, the results of a Transact-SQL SELECT statement to the data lake.
 
-  * <a href="">Examples</a>
+  * <a href="https://docs.microsoft.com/en-us/azure/synapse-analytics/sql/develop-tables-external-tables?tabs=hadoop">Use external tables with Synapse SQL</a>
   
   
 ### Operationalize data transformation with Azure Synapse serverless SQL pools using stored procedures
