@@ -126,7 +126,7 @@ spark.conf.set(f"fs.azure.account.key.{storageAccount}.blob.core.windows.net", a
 select count(*) from customer_data
 
  %sql
- `describe customer_data`
+ describe customer_data
  ```
  Note that `CustomerKey` and `CustomerAlternateKey` use a very similar naming convention.
 
@@ -173,10 +173,12 @@ display(customerUpdatedDF)
   <code>.option("dbTable", tableName + "Staging")</code><br>
  <code>.load())</code><br>
 
- <code>customerTempDF.createOrReplaceTempView("customer_temp_data")</code><br>
+ ```
+ customerTempDF.createOrReplaceTempView("customer_temp_data")
 
- <code> %sql</code><br>
- <code>select CustomerKey, CustomerAlternateKey from customer_temp_data limit 10;</code><br>`
+ %sql
+ select CustomerKey, CustomerAlternateKey from customer_temp_data limit 10;
+ ```
 
 
 ##  <h2 id="section2">Query data in the lake using Azure Synapse serverless SQL pools</h2>
