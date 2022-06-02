@@ -1,5 +1,7 @@
 # Azure Data Factory for Data Engineering by Examples
 
+## Examples from MS Learn
+
 * <a href="https://docs.microsoft.com/en-us/azure/data-factory/tutorial-incremental-copy-powershell">Incrementally load data from Azure SQL Database to Azure Blob storage using PowerShell</a>
 
 * <a href="https://docs.microsoft.com/en-us/azure/data-factory/tutorial-data-flow-write-to-lake">Best practices for writing to files to data lake with data flows</a>
@@ -23,3 +25,15 @@
 * <a href="https://docs.microsoft.com/en-us/azure/data-factory/how-to-send-email">Send an email with an Azure Data Factory or Azure Synapse pipeline</a>
 
 * <a href="https://docs.microsoft.com/en-us/azure/data-factory/data-migration-guidance-overview">Use Azure Data Factory to migrate data from your data lake or data warehouse to Azure</a>
+
+## Examples by My Case Study
+
+### 1. To use PolyBase data loading for dedicated SQL pool in Azure Synapse Analytics and then send an email with an Azure Synapse pipeline to report the loaded result.
+
+#### 1.1 Design a PolyBase data loading strategy for dedicated SQL pool in Azure Synapse Analytics
+
+
+
+#### 1.2 Send an email with an Azure Data Factory or Azure Synapse pipeline
+
+
