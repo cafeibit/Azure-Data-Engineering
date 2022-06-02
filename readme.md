@@ -32,6 +32,7 @@
 
 #### 1.1 Design a PolyBase data loading strategy for dedicated SQL pool in Azure Synapse Analytics
 
+An Extract, Load, and Transform (ELT) process can take advantage of built-in distributed query processing capabilities and eliminate resources needed to transform the data before loading. While SQL pool supports many loading methods including non-Polybase options such as BCP and SQL BulkCopy API, the fastest and most scalable way to load data is through PolyBase. PolyBase is a technology that accesses external data stored in Azure Blob storage or Azure Data Lake Store via the T-SQL language.
 
 
 #### 1.2 Send an email with an Azure Data Factory or Azure Synapse pipeline
