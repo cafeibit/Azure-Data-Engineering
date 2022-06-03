@@ -60,7 +60,7 @@ The basic steps for implementing a PolyBase ELT for dedicated SQL pool are:
 
   You might need to prepare and clean the data in your storage account before loading it into dedicated SQL pool. Data preparation can be performed while your data is in the source, as you export the data to text files, or after the data is in Azure Storage. It is easiest to work with the data as early in the process as possible.
   
-  * Define external tables
+  #### Define external tables
 
   Before you can load data, you need to define external tables in your data warehouse. PolyBase uses external tables to define and access the data in Azure Storage. An external table is similar to a database view. The external table contains the table schema and points to data that is stored outside the data warehouse.
 
