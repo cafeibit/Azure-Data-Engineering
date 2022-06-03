@@ -116,5 +116,7 @@ To send a email notifications during or after the above execution of a pipeline 
 
 Create a Logic App workflow named `SendEmailFromPipeline`. Define the workflow trigger as `When finished loading by PolyBase`, and add an action of `Office 365 Outlook – Send an email (V2)`.
 
+* <a href="https://docs.microsoft.com/en-us/azure/logic-apps/quickstart-create-first-logic-app-workflow">Quickstart: Create an integration workflow with multi-tenant Azure Logic Apps and the Azure portal</a>
+
 **Create a pipeline to trigger your Logic App email workflow**
 
