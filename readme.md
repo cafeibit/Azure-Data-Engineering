@@ -118,5 +118,27 @@ Create a Logic App workflow named `SendEmailFromPipeline`. Define the workflow t
 
 * <a href="https://docs.microsoft.com/en-us/azure/logic-apps/quickstart-create-first-logic-app-workflow">Quickstart: Create an integration workflow with multi-tenant Azure Logic Apps and the Azure portal</a>
 
-**Create a pipeline to trigger your Logic App email workflow**
+**Create a pipeline to trigger your Logic App email workflow for Azure Blob Storage**
+
+Setting up an alert is easy. At first, we need to define the alert condition (trigger or signal). An alert condition defines the metrics and the threshold that, when breached, the alert is to be triggered. 
+
+1. In the Azure portal, locate and open the storage account. On the storage account page, search and open Alerts under the Monitoring section
+2. On the Alerts page, click on New alert rule
+3. On the Alerts | Create rule page, observe that the storage account is listed by default under the RESOURCE section. You can add multiple storage accounts in the same alert. Under the CONDITION section, click Add.
+4. On the Configure signal logic page, select Used capacity under Signal name.
+5. On the Configure signal logic page, under Alert logic, set Operator as Greater than, Aggregation type as Average, and configure the threshold to 5 MB. We need to provide the value in bytes.
+6. Click Done to configure the trigger. The condition is added, and we'll be taken back to the Configure alerts rule page.
+7. The next step is to add an action to perform when the alert condition is reached. On the Configure alerts rule page, under the ACTIONS GROUPS section, click Create.
+8. On the Add action group page, provide the action group name, short name, and resource group. Under the Actions section, provide the action name and action type.
+9. As we set Action Type as Email/SMS/Push/Voice, a new blade opens. In the Email/SMS/Push/Voice blade, specify the email name and click OK.
+10. We are taken back to the Add action group page. On the Add action group page, click OK to save the action settings. We are then taken back to the Create rule page. The Email action is listed under the Action Groups section.
+11. The next step is to define the alert rule name, description, and severity.
+12. Click the Create alert rule button to create the alert.
+13. The next step is to trigger the alert.
+14. The triggered alerts are listed on the Alerts page.
+15. An email is sent to the email ID specified in the email action group. 
+
+We then need to define the action to be performed when the alert condition is reached. We can define more than one action for an alert. In our example, in addition to sending an email when the used capacity is more than 5 MB, we can configure Azure Automation to delete the old blobs/files so as to maintain the Azure storage capacity within 5 MB.
+
+There are other signals such as transactions, Ingress, Egress, Availability, Success Server Latency, and Success E2E Latency on which alerts can be defined. Detailed information on monitoring Azure storage is available at https://docs.microsoft.com/en-us/azure/storage/common/storage-monitoring-diagnosing-troubleshooting.
 
