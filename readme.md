@@ -143,3 +143,142 @@ We then need to define the action to be performed when the alert condition is re
 
 There are other signals such as transactions, Ingress, Egress, Availability, Success Server Latency, and Success E2E Latency on which alerts can be defined. Detailed information on monitoring Azure storage is available at https://docs.microsoft.com/en-us/azure/storage/common/storage-monitoring-diagnosing-troubleshooting.
 
+### 2. Use Azure Data Factory to migrate data from your data lake or data warehouse to Azure
+
+#### 2.1 Why Azure Data Factory can be used for data migration
+
+Azure Data Factory can easily scale up the amount of processing power to move data in a serverless manner with high performance, resilience, and scalability. And you pay only for what you use. Also note the following:
+
+* Azure Data Factory has no limitations on data volume or on the number of files.
+* Azure Data Factory can fully use your network and storage bandwidth to achieve the highest volume of data movement throughput in your environment.
+* Azure Data Factory uses a pay-as-you-go method, so that you pay only for the time you actually use to run the data migration to Azure.
+* Azure Data Factory can perform both a one-time historical load and scheduled incremental loads.
+* Azure Data Factory uses Azure integration runtime (IR) to move data between publicly accessible data lake and warehouse endpoints. It can also use self-hosted IR for moving data for data lake and warehouse endpoints inside Azure Virtual Network (VNet) or behind a firewall.
+* Azure Data Factory has enterprise-grade security: You can use Windows Installer (MSI) or Service Identity for secured service-to-service integration, or use Azure Key Vault for credential management.
+* Azure Data Factory provides a code-free authoring experience and a rich, built-in monitoring dashboard. 
+Online vs. offline data migration
+* Azure Data Factory is a standard online data migration tool to transfer data over a network (internet, ER, or VPN). Whereas with offline data migration, users physically ship data-transfer devices from their organization to an Azure Data Center.
+
+There are three key considerations when you choose between an online and offline migration approach:
+
+* Size of data to be migrated
+* Network bandwidth
+* Migration window
+
+For example, assume you plan to use Azure Data Factory to complete your data migration within two weeks (your migration window). Notice the pink/blue cut line in the following table. The lowest pink cell for any given column shows the data size/network bandwidth pairing whose migration window is closest to but less than two weeks. (Any size/bandwidth pairing in a blue cell has an online migration window of more than two weeks.)
+
+#### 2.2 Use Azure Data Factory to migrate data from an on-premises Hadoop cluster to Azure Storage
+
+Azure Data Factory provides a performant, robust, and cost-effective mechanism for migrating data at scale from on-premises HDFS to Azure Blob storage or Azure Data Lake Storage Gen2.
+
+Data Factory offers two basic approaches for migrating data from on-premises HDFS to Azure. You can select the approach based on your scenario.
+
+**Data Factory DistCp mode (recommended)**: In Data Factory, you can use DistCp (distributed copy) to copy files as-is to Azure Blob storage (including staged copy) or Azure Data Lake Store Gen2. Use Data Factory integrated with DistCp to take advantage of an existing powerful cluster to achieve the best copy throughput. You also get the benefit of flexible scheduling and a unified monitoring experience from Data Factory. Depending on your Data Factory configuration, copy activity automatically constructs a DistCp command, submits the data to your Hadoop cluster, and then monitors the copy status. We recommend Data Factory DistCp mode for migrating data from an on-premises Hadoop cluster to Azure.
+
+**Data Factory native integration runtime mode**: DistCp isn't an option in all scenarios. For example, in an Azure Virtual Networks environment, the DistCp tool doesn't support Azure ExpressRoute private peering with an Azure Storage virtual network endpoint. In addition, in some cases, you don't want to use your existing Hadoop cluster as an engine for migrating data so you don't put heavy loads on your cluster, which might affect the performance of existing ETL jobs. Instead, you can use the native capability of the Data Factory integration runtime as the engine that copies data from on-premises HDFS to Azure.
+This article provides the following information about both approaches:
+
+* Performance
+* Copy resilience
+* Network security
+* High-level solution architecture
+* Implementation best practices
+
+**Performance**
+
+In Data Factory DistCp mode, throughput is the same as if you use the DistCp tool independently. Data Factory DistCp mode maximizes the capacity of your existing Hadoop cluster. You can use DistCp for large inter-cluster or intra-cluster copying.
+
+DistCp uses MapReduce to effect its distribution, error handling and recovery, and reporting. It expands a list of files and directories into input for task mapping. Each task copies a file partition that's specified in the source list. You can use Data Factory integrated with DistCp to build pipelines to fully utilize your network bandwidth, storage IOPS, and bandwidth to maximize data movement throughput for your environment.
+
+Data Factory native integration runtime mode also allows parallelism at different levels. You can use parallelism to fully utilize your network bandwidth, storage IOPS, and bandwidth to maximize data movement throughput:
+
+A single copy activity can take advantage of scalable compute resources. With a self-hosted integration runtime, you can manually scale up the machine or scale out to multiple machines (up to four nodes). A single copy activity partitions its file set across all nodes.
+A single copy activity reads from and writes to the data store by using multiple threads.
+Data Factory control flow can start multiple copy activities in parallel. For example, you can use a For Each loop.
+For more information, see the copy activity performance guide.
+
+**Resilience**
+
+In Data Factory DistCp mode, you can use different DistCp command-line parameters (For example, -i, ignore failures or -update, write data when source file and destination file differ in size) for different levels of resilience.
+
+In the Data Factory native integration runtime mode, in a single copy activity run, Data Factory has a built-in retry mechanism. It can handle a certain level of transient failures in the data stores or in the underlying network.
+
+When doing binary copying from on-premises HDFS to Blob storage and from on-premises HDFS to Data Lake Store Gen2, Data Factory automatically performs checkpointing to a large extent. If a copy activity run fails or times out, on a subsequent retry (make sure that retry count is > 1), the copy resumes from the last failure point instead of starting at the beginning.
+
+**Network security**
+
+By default, Data Factory transfers data from on-premises HDFS to Blob storage or Azure Data Lake Storage Gen2 by using an encrypted connection over HTTPS protocol. HTTPS provides data encryption in transit and prevents eavesdropping and man-in-the-middle attacks.
+
+Alternatively, if you don't want data to be transferred over the public internet, for higher security, you can transfer data over a private peering link via ExpressRoute.
+
+**Implementation best practices**
+
+We recommend that you follow these best practices when you implement your data migration.
+
+* Authentication and credential management
+
+  To authenticate to HDFS, you can use either Windows (Kerberos) or Anonymous.
+Multiple authentication types are supported for connecting to Azure Blob storage. We highly recommend using managed identities for Azure resources. Built on top of an automatically managed Data Factory identity in Azure Active Directory (Azure AD), managed identities allow you to configure pipelines without supplying credentials in the linked service definition. Alternatively, you can authenticate to Blob storage by using a service principal, a shared access signature, or a storage account key.
+
+  Multiple authentication types also are supported for connecting to Data Lake Storage Gen2. We highly recommend using managed identities for Azure resources, but you also can use a service principal or a storage account key.
+When you're not using managed identities for Azure resources, we highly recommend storing the credentials in Azure Key Vault to make it easier to centrally manage and rotate keys without modifying Data Factory linked services. This is also a best practice for CI/CD.
+Initial snapshot data migration
+
+  In Data Factory DistCp mode, you can create one copy activity to submit the DistCp command and use different parameters to control initial data migration behavior.
+
+  In Data Factory native integration runtime mode, we recommend data partition, especially when you migrate more than 10 TB of data. To partition the data, use the folder names on HDFS. Then, each Data Factory copy job can copy one folder partition at a time. You can run multiple Data Factory copy jobs concurrently for better throughput.
+
+  If any of the copy jobs fail due to network or data store transient issues, you can rerun the failed copy job to reload that specific partition from HDFS. Other copy jobs that are loading other partitions aren't affected.
+
+* Delta data migration
+
+  In Data Factory DistCp mode, you can use the DistCp command-line parameter -update, write data when source file and destination file differ in size, for delta data migration.
+
+  In Data Factory native integration mode, the most performant way to identify new or changed files from HDFS is by using a time-partitioned naming convention. When your data in HDFS has been time-partitioned with time slice information in the file or folder name (for example, /yyyy/mm/dd/file.csv), your pipeline can easily identify which files and folders to copy incrementally.
+
+  Alternatively, if your data in HDFS isn't time-partitioned, Data Factory can identify new or changed files by using their LastModifiedDate value. Data Factory scans all the files from HDFS and copies only new and updated files that have a last modified timestamp that's greater than a set value.
+
+  If you have a large number of files in HDFS, the initial file scanning might take a long time, regardless of how many files match the filter condition. In this scenario, we recommend that you first partition the data by using the same partition you used for the initial snapshot migration. Then, file scanning can occur in parallel.
+  
+#### 2.3 Copy data from the HDFS server using Azure Data Factory or Synapse Analytics
+
+How to copy data from the Hadoop Distributed File System (HDFS) server. To learn more, read the introductory articles for Azure Data Factory and Synapse Analytics.
+
+**Supported capabilities**
+
+The HDFS connector is supported for the following activities:
+
+* Copy activity with supported source and sink matrix
+* Lookup activity
+* Delete activity
+
+Specifically, the HDFS connector supports:
+
+* Copying files by using Windows (Kerberos) or Anonymous authentication.
+* Copying files by using the webhdfs protocol or built-in DistCp support.
+* Copying files as is or by parsing or generating files with the supported file formats and compression codecs.
+
+**Get started**
+
+To perform the Copy activity with a pipeline, you can use one of the following tools or SDKs:
+
+* The Copy Data tool
+* The Azure portal
+* The .NET SDK
+* The Python SDK
+* Azure PowerShell
+* The REST API
+* The Azure Resource Manager template
+
+Create a linked service to HDFS using UI
+
+Use the following steps to create a linked service to HDFS in the Azure portal UI.
+
+Browse to the Manage tab in your Azure Data Factory or Synapse workspace and select Linked Services, then click New:
+
+#### 2.4 Use external Hive Metastore for Synapse Spark Pool
+
+Azure Synapse Analytics allows Apache Spark pools in the same workspace to share a managed HMS (Hive Metastore) compatible metastore as their catalog. When customers want to persist the Hive catalog metadata outside of the workspace, and share catalog objects with other computational engines outside of the workspace, such as HDInsight and Azure Databricks, they can connect to an external Hive Metastore. In this article, you can learn how to connect Synapse Spark to an external Apache Hive Metastore.
+
+**Set up linked service to Hive Metastore**
+
