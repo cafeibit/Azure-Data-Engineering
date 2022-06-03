@@ -66,9 +66,9 @@ The basic steps for implementing a PolyBase ELT for dedicated SQL pool are:
 
   Defining external tables involves specifying the data source, the format of the text files, and the table definitions. What follows are the T-SQL syntax topics that you'll need:
 
-    * CREATE EXTERNAL DATA SOURCE
-    * CREATE EXTERNAL FILE FORMAT
-    * CREATE EXTERNAL TABLE
+     * CREATE EXTERNAL DATA SOURCE
+     * CREATE EXTERNAL FILE FORMAT
+     * CREATE EXTERNAL TABLE
       
 4. Load the data into dedicated SQL pool staging tables using PolyBase.
 
