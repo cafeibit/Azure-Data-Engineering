@@ -37,4 +37,11 @@ An Extract, Load, and Transform (ELT) process can take advantage of built-in dis
 
 #### 1.2 Send an email with an Azure Data Factory or Azure Synapse pipeline
 
+To send a email notifications during or after the above execution of a pipeline that provides proactive alerting and reduces the need for reactive monitoring to discover issues.  This process shows how to configure email notifications from an Azure Data Factory or Azure Synapse pipeline. 
+
+**Create the email workflow in your Logic App**
+
+Create a Logic App workflow named `SendEmailFromPipeline`. Define the workflow trigger as `When finished loading by PolyBase`, and add an action of `Office 365 Outlook – Send an email (V2)`.
+
+**Create a pipeline to trigger your Logic App email workflow**
 
