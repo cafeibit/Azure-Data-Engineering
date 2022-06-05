@@ -32,7 +32,7 @@ to perform data engineering with Azure Synapse Apache Spark Pools, which enable 
 
  * <a href="#section2-5">Monitor and manage data engineering workloads with Apache Spark in Azure Synapse Analytics</a>
  
-## <h2 id="#section0">Design tables using Synapse SQL in Azure Synapse Analytics</h2>
+## <h2 id="section0">Design tables using Synapse SQL in Azure Synapse Analytics</h2>
 
 Designing tables with dedicated SQL pool and serverless SQL pool.
 
