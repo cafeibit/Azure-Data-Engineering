@@ -20,7 +20,7 @@
 
 # Perform data engineering with Azure Synapse Apache Spark Pools
 
-to perform data engineering with Azure Synapse Apache Spark Pools, which enable you to boost the performance of big-data analytic applications by in-memory cluster computing.
+To perform data engineering with Azure Synapse Apache Spark Pools, which enable you to boost the performance of big-data analytic applications by in-memory cluster computing.
 
  * <a href="#section2-1">Analyze data with Apache Spark in Azure Synapse Analytics</a>
  
@@ -1440,14 +1440,14 @@ GO
  
 <a href="https://docs.microsoft.com/en-us/azure/synapse-analytics/sql-data-warehouse/sql-data-warehouse-manage-monitor">Monitor your Azure Synapse Analytics dedicated SQL pool workload using DMVs</a>
 
-## <h2 id="#section2-1">Analyze data with Apache Spark in Azure Synapse Analytics</h2>
+## <h2 id="section2-1">Analyze data with Apache Spark in Azure Synapse Analytics</h2>
  
  
  
-## <h2 id="#section2-2">Ingest data with Apache Spark notebooks in Azure Synapse Analytics</h2>
+## <h2 id="section2-2">Ingest data with Apache Spark notebooks in Azure Synapse Analytics</h2>
 
-## <h2 id="#section2-3">Transform data with DataFrames in Apache Spark Pools in Azure Synapse Analytics</h2>
+## <h2 id="section2-3">Transform data with DataFrames in Apache Spark Pools in Azure Synapse Analytics</h2>
 
-## <h2 id="#section5">Integrate SQL and Apache Spark pools in Azure Synapse Analytics</h2>
+## <h2 id="section5">Integrate SQL and Apache Spark pools in Azure Synapse Analytics</h2>
 
-## <h2 id="#section2-5">Monitor and manage data engineering workloads with Apache Spark in Azure Synapse Analytics</h2>
+## <h2 id="section2-5">Monitor and manage data engineering workloads with Apache Spark in Azure Synapse Analytics</h2>
