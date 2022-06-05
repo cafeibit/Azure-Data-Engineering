@@ -1,5 +1,7 @@
 # Work with Data Warehouses using Azure Synapse Analytics
 
+ * <a href="#section">Design tables in Azure Synapse Analytics</a>
+ 
  * <a href="#section1">Reading and Writing to Synapse</a>
 
  * <a href="#section2">Query data in the lake using Azure Synapse serverless SQL pools</a>
@@ -30,7 +32,410 @@ to perform data engineering with Azure Synapse Apache Spark Pools, which enable 
 
  * <a href="#section2-5">Monitor and manage data engineering workloads with Apache Spark in Azure Synapse Analytics</a>
  
- 
+## <h2 id="#section0">Design tables using Synapse SQL in Azure Synapse Analytics</h2>
+
+Designing tables with dedicated SQL pool and serverless SQL pool.
+
+Serverless SQL pool is a query service over the data in your data lake. It doesn't have local storage for data ingestion. Dedicated SQL pool represents a collection of analytic resources that are being provisioned when using Synapse SQL. The size of a dedicated SQL pool is determined by Data Warehousing Units (DWU).
+
+**Common distribution methods for tables**
+
+The table category often determines which option to choose for distributing the table.
+
+```
+Table category	   Recommended distribution option
+Fact	             Use hash-distribution with clustered columnstore index. Performance improves when two hash tables are joined on the same distribution column.
+Dimension	        Use replicated for smaller tables. If tables are too large to store on each Compute node, use hash-distributed.
+Staging	          Use round-robin for the staging table. The load with CTAS is fast. Once the data is in the staging table, use INSERT...SELECT to move the data to                   production tables.
+```
+
+**Table partitions**
+
+A partitioned table stores and performs operations on the table rows according to data ranges. For example, a table could be partitioned by day, month, or year. You can improve query performance through partition elimination, which limits a query scan to data within a partition. You can also maintain the data through partition switching. Since the data in SQL pool is already distributed, too many partitions can slow query performance. For more information, see Partitioning guidance. When partition switching into table partitions that are not empty, consider using the TRUNCATE_TARGET option in your ALTER TABLE statement if the existing data is to be truncated. The below code switches in the transformed daily data into the SalesFact overwriting any existing data.
+
+`ALTER TABLE SalesFact_DailyFinalLoad SWITCH PARTITION 256 TO SalesFact PARTITION 256 WITH (TRUNCATE_TARGET = ON);`
+
+**Columnstore indexes**
+
+By default, dedicated SQL pool stores a table as a clustered columnstore index. This form of data storage achieves high data compression and query performance on large tables. The clustered columnstore index is usually the best choice, but in some cases a clustered index or a heap is the appropriate storage structure. A heap table can be especially useful for loading transient data, such as a staging table which is transformed into a final table. 
+
+**Statistics**
+
+The query optimizer uses column-level statistics when it creates the plan for executing a query. To improve query performance, it's important to have statistics on individual columns, especially columns used in query joins. Creating statistics happens automatically. Updating statistics doesn't happen automatically. Update statistics after a significant number of rows are added or changed. For example, update statistics after a load. 
+
+Primary key and unique key
+PRIMARY KEY is only supported when NONCLUSTERED and NOT ENFORCED are both used. UNIQUE constraint is only supported with NOT ENFORCED is used. Check Dedicated SQL pool table constraints.
+
+**Commands for creating tables**
+
+You can create a table as a new empty table. You can also create and populate a table with the results of a select statement. The following are the T-SQL commands for creating a table.
+```
+T-SQL                           Statement	Description
+CREATE TABLE	                   | Creates an empty table by defining all the table columns and options.
+CREATE EXTERNAL TABLE	          | Creates an external table. The definition of the table is stored in dedicated SQL pool. The table data is stored in Azure Blob storage or   Azure Data Lake Store.
+CREATE TABLE AS SELECT	         | Populates a new table with the results of a select statement. The table columns and data types are based on the select statement results. To import data, this statement can select from an external table.
+CREATE EXTERNAL TABLE AS SELECT	| Creates a new external table by exporting the results of a select statement to an external location. The location is either Azure Blob storage or Azure Data Lake Store.
+```
+
+**Aligning source data with dedicated SQL pool**
+
+Dedicated SQL pool tables are populated by loading data from another data source. To perform a successful load, the number and data types of the columns in the source data must align with the table definition in the dedicated SQL pool. Getting the data to align might be the hardest part of designing your tables.
+
+If data is coming from multiple data stores, you load the data into the dedicated SQL pool and store it in an integration table. Once data is in the integration table, you can use the power of dedicated SQL pool to perform transformation operations. Once the data is prepared, you can insert it into production tables.
+
+**Unsupported table features**
+
+Dedicated SQL pool supports many, but not all, of the table features offered by other databases. The following list shows some of the table features that aren't supported in dedicated SQL pool:
+
+* Foreign key, Check Table Constraints
+* Computed Columns
+* Indexed Views
+* Sequence
+* Sparse Columns
+* Surrogate Keys. Implement with Identity.
+* Synonyms
+* Triggers
+* Unique Indexes
+* User-Defined Types
+* Table size queries
+
+One simple way to identify space and rows consumed by a table in each of the 60 distributions, is to use DBCC PDW_SHOWSPACEUSED.
+
+`DBCC PDW_SHOWSPACEUSED('dbo.FactInternetSales');`
+
+However, using DBCC commands can be quite limiting. Dynamic management views (DMVs) show more detail than DBCC commands. Start by creating this view:
+
+```
+CREATE VIEW dbo.vTableSizes
+AS
+WITH base
+AS
+(
+SELECT
+ GETDATE()                                                             AS  [execution_time]
+, DB_NAME()                                                            AS  [database_name]
+, s.name                                                               AS  [schema_name]
+, t.name                                                               AS  [table_name]
+, QUOTENAME(s.name)+'.'+QUOTENAME(t.name)                              AS  [two_part_name]
+, nt.[name]                                                            AS  [node_table_name]
+, ROW_NUMBER() OVER(PARTITION BY nt.[name] ORDER BY (SELECT NULL))     AS  [node_table_name_seq]
+, tp.[distribution_policy_desc]                                        AS  [distribution_policy_name]
+, c.[name]                                                             AS  [distribution_column]
+, nt.[distribution_id]                                                 AS  [distribution_id]
+, i.[type]                                                             AS  [index_type]
+, i.[type_desc]                                                        AS  [index_type_desc]
+, nt.[pdw_node_id]                                                     AS  [pdw_node_id]
+, pn.[type]                                                            AS  [pdw_node_type]
+, pn.[name]                                                            AS  [pdw_node_name]
+, di.name                                                              AS  [dist_name]
+, di.position                                                          AS  [dist_position]
+, nps.[partition_number]                                               AS  [partition_nmbr]
+, nps.[reserved_page_count]                                            AS  [reserved_space_page_count]
+, nps.[reserved_page_count] - nps.[used_page_count]                    AS  [unused_space_page_count]
+, nps.[in_row_data_page_count]
+    + nps.[row_overflow_used_page_count]
+    + nps.[lob_used_page_count]                                        AS  [data_space_page_count]
+, nps.[reserved_page_count]
+ - (nps.[reserved_page_count] - nps.[used_page_count])
+ - ([in_row_data_page_count]
+         + [row_overflow_used_page_count]+[lob_used_page_count])       AS  [index_space_page_count]
+, nps.[row_count]                                                      AS  [row_count]
+from
+    sys.schemas s
+INNER JOIN sys.tables t
+    ON s.[schema_id] = t.[schema_id]
+INNER JOIN sys.indexes i
+    ON  t.[object_id] = i.[object_id]
+    AND i.[index_id] <= 1
+INNER JOIN sys.pdw_table_distribution_properties tp
+    ON t.[object_id] = tp.[object_id]
+INNER JOIN sys.pdw_table_mappings tm
+    ON t.[object_id] = tm.[object_id]
+INNER JOIN sys.pdw_nodes_tables nt
+    ON tm.[physical_name] = nt.[name]
+INNER JOIN sys.dm_pdw_nodes pn
+    ON  nt.[pdw_node_id] = pn.[pdw_node_id]
+INNER JOIN sys.pdw_distributions di
+    ON  nt.[distribution_id] = di.[distribution_id]
+INNER JOIN sys.dm_pdw_nodes_db_partition_stats nps
+    ON nt.[object_id] = nps.[object_id]
+    AND nt.[pdw_node_id] = nps.[pdw_node_id]
+    AND nt.[distribution_id] = nps.[distribution_id]
+LEFT OUTER JOIN (select * from sys.pdw_column_distribution_properties where distribution_ordinal = 1) cdp
+    ON t.[object_id] = cdp.[object_id]
+LEFT OUTER JOIN sys.columns c
+    ON cdp.[object_id] = c.[object_id]
+    AND cdp.[column_id] = c.[column_id]
+WHERE pn.[type] = 'COMPUTE'
+)
+, size
+AS
+(
+SELECT
+   [execution_time]
+,  [database_name]
+,  [schema_name]
+,  [table_name]
+,  [two_part_name]
+,  [node_table_name]
+,  [node_table_name_seq]
+,  [distribution_policy_name]
+,  [distribution_column]
+,  [distribution_id]
+,  [index_type]
+,  [index_type_desc]
+,  [pdw_node_id]
+,  [pdw_node_type]
+,  [pdw_node_name]
+,  [dist_name]
+,  [dist_position]
+,  [partition_nmbr]
+,  [reserved_space_page_count]
+,  [unused_space_page_count]
+,  [data_space_page_count]
+,  [index_space_page_count]
+,  [row_count]
+,  ([reserved_space_page_count] * 8.0)                                 AS [reserved_space_KB]
+,  ([reserved_space_page_count] * 8.0)/1000                            AS [reserved_space_MB]
+,  ([reserved_space_page_count] * 8.0)/1000000                         AS [reserved_space_GB]
+,  ([reserved_space_page_count] * 8.0)/1000000000                      AS [reserved_space_TB]
+,  ([unused_space_page_count]   * 8.0)                                 AS [unused_space_KB]
+,  ([unused_space_page_count]   * 8.0)/1000                            AS [unused_space_MB]
+,  ([unused_space_page_count]   * 8.0)/1000000                         AS [unused_space_GB]
+,  ([unused_space_page_count]   * 8.0)/1000000000                      AS [unused_space_TB]
+,  ([data_space_page_count]     * 8.0)                                 AS [data_space_KB]
+,  ([data_space_page_count]     * 8.0)/1000                            AS [data_space_MB]
+,  ([data_space_page_count]     * 8.0)/1000000                         AS [data_space_GB]
+,  ([data_space_page_count]     * 8.0)/1000000000                      AS [data_space_TB]
+,  ([index_space_page_count]  * 8.0)                                   AS [index_space_KB]
+,  ([index_space_page_count]  * 8.0)/1000                              AS [index_space_MB]
+,  ([index_space_page_count]  * 8.0)/1000000                           AS [index_space_GB]
+,  ([index_space_page_count]  * 8.0)/1000000000                        AS [index_space_TB]
+FROM base
+)
+SELECT *
+FROM size
+;
+```
+
+**Table space summary**
+
+This query returns the rows and space by table. It allows you to see which tables are your largest tables and whether they are round-robin, replicated, or hash-distributed. For hash-distributed tables, the query shows the distribution column.
+
+```
+SELECT
+     database_name
+,    schema_name
+,    table_name
+,    distribution_policy_name
+,      distribution_column
+,    index_type_desc
+,    COUNT(distinct partition_nmbr) as nbr_partitions
+,    SUM(row_count)                 as table_row_count
+,    SUM(reserved_space_GB)         as table_reserved_space_GB
+,    SUM(data_space_GB)             as table_data_space_GB
+,    SUM(index_space_GB)            as table_index_space_GB
+,    SUM(unused_space_GB)           as table_unused_space_GB
+FROM
+    dbo.vTableSizes
+GROUP BY
+     database_name
+,    schema_name
+,    table_name
+,    distribution_policy_name
+,      distribution_column
+,    index_type_desc
+ORDER BY
+    table_reserved_space_GB desc
+;
+```
+
+**Table space by distribution type**
+
+```
+SELECT
+     distribution_policy_name
+,    SUM(row_count)                as table_type_row_count
+,    SUM(reserved_space_GB)        as table_type_reserved_space_GB
+,    SUM(data_space_GB)            as table_type_data_space_GB
+,    SUM(index_space_GB)           as table_type_index_space_GB
+,    SUM(unused_space_GB)          as table_type_unused_space_GB
+FROM dbo.vTableSizes
+GROUP BY distribution_policy_name
+;
+```
+
+**Table space by index type**
+
+```
+SELECT
+     index_type_desc
+,    SUM(row_count)                as table_type_row_count
+,    SUM(reserved_space_GB)        as table_type_reserved_space_GB
+,    SUM(data_space_GB)            as table_type_data_space_GB
+,    SUM(index_space_GB)           as table_type_index_space_GB
+,    SUM(unused_space_GB)          as table_type_unused_space_GB
+FROM dbo.vTableSizes
+GROUP BY index_type_desc
+;
+Distribution space summary
+SQL
+
+Copy
+SELECT
+    distribution_id
+,    SUM(row_count)                as total_node_distribution_row_count
+,    SUM(reserved_space_MB)        as total_node_distribution_reserved_space_MB
+,    SUM(data_space_MB)            as total_node_distribution_data_space_MB
+,    SUM(index_space_MB)           as total_node_distribution_index_space_MB
+,    SUM(unused_space_MB)          as total_node_distribution_unused_space_MB
+FROM dbo.vTableSizes
+GROUP BY     distribution_id
+ORDER BY    distribution_id
+;
+```
+
+### Guidance for designing distributed tables using dedicated SQL pool in Azure Synapse Analytics
+
+**Consider using a hash-distributed table when:**
+
+* The table size on disk is more than 2 GB.
+* The table has frequent insert, update, and delete operations.
+
+**Consider using the round-robin distribution for your table in the following scenarios:**
+
+* When getting started as a simple starting point since it is the default
+* If there is no obvious joining key
+* If there is no good candidate column for hash distributing the table
+* If the table does not share a common join key with other tables
+* If the join is less significant than other joins in the query
+* When the table is a temporary staging table
+
+#### Choose a distribution column with data that distributes evenly
+
+Data stored in the distribution column can be updated. Updates to data in the distribution column could result in data shuffle operation. Choosing a distribution column is an important design decision since the values in this column determine how the rows are distributed. The best choice depends on several factors, and usually involves tradeoffs. Once a distribution column is chosen, you cannot change it.
+
+If you didn't choose the best column the first time, you can use CREATE TABLE AS SELECT (CTAS) to re-create the table with a different distribution column.
+For best performance, all of the distributions should have approximately the same number of rows. When one or more distributions have a disproportionate number of rows, some distributions finish their portion of a parallel query before others. Since the query can't complete until all distributions have finished processing, each query is only as fast as the slowest distribution.
+
+* Data skew means the data is not distributed evenly across the distributions
+* Processing skew means that some distributions take longer than others when running parallel queries. This can happen when the data is skewed.
+
+To balance the parallel processing, select a distribution column that:
+
+* **Has many unique values**. The column can have duplicate values. All rows with the same value are assigned to the same distribution. Since there are 60 distributions, some distributions can have > 1 unique values while others may end with zero values.
+* **Does not have NULLs, or has only a few NULLs**. For an extreme example, if all values in the column are NULL, all the rows are assigned to the same distribution. As a result, query processing is skewed to one distribution, and does not benefit from parallel processing.
+* **Is not a date column**. All data for the same date lands in the same distribution. If several users are all filtering on the same date, then only 1 of the 60 distributions do all the processing work.
+
+**Choose a distribution column that minimizes data movement**
+
+To get the correct query result queries might move data from one Compute node to another. Data movement commonly happens when queries have joins and aggregations on distributed tables. Choosing a distribution column that helps minimize data movement is one of the most important strategies for optimizing performance of your dedicated SQL pool.
+
+**To minimize data movement, select a distribution column that:**
+
+* Is used in JOIN, GROUP BY, DISTINCT, OVER, and HAVING clauses. When two large fact tables have frequent joins, query performance improves when you distribute both tables on one of the join columns. When a table is not used in joins, consider distributing the table on a column that is frequently in the GROUP BY clause.
+* Is not used in WHERE clauses. This could narrow the query to not run on all the distributions.
+* Is not a date column. WHERE clauses often filter by date. When this happens, all the processing could run on only a few distributions.
+
+**What to do when none of the columns are a good distribution column**
+
+If none of your columns have enough distinct values for a distribution column, you can create a new column as a composite of one or more values. To avoid data movement during query execution, use the composite distribution column as a join column in queries.
+
+Once you design a hash-distributed table, the next step is to load data into the table. For loading guidance, see Loading overview.
+
+How to tell if your distribution column is a good choice
+After data is loaded into a hash-distributed table, check to see how evenly the rows are distributed across the 60 distributions. The rows per distribution can vary up to 10% without a noticeable impact on performance.
+
+**Determine if the table has data skew**
+
+A quick way to check for data skew is to use DBCC PDW_SHOWSPACEUSED. The following SQL code returns the number of table rows that are stored in each of the 60 distributions. For balanced performance, the rows in your distributed table should be spread evenly across all the distributions.
+
+```
+-- Find data skew for a distributed table
+DBCC PDW_SHOWSPACEUSED('dbo.FactInternetSales');
+``
+
+**To identify which tables have more than 10% data skew:**
+
+1. Create the view dbo.vTableSizes that is shown in the Tables overview article.
+2. Run the following query:
+
+```
+select *
+from dbo.vTableSizes
+where two_part_name in
+    (
+    select two_part_name
+    from dbo.vTableSizes
+    where row_count > 0
+    group by two_part_name
+    having (max(row_count * 1.000) - min(row_count * 1.000))/max(row_count * 1.000) >= .10
+    )
+order by two_part_name, row_count
+;
+```
+
+**Check query plans for data movement**
+
+A good distribution column enables joins and aggregations to have minimal data movement. This affects the way joins should be written. To get minimal data movement for a join on two hash-distributed tables, one of the join columns needs to be the distribution column. When two hash-distributed tables join on a distribution column of the same data type, the join does not require data movement. Joins can use additional columns without incurring data movement.
+
+**To avoid data movement during a join:**
+
+* The tables involved in the join must be hash distributed on one of the columns participating in the join.
+* The data types of the join columns must match between both tables.
+* The columns must be joined with an equals operator.
+* The join type may not be a `CROSS JOIN`.
+* 
+To see if queries are experiencing data movement, you can look at the query plan.
+
+**Resolve a distribution column problem**
+
+It is not necessary to resolve all cases of data skew. Distributing data is a matter of finding the right balance between minimizing data skew and data movement. It is not always possible to minimize both data skew and data movement. Sometimes the benefit of having the minimal data movement might outweigh the impact of having data skew.
+
+To decide if you should resolve data skew in a table, you should understand as much as possible about the data volumes and queries in your workload. You can use the steps in the Query monitoring article to monitor the impact of skew on query performance. Specifically, look for how long it takes large queries to complete on individual distributions.
+
+Since you cannot change the distribution column on an existing table, the typical way to resolve data skew is to re-create the table with a different distribution column.
+
+**Re-create the table with a new distribution column**
+
+This example uses CREATE TABLE AS SELECT to re-create a table with a different hash distribution column.
+
+```
+CREATE TABLE [dbo].[FactInternetSales_CustomerKey]
+WITH (  CLUSTERED COLUMNSTORE INDEX
+     ,  DISTRIBUTION =  HASH([CustomerKey])
+     ,  PARTITION       ( [OrderDateKey] RANGE RIGHT FOR VALUES (   20000101, 20010101, 20020101, 20030101
+                                                                ,   20040101, 20050101, 20060101, 20070101
+                                                                ,   20080101, 20090101, 20100101, 20110101
+                                                                ,   20120101, 20130101, 20140101, 20150101
+                                                                ,   20160101, 20170101, 20180101, 20190101
+                                                                ,   20200101, 20210101, 20220101, 20230101
+                                                                ,   20240101, 20250101, 20260101, 20270101
+                                                                ,   20280101, 20290101
+                                                                )
+                        )
+    )
+AS
+SELECT  *
+FROM    [dbo].[FactInternetSales]
+OPTION  (LABEL  = 'CTAS : FactInternetSales_CustomerKey')
+;
+
+--Create statistics on new table
+CREATE STATISTICS [ProductKey] ON [FactInternetSales_CustomerKey] ([ProductKey]);
+CREATE STATISTICS [OrderDateKey] ON [FactInternetSales_CustomerKey] ([OrderDateKey]);
+CREATE STATISTICS [CustomerKey] ON [FactInternetSales_CustomerKey] ([CustomerKey]);
+CREATE STATISTICS [PromotionKey] ON [FactInternetSales_CustomerKey] ([PromotionKey]);
+CREATE STATISTICS [SalesOrderNumber] ON [FactInternetSales_CustomerKey] ([SalesOrderNumber]);
+CREATE STATISTICS [OrderQuantity] ON [FactInternetSales_CustomerKey] ([OrderQuantity]);
+CREATE STATISTICS [UnitPrice] ON [FactInternetSales_CustomerKey] ([UnitPrice]);
+CREATE STATISTICS [SalesAmount] ON [FactInternetSales_CustomerKey] ([SalesAmount]);
+
+--Rename the tables
+RENAME OBJECT [dbo].[FactInternetSales] TO [FactInternetSales_ProductKey];
+RENAME OBJECT [dbo].[FactInternetSales_CustomerKey] TO [FactInternetSales];
+```
+
 ## <h2 id="section1">Reading and Writing to Synapse</h2>
  
  ## Objectives
