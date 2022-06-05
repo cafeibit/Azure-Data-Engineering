@@ -1,6 +1,6 @@
 # Work with Data Warehouses using Azure Synapse Analytics
 
- * <a href="#section">Design tables in Azure Synapse Analytics</a>
+ * <a href="#section0">Design tables in Azure Synapse Analytics</a>
  
  * <a href="#section1">Reading and Writing to Synapse</a>
 
