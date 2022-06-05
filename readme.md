@@ -353,7 +353,7 @@ A quick way to check for data skew is to use DBCC PDW_SHOWSPACEUSED. The followi
 ```
 -- Find data skew for a distributed table
 DBCC PDW_SHOWSPACEUSED('dbo.FactInternetSales');
-``
+```
 
 **To identify which tables have more than 10% data skew:**
 
@@ -433,6 +433,7 @@ CREATE STATISTICS [OrderQuantity] ON [FactInternetSales_CustomerKey] ([OrderQuan
 CREATE STATISTICS [UnitPrice] ON [FactInternetSales_CustomerKey] ([UnitPrice]);
 CREATE STATISTICS [SalesAmount] ON [FactInternetSales_CustomerKey] ([SalesAmount]);
 ```
+
 ```
 --Rename the tables
 RENAME OBJECT [dbo].[FactInternetSales] TO [FactInternetSales_ProductKey];
