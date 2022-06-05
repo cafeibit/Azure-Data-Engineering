@@ -420,7 +420,9 @@ SELECT  *
 FROM    [dbo].[FactInternetSales]
 OPTION  (LABEL  = 'CTAS : FactInternetSales_CustomerKey')
 ;
+```
 
+```
 --Create statistics on new table
 CREATE STATISTICS [ProductKey] ON [FactInternetSales_CustomerKey] ([ProductKey]);
 CREATE STATISTICS [OrderDateKey] ON [FactInternetSales_CustomerKey] ([OrderDateKey]);
@@ -430,7 +432,8 @@ CREATE STATISTICS [SalesOrderNumber] ON [FactInternetSales_CustomerKey] ([SalesO
 CREATE STATISTICS [OrderQuantity] ON [FactInternetSales_CustomerKey] ([OrderQuantity]);
 CREATE STATISTICS [UnitPrice] ON [FactInternetSales_CustomerKey] ([UnitPrice]);
 CREATE STATISTICS [SalesAmount] ON [FactInternetSales_CustomerKey] ([SalesAmount]);
-
+```
+```
 --Rename the tables
 RENAME OBJECT [dbo].[FactInternetSales] TO [FactInternetSales_ProductKey];
 RENAME OBJECT [dbo].[FactInternetSales_CustomerKey] TO [FactInternetSales];
