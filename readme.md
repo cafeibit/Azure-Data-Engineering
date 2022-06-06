@@ -1448,7 +1448,7 @@ FROM [wwi_external].[DailySalesCounts]
 
 One of the benefits of using Spark is that you can write and run code in various programming languages, enabling you to use the programming skills you already have and to use the most appropriate language for a given task. The default language in a new Azure Synapse Analytics Spark notebook is PySpark - a Spark-optimized version of Python, which is commonly used by data scientists and analysts due to its strong support for data manipulation and visualization. Additionally, you can use languages such as Scala (a Java-derived language that can be used interactively) and SQL (a variant of the commonly used SQL language included in the Spark SQL library to work with relational data structures). Software engineers can also create compiled solutions that run on Spark using frameworks such as Java and Microsoft .NET. 
  
-**Exploring data with dataframes**
+#### Exploring data with dataframes
  
 Natively, Spark uses a data structure called a resilient distributed dataset (RDD); but while you can write code that works directly with RDDs, the most commonly used data structure for working with structured data in Spark is the dataframe, which is provided as part of the Spark SQL library. Dataframes in Spark are similar to those in the ubiquitous Pandas Python library, but optimized to work in Spark's distributed processing environment.
 
@@ -1456,8 +1456,321 @@ Natively, Spark uses a data structure called a resilient distributed dataset (RD
 
  In addition to the Dataframe API, Spark SQL provides a strongly-typed Dataset API that is supported in Java and Scala. We'll focus on the Dataframe API in this module. 
  
+**Loading data into a dataframe**
+ 
+Let's explore a hypothetical example to see how you can use a dataframe to work with data. Suppose you have the following data in a comma-delimited text file named products.csv in the primary storage account for an Azure Synapse Analytics workspace:
+``` 
+ProductID,ProductName,Category,ListPrice
+771,"Mountain-100 Silver, 38",Mountain Bikes,3399.9900
+772,"Mountain-100 Silver, 42",Mountain Bikes,3399.9900
+773,"Mountain-100 Silver, 44",Mountain Bikes,3399.9900
+...
+```
+In a Spark notebook, you could use the following PySpark code to load the data into a dataframe and display the first 10 rows:
+```
+ %%pyspark
+df = spark.read.load('abfss://container@store.dfs.core.windows.net/products.csv',
+    format='csv',
+    header=True
+)
+display(df.limit(10))
+```
+The %%pyspark line at the beginning is called a magic, and tells Spark that the language used in this cell is PySpark. You can select the language you want to use as a default in the toolbar of the Notebook interface, and then use a magic to override that choice for a specific cell. For example, here's the equivalent Scala code for the products data example:
+```
+ %%spark
+val df = spark.read.format("csv").option("header", "true").load("abfss://container@store.dfs.core.windows.net/products.csv")
+display(df.limit(10))
+```
+**Specifying a dataframe schema**
+ 
+In the previous example, the first row of the CSV file contained the column names, and Spark was able to infer the data type of each column from the data it contains. You can also specify an explicit schema for the data, which is useful when the column names aren't included in the data file, like this CSV example: 
+```
+ 771,"Mountain-100 Silver, 38",Mountain Bikes,3399.9900
+772,"Mountain-100 Silver, 42",Mountain Bikes,3399.9900
+773,"Mountain-100 Silver, 44",Mountain Bikes,3399.9900
+...
+```
+ The following PySpark example shows how to specify a schema for the dataframe to be loaded from a file named product-data.csv in this format:
+```
+ from pyspark.sql.types import *
+from pyspark.sql.functions import *
+
+productSchema = StructType([
+    StructField("ProductID", IntegerType()),
+    StructField("ProductName", StringType()),
+    StructField("Category", StringType()),
+    StructField("ListPrice", FloatType())
+    ])
+
+df = spark.read.load('abfss://container@store.dfs.core.windows.net/product-data.csv',
+    format='csv',
+    schema=productSchema,
+    header=False)
+display(df.limit(10))
+```
+**Filtering and grouping dataframes**
+ 
+You can use the methods of the Dataframe class to filter, sort, group, and otherwise manipulate the data it contains. For example, the following code example uses the select method to retrieve the ProductName and ListPrice columns from the df dataframe containing product data in the previous example:  `pricelist_df = df.select("ProductID", "ListPrice")`
+ 
+In common with most data manipulation methods, select returns a new dataframe object.
+
+ **Tip**
+
+Selecting a subset of columns from a dataframe is a common operation, which can also be achieved by using the following shorter syntax:
+
+`pricelist_df = df["ProductID", "ListPrice"]`
+
+You can "chain" methods together to perform a series of manipulations that results in a transformed dataframe. For example, this example code chains the select and where methods to create a new dataframe containing the ProductName and ListPrice columns for products with a category of Mountain Bikes or Road Bikes: 
+ ```
+ bikes_df = df.select("ProductName", "ListPrice").where((df["Category"]=="Mountain Bikes") | (df["Category"]=="Road Bikes"))
+display(bikes_df)
+ ```
+ To group and aggregate data, you can use the groupBy method and aggregate functions. For example, the following PySpark code counts the number of products for each category:
+ ```
+ counts_df = df.select("ProductID", "Category").groupBy("Category").count()
+display(counts_df)
+ ```
+#### Using SQL expressions in Spark
+ 
+The Dataframe API is part of a Spark library named Spark SQL, which enables data analysts to use SQL expressions to query and manipulate data.
+
+**Creating database objects in the Spark catalog**
+ 
+The Spark catalog is a metastore for relational data objects such as views and tables. The Spark runtime can use the catalog to seamlessly integrate code written in any Spark-supported language with SQL expressions that may be more natural to some data analysts or developers.
+
+One of the simplest ways to make data in a dataframe available for querying in the Spark catalog is to create a temporary view, as shown in the following code example: `df.createOrReplaceTempView("products")`
+
+ A view is temporary, meaning that it's automatically deleted at the end of the current session. You can also create tables that are persisted in the catalog to define a database that can be queried using Spark SQL.
+
+ **Note**
+
+We won't explore Spark catalog tables in depth in this module, but it's worth taking the time to highlight a few key points:
+
+* You can create an empty table by using the spark.catalog.createTable method. Tables are metadata structures that store their underlying data in the storage location associated with the catalog. Deleting a table also deletes its underlying data.
+* You can save a dataframe as a table by using its saveAsTable method.
+* You can create an external table by using the spark.catalog.createExternalTable method. External tables define metadata in the catalog but get their underlying data from an external storage location; typically a folder in a data lake. Deleting an external table does not delete the underlying data.
+ 
+**Using the Spark SQL API to query data**
+ 
+You can use the Spark SQL API in code written in any language to query data in the catalog. For example, the following PySpark code uses a SQL query to return data from the products view as a dataframe. 
+ ```
+ bikes_df = spark.sql("SELECT ProductID, ProductName, ListPrice \
+                      FROM products \
+                      WHERE Category IN ('Mountain Bikes', 'Road Bikes')")
+display(bikes_df)
+```
+ 
+**Using SQL code**
+ 
+The previous example demonstrated how to use the Spark SQL API to embed SQL expressions in Spark code. In a notebook, you can also use the %%sql magic to run SQL code that queries objects in the catalog, like this: 
+ ```
+ %%sql
+
+SELECT Category, COUNT(ProductID) AS ProductCount
+FROM products
+GROUP BY Category
+ORDER BY Category
+ ```
+ 
+### Visualize data with Spark
+
+One of the most intuitive ways to analyze the results of data queries is to visualize them as charts. Notebooks in Azure Synapse Analytics provide some basic charting capabilities in the user interface, and when that functionality doesn't provide what you need, you can use one of the many Python graphics libraries to create and display data visualizations in the notebook.
+
+#### Using built-in notebook charts
+ 
+When you display a dataframe or run a SQL query in a Spark notebook in Azure Synapse Analytics, the results are displayed under the code cell. By default, results are rendered as a table, but you can also change the results view to a chart and use the chart properties to customize how the chart visualizes the data, as shown here: 
+
+The built-in charting functionality in notebooks is useful when you're working with results of a query that don't include any existing groupings or aggregations, and you want to quickly summarize the data visually. When you want to have more control over how the data is formatted, or to display values that you have already aggregated in a query, you should consider using a graphics package to create your own visualizations.
+
+**Using graphics packages in code**
+ 
+There are many graphics packages that you can use to create data visualizations in code. In particular, Python supports a large selection of packages; most of them built on the base Matplotlib library. The output from a graphics library can be rendered in a notebook, making it easy to combine code to ingest and manipulate data with inline data visualizations and markdown cells to provide commentary.
+
+For example, you could use the following PySpark code to aggregate data from the hypothetical products data explored previously in this module, and use Matplotlib to create a chart from the aggregated data.
+``` 
+from matplotlib import pyplot as plt
+
+# Get the data as a Pandas dataframe
+data = spark.sql("SELECT Category, COUNT(ProductID) AS ProductCount \
+                  FROM products \
+                  GROUP BY Category \
+                  ORDER BY Category").toPandas()
+
+# Clear the plot area
+plt.clf()
+
+# Create a Figure
+fig = plt.figure(figsize=(12,8))
+
+# Create a bar plot of product counts by category
+plt.bar(x=data['Category'], height=data['ProductCount'], color='orange')
+
+# Customize the chart
+plt.title('Product Counts by Category')
+plt.xlabel('Category')
+plt.ylabel('Products')
+plt.grid(color='#95a5a6', linestyle='--', linewidth=2, axis='y', alpha=0.7)
+plt.xticks(rotation=70)
+
+# Show the plot area
+plt.show()
+``` 
+
+The Matplotlib library requires data to be in a Pandas dataframe rather than a Spark dataframe, so the toPandas method is used to convert it. The code then creates a figure with a specified size and plots a bar chart with some custom property configuration before showing the resulting plot.
+ 
+ You can use the Matplotlib library to create many kinds of chart; or if preferred, you can use other libraries such as Seaborn to create highly customized charts.
+ 
 ## <h2 id="section2-2">Ingest data with Apache Spark notebooks in Azure Synapse Analytics</h2>
 
+### Understand the use-cases for spark notebooks
+
+There are various use cases that make using notebooks compelling within Azure Synapse Analytics 
+
+ #### To perform exploratory data analysis using a familiar paradigm
+ 
+Many data engineers and data scientist work with Apache Spark in various incarnations, be it Microsoft Azure HDInsight, Azure Databricks, or even open-source Apache Spark. The notebooks that are available within Azure Synapse Analytics contain many of the features that these professionals are used to when working with notebooks to explore the data within their organizations. It enables data engineers and scientists to quickly launch a notebook to explore data without the need to learn a new tool, while taking advantage of the inherent integration that the notebooks in Azure Synapse Analytics has with other aspects of the product.
+
+#### To integrate notebooks as part of a broader data transformation process
+ 
+Running complex or large transformation on an Apache Spark cluster is at times far more efficient than trying to perform the transformation using traditional relational Transact-SQL methods. You can use notebooks to perform transformations using Apache Spark, and then integrate this transformation into a broader extract, transform, and load (ETL) process by integrating the notebook into an ETL tool such as Azure Data Factory, or Azure Synapse pipelines.
+
+#### You wish to perform advanced analytics using notebooks with Azure Machine Learning Services
+ 
+You can create Apache Spark tables in a notebook to connect to a linked service for Azure Machine Learning Services to perform various advanced analytical tasks from classical machine learning to deep learning, both supervised and unsupervised. Whether you prefer to write Python or R code with the SDK or work with no-code/low-code options in Azure Machine Learning Studio, you can build and train machine learning and deep-learning models using the notebooks, and track their activity in an Azure Machine Learning Workspace. 
+
+### Load data in spark notebooks
+
+In order to ingest data into a notebook, there are several options. Currently it is possible to load data from an Azure Storage Account, and an Azure Synapse Analytics dedicated SQL pool.
+
+Some examples for reading data in a notebook are:
+
+* Read a CSV from Azure Data Lake Store Gen2 as an Apache Spark DataFrame
+* Read a CSV from Azure Storage Account as an Apache Spark DataFrame
+* Read data from the primary storage account
+ 
+**Example 1: Read a CSV file from an Azure Data Lake Store Gen2 store as an Apache Spark DataFrame.**
+ 
+The following code is used to read a CSV file from an Azure Data Lake Store Gen2 store as an Apache Spark DataFrame.
+
+```
+from pyspark.sql import SparkSession
+from pyspark.sql.types import *
+account_name = "Your account name"
+container_name = "Your container name"
+relative_path = "Your path"
+adls_path = 'abfss://%s@%s.dfs.core.windows.net/%s' % (container_name, account_name, relative_path)
+
+spark.conf.set("fs.azure.account.auth.type.%s.dfs.core.windows.net" %account_name, "SharedKey")
+spark.conf.set("fs.azure.account.key.%s.dfs.core.windows.net" %account_name ,"Your ADLS Gen2 Primary Key")
+
+df1 = spark.read.option('header', 'true') \
+                .option('delimiter', ',') \
+                .csv(adls_path + '/Testfile.csv')
+```
+ 
+There are parameter name values that you need to replace in the above code to ensure that it works, including:
+
+* account_name
+
+Replace "Your account name" with the storage account name you wish to use
+
+* container_name
+
+Replace "Your container name" with the storage container you wish to use
+
+* relative_path
+
+Replace "Your path" with the relative path of where the file is stored
+
+* adls_path
+
+The adls_path is defined by passing through the above parameters.
+
+**Example 2: Read a CSV file from Azure Storage Account as a Spark DataFrame.**
+ 
+The following code is used to read a CSV file from Azure Storage Account as an Apache Spark DataFrame.
+
+```
+from pyspark.sql import SparkSession
+from pyspark.sql.types import *
+
+blob_account_name = "Your blob account name"
+blob_container_name = "Your blob container name"
+blob_relative_path = "Your blob relative path"
+blob_sas_token = "Your blob sas token"
+
+wasbs_path = 'wasbs://%s@%s.blob.core.windows.net/%s' % (blob_container_name, blob_account_name, blob_relative_path)
+spark.conf.set('fs.azure.sas.%s.%s.blob.core.windows.net' % (blob_container_name, blob_account_name), blob_sas_token)
+
+df = spark.read.option("header", "true") \
+            .option("delimiter","|") \
+            .schema(schema) \
+            .csv(wasbs_path)
+```
+There are parameter name values that you need to replace in the above code to ensure that it works, including:
+
+* blob_account_name
+
+Replace "Your blob account name" with the name of your blob account.
+
+* blob_container_name
+
+Replace "Your blob container" with the name of the blob container the file is in.
+
+* blob_relative_path
+
+Replace "Your blob relative path" with the name of the relative path pointing to the csv you want to read.
+
+* blob_sas_token
+
+Replace "Your blob sas token" with the blob SAS key.
+
+**Example 3: Read data from the primary storage account**
+ 
+The third possibility is to read data from the primary storage account, using the Data tab in the Azure Synapse Studio environment. If you right-click on a file and select New notebook, you will see a new notebook with the data generated.
+
+New notebook to pass Data and Load into Notebook
+
+**Note**
+ 
+ If you would like to load data to or from a table into a Spark DataFrame, you can use the Azure Synapse Apache Spark pool to Synapse SQL connector. The Azure Synapse Apache Spark pool to Synapse SQL connector is a data source implementation for Apache Spark, and it uses Azure Data Lake Storage Gen2 and PolyBase in dedicated SQL pools to efficiently transfer data between the Spark cluster and the Azure Synapse dedicated SQL pool instance.
+ ```
+ %%spark
+spark.sql("CREATE DATABASE IF NOT EXISTS nyctaxi")
+val df = spark.read.sqlanalytics("SQLPOOL1.dbo.Trip") 
+df.write.mode("overwrite").saveAsTable("nyctaxi.trip")
+ ```
+In this code example, the spark.sql method is used to create a database named nyctaxi. A DataFrame named df reads data from a table named Trip in the SQLPOOL1 dedicated SQL pool instance. Finally, the DataFrame df writes data into it and used the saveAsTable method to save it as nyctaxi.trip.
+
+As you can see, there are various ways to load data into an Apache Spark DataFrame depending on the source.
+ 
+#### Flatten nested structures and explode arrays with Apache Spark
+
+A common use case for using Apache Spark pools in Azure Synapse Analytics is for transforming complex data structures using DataFrames. It can help for the following reasons:
+
+* Complex data types are increasingly common and represent a challenge for data engineers because analyzing nested schema and data arrays often include time-consuming and complex SQL queries.
+* It can be difficult to rename or cast the nested column data type.
+* Performance issues arise when working with deeply nested objects. Data Engineers need to understand how to efficiently process complex data types and make them easily accessible to everyone. In the following example, Apache Spark for Azure Synapse is used to read and transform objects into a flat structure through data frames.
+* Apache Synapse SQL serverless is used to query such objects directly and return those results as a regular table.
+* With Azure Synapse Apache Spark pools, it's easy to transform nested structures into columns and array elements into multiple rows.
+ 
+In the example, the following steps show the techniques involved to deal with complex data types by creating multiple DataFrames to achieve the desired result.
+
+**Flatten Nested Structures Steps** 
+
+Step 1: Define a function for flattening
+We create a function that will flatten the nested schema.
+
+Step 2: Flatten nested schema
+We will define the function you create to flatten the nested schema from one DataFrame into a new DataFrame.
+
+Step 3: Explode Arrays
+Here you will transform the data array from the DataFrame created in step 2 into a new DataFrame.
+
+Step 4: Flatten child nested Schema
+Finally, you use the transformed DataFrame created in step 3 and load the cleansed data into a destination DataFrame to complete the work. 
+ 
+ 
 ## <h2 id="section2-3">Transform data with DataFrames in Apache Spark Pools in Azure Synapse Analytics</h2>
 
 ## <h2 id="section5">Integrate SQL and Apache Spark pools in Azure Synapse Analytics</h2>
