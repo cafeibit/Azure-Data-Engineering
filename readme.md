@@ -1301,7 +1301,8 @@ That is to say, data sources that contain invalid data formats, corrupted record
   * To create the DailySalesCounts table and load data using the COPY statement. 
   * As before, be sure to replace YOURACCOUNT with the name of your ADLS Gen2 account:
   
-  ```CREATE TABLE [wwi_staging].DailySalesCounts
+  ```
+  CREATE TABLE [wwi_staging].DailySalesCounts
     (
         [Date] [int]  NOT NULL,
         [NorthAmerica] [int]  NOT NULL,
@@ -1326,8 +1327,7 @@ WITH (
 GO
 ```
  
- * Attempt to load using PolyBase
-   *  to create a new external file format, external table, and load data using PolyBase:
+ * Attempt to load using PolyBase to create a new external file format, external table, and load data using PolyBase:
    
  ```
  CREATE EXTERNAL FILE FORMAT csv_dailysales
@@ -1342,25 +1342,27 @@ GO
  GO
  ```
 
-`CREATE EXTERNAL TABLE [wwi_external].DailySalesCounts`<br>
-    `(`<br>
-        `[Date] [int]  NOT NULL,`<br>
-        `[NorthAmerica] [int]  NOT NULL,`<br>
-        `[SouthAmerica] [int]  NOT NULL,`<br>
-        `[Europe] [int]  NOT NULL,`<br>
-        `[Africa] [int]  NOT NULL,`<br>
-        `[Asia] [int]  NOT NULL`<br>
-    `)`<br>
-`WITH`<br>
-    `(`<br>
-        `LOCATION = '/campaign-analytics/dailycounts.txt',`<br>  
-        `DATA_SOURCE = ABSS,`<br>
-        `FILE_FORMAT = csv_dailysales`<br>
-    `)  `<br>
-`GO`<br>
-`INSERT INTO [wwi_staging].[DailySalesCounts]`<br>
-`SELECT *`<br>
-`FROM [wwi_external].[DailySalesCounts]`<br>
+```
+CREATE EXTERNAL TABLE [wwi_external].DailySalesCounts
+    (
+        [Date] [int]  NOT NULL,
+        [NorthAmerica] [int]  NOT NULL,
+        [SouthAmerica] [int]  NOT NULL,
+        [Europe] [int]  NOT NULL,
+        [Africa] [int]  NOT NULL,
+        [Asia] [int]  NOT NULL
+    )
+WITH
+    (
+        LOCATION = '/campaign-analytics/dailycounts.txt',
+        DATA_SOURCE = ABSS,
+        FILE_FORMAT = csv_dailysales
+    )
+GO
+INSERT INTO [wwi_staging].[DailySalesCounts]
+SELECT *`<br>
+FROM [wwi_external].[DailySalesCounts]
+```
  
  **<a href="analyze-optimize-performamce.md">Analyze and optimize data warehouse storage in Azure Synapse Analytics</a>**
 
@@ -1442,7 +1444,17 @@ GO
 
 ## <h2 id="section2-1">Analyze data with Apache Spark in Azure Synapse Analytics</h2>
  
+### Analyze data with Spark
+
+One of the benefits of using Spark is that you can write and run code in various programming languages, enabling you to use the programming skills you already have and to use the most appropriate language for a given task. The default language in a new Azure Synapse Analytics Spark notebook is PySpark - a Spark-optimized version of Python, which is commonly used by data scientists and analysts due to its strong support for data manipulation and visualization. Additionally, you can use languages such as Scala (a Java-derived language that can be used interactively) and SQL (a variant of the commonly used SQL language included in the Spark SQL library to work with relational data structures). Software engineers can also create compiled solutions that run on Spark using frameworks such as Java and Microsoft .NET. 
  
+**Exploring data with dataframes**
+ 
+Natively, Spark uses a data structure called a resilient distributed dataset (RDD); but while you can write code that works directly with RDDs, the most commonly used data structure for working with structured data in Spark is the dataframe, which is provided as part of the Spark SQL library. Dataframes in Spark are similar to those in the ubiquitous Pandas Python library, but optimized to work in Spark's distributed processing environment.
+
+ **Note**
+
+ In addition to the Dataframe API, Spark SQL provides a strongly-typed Dataset API that is supported in Java and Scala. We'll focus on the Dataframe API in this module. 
  
 ## <h2 id="section2-2">Ingest data with Apache Spark notebooks in Azure Synapse Analytics</h2>
 
