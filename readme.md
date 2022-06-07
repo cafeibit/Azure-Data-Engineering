@@ -1773,7 +1773,6 @@ Finally, you use the transformed DataFrame created in step 3 and load the cleans
  
 ## <h2 id="section2-3">Transform data with DataFrames in Apache Spark Pools in Azure Synapse Analytics</h2>
 
-## <h2 id="section5">Integrate SQL and Apache Spark pools in Azure Synapse Analytics</h2>
 
 ## <h2 id="section2-5">Monitor and manage data engineering workloads with Apache Spark in Azure Synapse Analytics</h2>
 
