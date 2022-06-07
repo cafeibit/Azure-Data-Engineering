@@ -1895,7 +1895,7 @@ If there is an optimization necessary in relation to the optimization of a job e
 
 In another case you might use the thread pool that runs on the driver, which could result in faster operations for many tasks. 
  
-###Automate scaling of Apache Spark pools in Azure Synapse Analytics
+### Automate scaling of Apache Spark pools in Azure Synapse Analytics
 
 Within an Apache Spark Pool, it is possible to configure a fixed size when you disable autoscaling. When you enable autoscale, you can set a minimum and maximum number of nodes in order to control the scale that you'd like.
 
