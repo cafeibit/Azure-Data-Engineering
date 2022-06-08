@@ -1498,7 +1498,7 @@ BEGIN
 END;
 ```
  
-**Within data manipulation operations, using IF with the EXISTS keyword can be a useful tool for efficient existence checks, as in the following example:
+**Within data manipulation operations, using IF with the EXISTS keyword can be a useful tool for efficient existence checks, as in the following example:**
 
 ```
 IF EXISTS (SELECT * FROM Sales.EmpOrders WHERE empid =5)
