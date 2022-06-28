@@ -1,4 +1,7 @@
-# Work with Data Warehouses using Azure Synapse Analytics
+# Work with Data Warehouses using Azure Synapse Analytics  
+
+<a href="https://docs.microsoft.com/en-ca/learn/paths/work-with-data-warehouses-using-azure-synapse-analytics/">MS Learn:Work with Data Warehouses using Azure Synapse Analytics</a>
+<a href="https://docs.microsoft.com/en-ca/learn/paths/realize-integrated-analytical-solutions-with-azure-synapse-analytics/">Realize Integrated Analytical Solutions with Azure Synapse Analytics</a>
 
  * <a href="#section0">Design tables in Azure Synapse Analytics</a>
  
@@ -11,12 +14,27 @@
  * <a href="#section4">Use Azure Synapse serverless SQL pools for transforming the data in the lake</a>
 
  * <a href="#section6">Serve the data from Azure Synapse serverless SQL pool</a>
+ 
+ * Design a Modern Data Warehouse using Azure Synapse Analytics
+ 
+ * Analyze data in a relational data warehouse
+ 
+ * Use data loading best practices in Azure Synapse Analytics
+ 
+ * Optimize data warehouse query performance in Azure Synapse Analytics
+ 
+ * Integrate SQL and Apache Spark pools in Azure Synapse Analytics
 
  * <a href="#section7">Work with Data Warehouses using Azure Synapse Analytics by developer features</a>
 
  * <a href="#section8">Use data loading best practices in Azure Synapse Analytics</a>
 
  * <a href="#section9">Manage and monitor data warehouse activities in Azure Synapse Analytics</a>
+
+ * <a href="">Analyze and optimize data warehouse storage in Azure Synapse Analytics</a>
+ 
+ * <a href="">Secure a data warehouse in Azure Synapse Analytics</a>
+
 
 # Perform data engineering with Azure Synapse Apache Spark Pools
 
