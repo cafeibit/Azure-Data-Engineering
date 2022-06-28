@@ -24,6 +24,8 @@ To perform data engineering with Azure Synapse Apache Spark Pools, which enable 
 
  * <a href="#section2-1">Analyze data with Apache Spark in Azure Synapse Analytics</a>
  
+ * <a href="#section2-6">Use Delta Lake in Azure Synapse Analytics</a>
+ 
  * <a href="#section2-2">Ingest data with Apache Spark notebooks in Azure Synapse Analytics</a>
 
  * <a href="#section2-3">Transform data with DataFrames in Apache Spark Pools in Azure Synapse Analytics</a>
