@@ -1,6 +1,8 @@
 # Work with Data Warehouses using Azure Synapse Analytics  
 
-<a href="https://docs.microsoft.com/en-ca/learn/paths/work-with-data-warehouses-using-azure-synapse-analytics/">MS Learn:Work with Data Warehouses using Azure Synapse Analytics</a>
+MS Learn:
+
+<a href="https://docs.microsoft.com/en-ca/learn/paths/work-with-data-warehouses-using-azure-synapse-analytics/">Work with Data Warehouses using Azure Synapse Analytics</a>
 
 <a href="https://docs.microsoft.com/en-ca/learn/paths/realize-integrated-analytical-solutions-with-azure-synapse-analytics/">Realize Integrated Analytical Solutions with Azure Synapse Analytics</a>
 
