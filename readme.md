@@ -6,6 +6,8 @@ MS Learn:
 
 <a href="https://docs.microsoft.com/en-ca/learn/paths/realize-integrated-analytical-solutions-with-azure-synapse-analytics/">Realize Integrated Analytical Solutions with Azure Synapse Analytics</a>
 
+<a href="https://docs.microsoft.com/en-ca/learn/paths/work-with-hybrid-transactional-analytical-processing-solutions/">Work with Hybrid Transactional and Analytical Processing Solutions using Azure Synapse Analytics</a>
+
  * <a href="#section0">Design tables in Azure Synapse Analytics</a>
  
  * <a href="#section1">Reading and Writing to Synapse</a>
