@@ -145,7 +145,7 @@ Work with large amounts of data from multiple sources in different raw formats. 
   *  Read data from: JSON without a Schema, JSON with a Schema
   *  Read data from: Parquet files without a schema, Parquet files with a schema
   *  Read data from tables/views, Write data to a Parquet file, Read the Parquet file back and display the results
-  *  <a href="./notebook/Read Write Query with DataFrame.ipynb">Examples</a>
+  *  <a href="./notebook/Read Write Query with DataFrame.ipynb">Read Examples</a>
 
 ##  <h2 id="section4">Work with DataFrames in Azure Databricks</h4>
 
@@ -160,7 +160,7 @@ Spark uses 3 different APIs: RDDs, DataFrames, and DataSets. The architectural f
  * Use select() to select a subset of columns from a DataFrame
  * Use distinct() and dropDuplicates to remove duplicate data
  * Use drop() to remove columns from a DataFrame
- * <a href="./notebook/Working with DataFrames.ipynb">READ Examples</a>
+ * <a href="./notebook/Working with DataFrames.ipynb">Work Examples</a>
 
 
 ##  <h2 id="section5">Describe lazy evaluation and other performance features in Azure Databricks</h2>
