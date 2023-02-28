@@ -49,7 +49,7 @@ Delta Lake allows users to easily combine streaming and batch workloads in a uni
 
 By considering our business logic at all steps of the ETL pipeline, we can ensure that storage and compute costs are optimized by reducing unnecessary duplication of data and limiting ad hoc querying against full historic data. Each stage can be configured as a batch or streaming job, and ACID transactions ensure that we succeed or fail completely.
 
-There is a function is defined to demonstrate using Databricks Auto Loader with the PySpark API. This code includes both a Structured Streaming read and write.Note that when using Auto Loader with automatic schema inference and evolution, the 4 arguments shown here should allow ingestion of most datasets. These arguments are explained below.
+There is a function is defined to demonstrate using Databricks Auto Loader with the PySpark API. This code includes both a Structured Streaming read and write.Note that when using Auto Loader with automatic schema inference and evolution, the 4 arguments shown here should allow ingestion of most datasets. These arguments are explained below. Databricks Auto Loader can automatically process files as they land in your cloud object stores. 
 
 | argument | what it is | how it's used |
 | --- | --- | --- |
@@ -103,3 +103,58 @@ Once data has been ingested to Delta Lake with Auto Loader, users can interact w
 %sql
 SELECT * FROM target_table
 ```
+
+### Bronze Table: Ingesting Raw JSON Recordings
+Below, we configure a read on a raw JSON source using Auto Loader with schema inference.
+
+Note that while you need to use the Spark DataFrame API to set up an incremental read, once configured you can immediately register a temp view to leverage Spark SQL for streaming transformations on your data.
+ **NOTE**: For a JSON data source, Auto Loader will default to inferring each column as a string. Here, we demonstrate specifying the data type for the **`time`** column using the **`cloudFiles.schemaHints`** option. Note that specifying improper types for a field will result in null values.
+
+```
+(spark.readStream
+    .format("cloudFiles")
+    .option("cloudFiles.format", "json")
+    .option("cloudFiles.schemaHints", "time DOUBLE")
+    .option("cloudFiles.schemaLocation", f"{DA.paths.checkpoints}/bronze")
+    .load(DA.paths.data_landing_location)
+    .createOrReplaceTempView("recordings_raw_temp"))
+```
+Here, we'll enrich our raw data with additional metadata describing the source file and the time it was ingested. This additional metadata can be ignored during downstream processing while providing useful information for troubleshooting errors if corrupt data is encountered.
+
+```
+%sql
+CREATE OR REPLACE TEMPORARY VIEW recordings_bronze_temp AS (
+SELECT *, current_timestamp() receipt_time, input_file_name() source_file
+FROM recordings_raw_temp
+```
+
+The code below passes our enriched raw data back to PySpark API to process an incremental write to a Delta Lake table.
+
+```
+(spark.table("recordings_bronze_temp")
+      .writeStream
+      .format("delta")
+      .option("checkpointLocation", f"{DA.paths.checkpoints}/bronze")
+      .outputMode("append")
+      .table("bronze"))
+```
+
+Trigger another file arrival with the following cell and you'll see the changes immediately detected by the streaming query you've written.
+`DA.data_factory.load()`
+
+### Load Static Lookup Table
+
+The ACID guarantees that Delta Lake brings to your data are managed at the table level, ensuring that only fully successfully commits are reflected in your tables. If you choose to merge these data with other data sources, be aware of how those sources version data and what sort of consistency guarantees they have.
+
+In this simplified demo, we are loading a static CSV file to add patient data to our recordings. In production, we could use Databricks' <a href="https://docs.databricks.com/spark/latest/structured-streaming/auto-loader.html" target="_blank">Auto Loader</a> feature to keep an up-to-date view of these data in our Delta Lake.
+
+```
+(spark.read
+      .format("csv")
+      .schema("mrn STRING, name STRING")
+      .option("header", True)
+      .load(f"{DA.paths.datasets}/healthcare/patient/patient_info.csv")
+      .createOrReplaceTempView("pii"))
+```
+
+
