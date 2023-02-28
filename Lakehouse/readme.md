@@ -215,7 +215,7 @@ Trigger another new file and wait for it propagate through both previous queries
 
 ```
 %sql
-ELECT COUNT(*) FROM recordings_enriched
+SELECT COUNT(*) FROM recordings_enriched
 
 DA.data_factory.load()
 ```
