@@ -103,6 +103,25 @@ Once data has been ingested to Delta Lake with Auto Loader, users can interact w
 %sql
 SELECT * FROM target_table
 ```
+ 
+### Datasets Used
+This demo uses simplified artificially generated medical data. The schema of our two datasets is represented below. Note that we will be manipulating these schema during various steps.
+
+#### Recordings
+The main dataset uses heart rate recordings from medical devices delivered in the JSON format. 
+| Field | Type |
+| --- | --- |
+| device_id | int |
+| mrn | long |
+| time | double |
+| heartrate | double |
+ 
+#### PII
+These data will later be joined with a static table of patient information stored in an external system to identify patients by name.
+| Field | Type |
+| ---   | --- |
+| mrn   | long |
+| name  | string |
 
 ### Bronze Table: Ingesting Raw JSON Recordings
 Below, we configure a read on a raw JSON source using Auto Loader with schema inference.
