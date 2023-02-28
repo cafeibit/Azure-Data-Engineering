@@ -36,6 +36,8 @@ To harness the power of Apache Spark and powerful clusters running on the Azure 
  
   * <a href="./Lakehouse/readme.md">Implement Azure Databricks Lakehouse and build incremental workflows</a>
   
+    * <a href="./Lakehouse/dlt.md">Implement incremental data pipelines and ML workflows by Delta Lake Table</a>
+  
 <img src="./azure-databricks.png" />
 
 <a href="https://docs.microsoft.com/en-us/azure/databricks/scenarios/databricks-extract-load-sql-data-warehouse">Tutorial: Extract, transform, and load data by using Azure Databricks</a>
