@@ -155,6 +155,122 @@ In this simplified demo, we are loading a static CSV file to add patient data to
       .option("header", True)
       .load(f"{DA.paths.datasets}/healthcare/patient/patient_info.csv")
       .createOrReplaceTempView("pii"))
+
+
+%sql
+SELECT * FROM pii
+```
+### Silver Table: Enriched Recording Data
+
+As a second hop in our silver level, we will do the follow enrichments and checks:
+ - Our recordings data will be joined with the PII to add patient names
+ - The time for our recordings will be parsed to the format **`'yyyy-MM-dd HH:mm:ss'`** to be human-readable
+ - We will exclude heart rates that are <= 0, as we know that these either represent the absence of the patient or an error in transmission
+
+```
+(spark.readStream
+  .table("bronze")
+  .createOrReplaceTempView("bronze_tmp"))
 ```
 
+```
+%sql
+CREATE OR REPLACE TEMPORARY VIEW recordings_w_pii AS (
+SELECT device_id, a.mrn, b.name, cast(from_unixtime(time, 'yyyy-MM-dd HH:mm:ss') AS timestamp) time, heartrate
+FROM bronze_tmp a
+INNER JOIN pii b
+ON a.mrn = b.mrn
+WHERE heartrate > 0)
+```
 
+```
+(spark.table("recordings_w_pii")
+      .writeStream
+      .format("delta")
+      .option("checkpointLocation", f"{DA.paths.checkpoints}/recordings_enriched")
+      .outputMode("append")
+      .table("recordings_enriched"))
+```
+
+Trigger another new file and wait for it propagate through both previous queries.
+
+```
+%sql
+ELECT COUNT(*) FROM recordings_enriched
+
+DA.data_factory.load()
+```
+
+### Gold Table: Daily Averages
+
+Here we read a stream of data from **`recordings_enriched`** and write another stream to create an aggregate gold table of daily averages for each patient.
+
+```
+(spark.readStream
+  .table("recordings_enriched")
+  .createOrReplaceTempView("recordings_enriched_temp"))
+
+%sql
+CREATE OR REPLACE TEMP VIEW patient_avg AS (
+SELECT mrn, name, mean(heartrate) avg_heartrate, date_trunc("DD", time) date
+FROM recordings_enriched_temp
+GROUP BY mrn, name, date_trunc("DD", time))
+```
+
+Note that we're using **`.trigger(availableNow=True)`** below. This provides us the ability to continue to use the strengths of Structured Streaming while triggering this job one-time to process all available data in micro-batches. To recap, these strengths include:
+ - exactly once end-to-end fault tolerant processing
+- automatic detection of changes in upstream data sources
+ 
+If we know the approximate rate at which our data grows, we can appropriately size the cluster we schedule for this job to ensure fast, cost-effective processing. The customer will be able to evaluate how much updating this final aggregate view of their data costs and make informed decisions about how frequently this operation needs to be run.
+
+Downstream processes subscribing to this table do not need to re-run any expensive aggregations. Rather, files just need to be de-serialized and then queries based on included fields can quickly be pushed down against this already-aggregated source.
+
+```
+(spark.table("patient_avg")
+      .writeStream
+      .format("delta")
+      .outputMode("complete")
+      .option("checkpointLocation", f"{DA.paths.checkpoints}/daily_avg")
+      .trigger(availableNow=True)
+      .table("daily_patient_avg"))
+```
+
+#### Important Considerations for complete Output with Delta
+
+When using **`complete`** output mode, we rewrite the entire state of our table each time our logic runs. While this is ideal for calculating aggregates, we **cannot** read a stream from this directory, as Structured Streaming assumes data is only being appended in the upstream logic.
+
+**NOTE**: Certain options can be set to change this behavior, but have other limitations attached. For more details, refer to <a href="https://docs.databricks.com/delta/delta-streaming.html#ignoring-updates-and-deletes" target="_blank">Delta Streaming: Ignoring Updates and Deletes</a>.
+
+The gold Delta table we have just registered will perform a static read of the current state of the data each time we run the following query.
+
+```
+ %sql
+SELECT * FROM daily_patient_avg
+```
+
+Note the above table includes all days for all users. If the predicates for our ad hoc queries match the data encoded here, we can push down our predicates to files at the source and very quickly generate more limited aggregate views.
+
+```
+ %sql
+SELECT * 
+FROM daily_patient_avg
+WHERE date BETWEEN "2020-01-17" AND "2020-01-31"
+```
+
+### Process Remaining Records
+
+The following cell will land additional files for the rest of 2020 in your source directory. You'll be able to see these process through the first 3 tables in your Delta Lake, but will need to re-run your final query to update your **`daily_patient_avg`** table, since this query uses the trigger available now syntax.
+
+`DA.data_factory.load(continuous=True)`
+
+### Wrapping Up
+Finally, make sure all streams are stopped.
+
+### Additional Topics & Resources
+
+* <a href="https://docs.databricks.com/delta/delta-streaming.html" target="_blank">Table Streaming Reads and Writes</a>
+* <a href="https://spark.apache.org/docs/latest/structured-streaming-programming-guide.html" target="_blank">Structured Streaming Programming Guide</a>
+* <a href="https://www.youtube.com/watch?v=rl8dIzTpxrI" target="_blank">A Deep Dive into Structured Streaming</a> by Tathagata Das. This is an excellent video describing how Structured Streaming works.
+* <a href="https://databricks.com/glossary/lambda-architecture" target="_blank">Lambda Architecture</a>
+* <a href="https://bennyaustin.wordpress.com/2010/05/02/kimball-and-inmon-dw-models/#" target="_blank">Data Warehouse Models</a>
+* <a href="http://spark.apache.org/docs/latest/structured-streaming-kafka-integration.html" target="_blank">Create a Kafka Source Stream</a>
