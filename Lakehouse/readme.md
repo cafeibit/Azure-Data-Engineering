@@ -1,6 +1,16 @@
 # Implement Azure Databricks Lakehouse and build incremental workflows
 
-We choose Azure Databricks to build the data engineering and analytics platform in the Azure cloud. 
+The **Databricks Lakehouse Platform** is a data platform that combines the best elements of data lakes and data warehouses to deliver the reliability, strong governance and performance of data warehouses with the openness, flexibility and machine learning support of data lakes. It is built on an open and reliable data foundation that efficiently handles all data types and applies one common security and governance approach across all your data and cloud platforms³. The Databricks Lakehouse Platform also offers you a consistent management, security, and governance experience across all clouds¹.
+
+Some of the benefits of using the Databricks Lakehouse Platform are:
+- You can unify your data analytics and AI use cases on one platform
+- You can eliminate data silos and reduce decision-making speed
+- You can leverage open source data formats such as Delta Lake to enable ACID transactions and schema enforcement on your cloud object storage
+- You can access a rich ecosystem of tools such as SQL Analytics, MLflow, Redash, Tableau etc. to perform various tasks on your data
+- You can scale up or down your compute resources as needed without compromising performance or cost-efficiency
+
+A common organizational data platform problem is that data is often stored in silos across different systems, such as data lakes, data warehouses, operational databases etc. This makes it hard to access, analyze and govern the data effectively and efficiently.The data lakehouse solves this problem by providing a unified modern data platform that can handle both structured and unstructured data with high reliability, performance and governance¹³. A data lakehouse can take the place of individual solutions by breaking down the silo walls between multiple repositories. This integration creates a much more efficient end-to-end process over curated data sources. A data lakehouse also enables various use cases such as business intelligence, machine learning and real-time analytics on one platform⁵.
+
 Before we implement the Lakehouse platform we need to explore the external data from the ingested raw data by ADF in the Azure Data Lake, 
 then we can use Auto Loader function to build incremental ETL pipelines as the multi-hop architecture - "Boronze", "Silver" and "Gold" data layer.
 
