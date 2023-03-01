@@ -6,12 +6,12 @@ then we can use Auto Loader function to build incremental ETL pipelines as the m
 
  - Build ETL pipelines using Apache Spark SQL and Python with Databricks in Lakehouse
  
-   -- Create a cluster on Databricks that can run Apache Spark SQL and Python workloads.
-   -- Explore the source data that you want to ingest and transform using interactive notebooks.
-   -- Ingest raw data to Delta Lake, an open-source storage layer that provides reliability and performance for your data lake.
-   -- Prepare raw data and write to Delta Lake using Apache Spark SQL or Python commands. You can also apply business logic and transformations as needed.
-   -- Query the transformed data using Apache Spark SQL or Python. You can also use BI tools or machine learning frameworks to analyze the data.
-   -- Create a Databricks job to run the pipeline on a schedule or on demand12.
+   * Create a cluster on Databricks that can run Apache Spark SQL and Python workloads.
+   * Explore the source data that you want to ingest and transform using interactive notebooks.
+   * Ingest raw data to Delta Lake, an open-source storage layer that provides reliability and performance for your data lake.
+   * Prepare raw data and write to Delta Lake using Apache Spark SQL or Python commands. You can also apply business logic and transformations as needed.
+   * Query the transformed data using Apache Spark SQL or Python. You can also use BI tools or machine learning frameworks to analyze the data.
+   * Create a Databricks job to run the pipeline on a schedule or on demand12.
 Optionally, you can also use Delta Live Tables, a feature that simplifies and modernizes the approach to building ETL pipelines by allowing you to use SQL or Python to define declarative pipelines. Delta Live Tables automatically manages all the dependencies within the pipeline and handles schema evolution, error handling, monitoring etc.
 
  - Design and implement the incremental auto loader pipelines
