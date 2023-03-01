@@ -1,10 +1,17 @@
 # Implement Azure Databricks Lakehouse and build incremental workflows
 
-We choose Azure Databricks to build the data engineering and analytics platfrom in the Azure cloud. 
+We choose Azure Databricks to build the data engineering and analytics platform in the Azure cloud. 
 Before we implement the Lakehouse platform we need to explore the external data from the ingested raw data by ADF in the Azure Data Lake, 
 then we can use Auto Loader function to build incremental ETL pipelines as the multi-hop architecture - "Boronze", "Silver" and "Gold" data layer.
 
- - Explore and analyss external data from "Source" in Azure Data Lake
+ - Build ETL pipelines using Apache Spark SQL and Python with Databricks in Lakehouse
+   -- Create a cluster on Databricks that can run Apache Spark SQL and Python workloads.
+   -- Explore the source data that you want to ingest and transform using interactive notebooks.
+   -- Ingest raw data to Delta Lake, an open-source storage layer that provides reliability and performance for your data lake.
+   -- Prepare raw data and write to Delta Lake using Apache Spark SQL or Python commands. You can also apply business logic and transformations as needed.
+   -- Query the transformed data using Apache Spark SQL or Python. You can also use BI tools or machine learning frameworks to analyze the data.
+   -- Create a Databricks job to run the pipeline on a schedule or on demand12.
+Optionally, you can also use Delta Live Tables, a feature that simplifies and modernizes the approach to building ETL pipelines by allowing you to use SQL or Python to define declarative pipelines. Delta Live Tables automatically manages all the dependencies within the pipeline and handles schema evolution, error handling, monitoring etc.
  - Design and implement the incremental auto loader pipelines
  - Orchestrate and monitor the workflows by ADF and DLT
  - Test and build the report dashboard
