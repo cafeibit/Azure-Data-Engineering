@@ -1,6 +1,6 @@
 # Implement Azure Databricks Lakehouse and build incremental workflows
 
-The **Databricks Lakehouse Platform** is a data platform that combines the best elements of data lakes and data warehouses to deliver the reliability, strong governance and performance of data warehouses with the openness, flexibility and machine learning support of data lakes. It is built on an open and reliable data foundation that efficiently handles all data types and applies one common security and governance approach across all your data and cloud platforms³. The Databricks Lakehouse Platform also offers you a consistent management, security, and governance experience across all clouds¹.
+The **Databricks Lakehouse Platform** is a data platform that combines the best elements of data lakes and data warehouses to deliver the reliability, strong governance and performance of data warehouses with the openness, flexibility and machine learning support of data lakes. It is built on an open and reliable data foundation that efficiently handles all data types and applies one common security and governance approach across all your data and cloud platforms. The Databricks Lakehouse Platform also offers you a consistent management, security, and governance experience across all clouds.
 
 Some of the benefits of using the Databricks Lakehouse Platform are:
 - You can unify your data analytics and AI use cases on one platform
