@@ -74,13 +74,15 @@ bronze_table.alias("bronze").merge(
   "bronze.id = new_data.id"
 ).whenNotMatchedInsertAll().execute()
 ```
+
 This code loads the latest file from the source path and merges it into the "Bronze" data layer using the MERGE command. The id column is used as the join key to match records in the "Bronze" data layer with the new data. If a record with a matching id is found in the "Bronze" data layer, the record is updated with the new data. If no matching record is found, a new record is inserted.
 
 I hope these examples help you get started with ingesting raw data from Azure Data Lake Storage Gen2 into the "Bronze" data layer and implementing incremental auto loading using Databricks SQL and Python. Let me know if you have any additional questions or need more guidance.
 
 You can use the "MERGE" that is is genius but how about using Spark Structured Streaming such as readStream and writeStream to move the raw data from data source into the "Bronze" then clean up, transform, filter and process into the "Silver" layer.
 
-##You can use Spark Structured Streaming to read data from a data source and write it to the "Bronze" data layer, then transform and write it to the "Silver" data layer. Here's an example Python code snippet that demonstrates how to do this:
+## You can use Spark Structured Streaming to read data from a data source and write it to the "Bronze" data layer, then transform and write it to the "Silver" data layer. Here's an example Python code snippet that demonstrates how to do this:
+
 ```
 python
 Copy code
@@ -150,6 +152,7 @@ silver_query = raw_data \
 # Wait for the query to finish
 silver_query.awaitTermination()
 ```
+
 This code reads the raw data as a stream using the readStream method, and writes it to the "Bronze" data layer using the writeStream method. It then defines a function to transform the data and write it to the "Silver" data layer using Databricks Delta's MERGE command, and uses the foreachBatch method to apply this function to each batch of data as it arrives. Finally, it starts the query and waits for it to finish using the awaitTermination method.
 
 In this example, the raw data is filtered to remove records where col3 is less than or equal to 0, and a timestamp column is added to each record to track when it was processed. The transformed data is then merged into the "Silver" data layer using the **MERGE**
