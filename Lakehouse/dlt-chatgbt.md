@@ -223,4 +223,48 @@ It uses the **spark.readStream** method to read the data from the "Silver" layer
 
 In this example, the **aggregate_and_write** function aggregates the data from the "Silver" layer and two lookup tables (lookup1 and lookup2) using SQL, and writes the aggregated data to the "Gold" layer. The **spark.sql** method is used to execute the SQL.
 
+## To discuss some data engineering techniques for the "Silver" layer using Databricks.
+
+1. Handling Null or Empty Values:
+To handle null or empty values in a column, you can use the **fillna()** function to replace null or empty values with a specified value. For example, to replace null values in the column_name column with the string "unknown", you can use the following code:
+```
+df = df.fillna({'column_name': 'unknown'})
+```
+2. Changing Data Type for Columns:
+To change the data type of a column, you can use the **cast()** function to convert the column to the desired data type. For example, to convert the column_name column from string to double, you can use the following code:
+```
+from pyspark.sql.functions import col
+
+df = df.withColumn("column_name", col("column_name").cast("double"))
+```
+3. Cleansing Unnecessary Columns/Rows:
+To remove unnecessary columns from a DataFrame, you can use the **drop()** function to drop the columns you don't need. For example, to drop the column_name column from the DataFrame, you can use the following code:
+```
+df = df.drop("column_name")
+```
+To remove unnecessary rows from a DataFrame, you can use the **filter()** function to filter the rows you don't need based on a condition. For example, to filter out rows where the column_name column contains the string "unknown", you can use the following code:
+```
+df = df.filter(df.column_name != "unknown")
+```
+4. Enriching Date Time:
+To convert a Unix timestamp to a human-readable date and time format, you can use the **from_unixtime()** function. For example, to convert the unix_timestamp column to a human-readable date and time format, you can use the following code:
+```
+from pyspark.sql.functions import from_unixtime
+
+df = df.withColumn("timestamp", from_unixtime("unix_timestamp"))
+```
+5. sing Databricks Built-in Functions:
+Databricks provides several built-in functions that you can use for data analysis. For example, you can use the **input_file_name()** function to get the name of the file that a row of data came from, and you can use the **current_timestamp()** function to get the current timestamp. For example, to add a column to the DataFrame that contains the name of the file that each row came from, you can use the following code:
+```
+from pyspark.sql.functions import input_file_name
+
+df = df.withColumn("file_name", input_file_name())
+```
+To add a column to the DataFrame that contains the current timestamp, you can use the following code:
+```
+from pyspark.sql.functions import current_timestamp
+
+df = df.withColumn("current_time", current_timestamp())
+```
+hese are just a few examples of the data engineering techniques that you can use in Databricks to clean, transform, and enrich your data in the "Silver" layer.
 
