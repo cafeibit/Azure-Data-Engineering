@@ -84,8 +84,6 @@ You can use the "MERGE" that is is genius but how about using Spark Structured S
 ## You can use Spark Structured Streaming to read data from a data source and write it to the "Bronze" data layer, then transform and write it to the "Silver" data layer. Here's an example Python code snippet that demonstrates how to do this:
 
 ```
-python
-Copy code
 from pyspark.sql.functions import *
 from pyspark.sql.types import *
 from delta.tables import *
@@ -157,7 +155,72 @@ This code reads the raw data as a stream using the readStream method, and writes
 
 In this example, the raw data is filtered to remove records where col3 is less than or equal to 0, and a timestamp column is added to each record to track when it was processed. The transformed data is then merged into the "Silver" data layer using the **MERGE**
 
+##  Here's an example Python code snippet that demonstrates how to use managed tables and temporary views to aggregate data from the "Silver" layer and some lookup tables into the "Gold" layer:
 
+```
+from pyspark.sql.functions import *
+from delta.tables import *
 
+# Define the path to the "Silver" data layer
+silver_path = "/mnt/<your-delta-lake>/silver/"
+
+# Define the path to the "Gold" data layer
+gold_path = "/mnt/<your-delta-lake>/gold/"
+
+# Define the path to the lookup tables
+lookup_path = "/mnt/<your-delta-lake>/lookup/"
+
+# Define the schema for the lookup tables
+lookup_schema = StructType([
+    StructField("id", IntegerType(), True),
+    StructField("name", StringType(), True)
+])
+
+# Define a function to aggregate the data from the "Silver" layer and the lookup tables and write it to the "Gold" layer
+def aggregate_and_write():
+    # Read the data from the "Silver" layer as a managed table
+    silver_table = spark.table("silver")
+    
+    # Read the lookup tables as temporary views
+    lookup1 = spark.read.format("delta").schema(lookup_schema).load(lookup_path + "table1").createOrReplaceTempView("lookup1")
+    lookup2 = spark.read.format("delta").schema(lookup_schema).load(lookup_path + "table2").createOrReplaceTempView("lookup2")
+    
+    # Perform the aggregation using SQL
+    aggregated_data = spark.sql("""
+        SELECT l1.name AS name1, l2.name AS name2, COUNT(*) AS count
+        FROM silver s
+        JOIN lookup1 l1 ON s.col1 = l1.id
+        JOIN lookup2 l2 ON s.col2 = l2.id
+        GROUP BY l1.name, l2.name
+    """)
+    
+    # Write the aggregated data to the "Gold" layer
+    gold_table = DeltaTable.forPath(spark, gold_path)
+    gold_table.alias("gold").merge(
+        aggregated_data.alias("new_data"),
+        "gold.name1 = new_data.name1 AND gold.name2 = new_data.name2"
+    ).whenMatchedUpdateAll().whenNotMatchedInsertAll().execute()
+
+# Define a query to run the aggregation function periodically
+gold_query = spark \
+    .readStream \
+    .format("delta") \
+    .option("path", silver_path) \
+    .option("latestFirst", "true") \
+    .load() \
+    .writeStream \
+    .trigger(processingTime="5 minutes") \
+    .foreachBatch(lambda batch, batch_id: aggregate_and_write()) \
+    .start()
+
+# Wait for the query to finish
+gold_query.awaitTermination()
+```
+
+This code defines a function called **aggregate_and_write** that performs the aggregation using SQL, reads the data from the "Silver" layer as a managed table, and reads the lookup tables as temporary views. It then writes the aggregated data to the "Gold" layer using Databricks Delta's **MERGE** command.
+
+It uses the **spark.readStream** method to read the data from the "Silver" layer as a stream, and the **writeStream** method to periodically apply the **aggregate_and_write** function to each batch of data using the **foreachBatch** method. The **trigger** method is used to control how often the function is applied.
+
+In this example, the **aggregate_and_write** function aggregates the data from the "Silver" layer and two lookup tables (lookup1 and lookup2) using SQL, and writes the aggregated data to the "Gold" layer. The **spark.sql** method is used to execute the SQL.
 
 
